@@ -16,3 +16,8 @@ float Clampf(float val, float min, float max)
 {
     return CLAMP(val, min, max);
 }
+
+float Lerpf(float a, float b, float w)
+{
+    return a + (b - a) * w;
+}

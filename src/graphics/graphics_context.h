@@ -11,7 +11,7 @@ typedef struct mfb_window mfb_window;
 typedef struct GraphicsContext {
     mfb_window* window;
     mfb_update_state windowUpdateState;
-    Vector2_u windowSize;
+    Vector2u windowSize;
     u32* buffer;
     size_t bufferSize;
     Vector2 mousePosition;

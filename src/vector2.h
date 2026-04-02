@@ -8,21 +8,21 @@ typedef struct Vector2 {
     float y;
 } Vector2;
 
-typedef struct Vector2_i {
+typedef struct Vector2i {
     i32 x;
     i32 y;
-} Vector2_i;
+} Vector2i;
 
-typedef struct Vector2_u {
+typedef struct Vector2u {
     u32 x;
     u32 y;
-} Vector2_u;
+} Vector2u;
 
 Vector2 Vector2_zero();
 
 Vector2 Vector2_AddScalar(Vector2 vec, float value);
-Vector2_i Vector2i_AddScalar(Vector2_i vec, i32 value);
-Vector2_u Vector2u_AddScalar(Vector2_u vec, u32 value);
+Vector2i Vector2i_AddScalar(Vector2i vec, i32 value);
+Vector2u Vector2u_AddScalar(Vector2u vec, u32 value);
 
 Vector2 Vector2_Div(Vector2 vec, float value);
 

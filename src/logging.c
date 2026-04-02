@@ -46,6 +46,7 @@ void LogWarning(const char* fmt, ...)
     va_start(args, fmt);
 
     char timeString[TIME_STRING_SIZE];
+    GetTimeString(timeString, TIME_STRING_SIZE);
     fprintf(stdout, "%s [WARNING]: ", timeString);
     vfprintf(stdout, fmt, args);
     fputc('\n', stdout);

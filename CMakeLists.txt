@@ -22,6 +22,7 @@ set(GRAPHICS_FILES
 	graphics.c graphics.h
 	screen_capture.c screen_capture.h
 	image.c image.h
+	stb_implementation.c
 )
 
 list(TRANSFORM SRC_FILES PREPEND "src/")
@@ -35,7 +36,7 @@ add_subdirectory(external/minifb)
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX -d)
 
 ### Add include directories here ###
-target_include_directories(${PROJECT_NAME} PRIVATE external external/minifb/include src)
+target_include_directories(${PROJECT_NAME} PRIVATE external src external/minifb/include external/stb)
 
 ### Uncomment this line if you want the standard libraries to be linked statically ###
 # target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)

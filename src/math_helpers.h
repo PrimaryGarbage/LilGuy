@@ -10,5 +10,6 @@
 i32 Clampi(i32 min, i32 max, i32 val);
 u32 Clampu(i32 min, u32 max, u32 val);
 float Clampf(float min, float max, float val);
+float Lerpf(float a, float b, float w);
 
 #endif // __MATH_HELPERS_H__
