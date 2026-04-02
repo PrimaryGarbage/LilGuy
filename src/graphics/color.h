@@ -22,7 +22,7 @@ typedef struct Color {
     float a;
 } Color;
 
-inline static u8 extractA(u32 color)
+inline static u8 ExtractA(u32 color)
 {
     #ifdef COLOR_SCHEME_BGRA
         return (u8)(color >> 24);
@@ -33,7 +33,7 @@ inline static u8 extractA(u32 color)
     #endif
 }
 
-inline static u8 extractR(u32 color)
+inline static u8 ExtractR(u32 color)
 {
     #ifdef COLOR_SCHEME_BGRA
         return (u8)((color & 0x00FF0000) >> 16);
@@ -44,7 +44,7 @@ inline static u8 extractR(u32 color)
     #endif
 }
 
-inline static u8 extractG(u32 color)
+inline static u8 ExtractG(u32 color)
 {
     #ifdef COLOR_SCHEME_BGRA
         return (u8)((color & 0x0000FF00) >> 8);
@@ -55,7 +55,7 @@ inline static u8 extractG(u32 color)
     #endif
 }
 
-inline static u8 extractB(u32 color)
+inline static u8 ExtractB(u32 color)
 {
     #ifdef COLOR_SCHEME_BGRA
         return (u8)(color & 0x000000FF);
@@ -66,7 +66,7 @@ inline static u8 extractB(u32 color)
     #endif
 }
 
-inline static u32 packColor(Color color)
+inline static u32 PackColor(Color color)
 {
     #ifdef COLOR_SCHEME_BGRA
         return ((u32)(color.a * 255.0f)) << 24 | ((u32)(color.r * 255.0f)) << 16 | ((u32)(color.g * 255.0f)) << 8 | (u32)(color.b * 255.0f);
@@ -77,17 +77,17 @@ inline static u32 packColor(Color color)
     #endif
 }
 
-inline static Color unpackColor(u32 color)
+inline static Color UnpackColor(u32 color)
 {
     return (Color){
-        .a = extractA(color) / 255.0f,
-        .r = extractR(color) / 255.0f,
-        .g = extractG(color) / 255.0f,
-        .b = extractB(color) / 255.0f
+        .a = ExtractA(color) / 255.0f,
+        .r = ExtractR(color) / 255.0f,
+        .g = ExtractG(color) / 255.0f,
+        .b = ExtractB(color) / 255.0f
     };
 }
 
-inline static Color blendColors(Color fg, Color bg)
+inline static Color BlendColors(Color fg, Color bg)
 {
     if (fg.a == 1.0f) return fg;
 
@@ -99,18 +99,6 @@ inline static Color blendColors(Color fg, Color bg)
         (fg.a * fg.g + bg.a * (1.0f - fg.a) * bg.g) / outA,
         (fg.a * fg.b + bg.a * (1.0f - fg.a) * bg.b) / outA,
         outA
-    };
-}
-
-inline static Color blendColorsToColorPremult(Color fg, Color bg)
-{
-    if (fg.a == 1.0f) return fg;
-
-    return (Color) {
-        fg.a * fg.r + bg.a * (1.0f - fg.a) * bg.r,
-        fg.a * fg.g + bg.a * (1.0f - fg.a) * bg.g,
-        fg.a * fg.b + bg.a * (1.0f - fg.a) * bg.b,
-        fg.a + bg.a * (1.0f - fg.a)
     };
 }
 

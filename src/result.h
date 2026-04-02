@@ -1,18 +1,18 @@
 #ifndef __ERROR_H__
 #define __ERROR_H__
 
-#include <stdlib.h>
+#include "short_types.h"
 #include <stdbool.h>
 #include <stdarg.h>
 
 #define IF_ERROR(result, code) \
-if (isError(&result)) \
+if (IsError(&result)) \
 { \
     code \
 }
 
 #define IF_ERROR_RETURN(result) \
-if(isError(&result)) return result
+if(IsError(&result)) return result
 
 typedef enum ResultCode {
     RESULT_SUCCESS = 0,
@@ -28,17 +28,17 @@ typedef struct Result {
 
 static const Result result_success = { RESULT_SUCCESS, NULL };
 
-static inline bool isError(const Result* result)
+static inline bool IsError(const Result* result)
 {
     return result->code != RESULT_SUCCESS;
 }
 
-static inline Result genericError(const char* message)
+static inline Result GenericError(const char* message)
 {
     return (Result){ RESULT_GENERIC_ERROR, message };
 }
 
-static inline Result error(ResultCode code, const char* message)
+static inline Result Error(ResultCode code, const char* message)
 {
     return (Result){ code, message };
 }

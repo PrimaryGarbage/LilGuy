@@ -20,10 +20,10 @@ typedef struct Vector2_u {
 
 Vector2 Vector2_zero();
 
-Vector2 Vector2_addScalar(Vector2 vec, float value);
-Vector2_i Vector2_i_addScalar(Vector2_i vec, i32 value);
-Vector2_u Vector2_u_addScalar(Vector2_u vec, u32 value);
+Vector2 Vector2_AddScalar(Vector2 vec, float value);
+Vector2_i Vector2i_AddScalar(Vector2_i vec, i32 value);
+Vector2_u Vector2u_AddScalar(Vector2_u vec, u32 value);
 
-Vector2 Vector2_div(Vector2 vec, float value);
+Vector2 Vector2_Div(Vector2 vec, float value);
 
 #endif // __VECTOR2_H__

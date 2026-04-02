@@ -17,7 +17,7 @@ static void localtime_c(struct tm* local_time, time_t* raw_time)
 }
 
 
-void getTimeString(char* str, size_t strSize)
+void GetTimeString(char* str, size_t strSize)
 {
     time_t rawTime;
     struct tm localTime;
@@ -26,13 +26,13 @@ void getTimeString(char* str, size_t strSize)
     strftime(str, strSize, "%Y-%m-%d %H:%M:%S", &localTime);
 }
 
-void logInfo(const char* fmt, ...)
+void LogInfo(const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
 
     char timeString[TIME_STRING_SIZE];
-    getTimeString(timeString, TIME_STRING_SIZE);
+    GetTimeString(timeString, TIME_STRING_SIZE);
     fprintf(stdout, "%s [INFO]: ", timeString);
     vfprintf(stdout, fmt, args);
     fputc('\n', stdout);
@@ -40,7 +40,7 @@ void logInfo(const char* fmt, ...)
     va_end(args);
 }
 
-void logWarning(const char* fmt, ...)
+void LogWarning(const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
@@ -53,20 +53,20 @@ void logWarning(const char* fmt, ...)
     va_end(args);
 }
 
-void logError(const Result* result, const char* optionalMessage)
+void LogError(const Result* result, const char* optionalMessage)
 {
     char timeString[TIME_STRING_SIZE];
-    getTimeString(timeString, TIME_STRING_SIZE);
+    GetTimeString(timeString, TIME_STRING_SIZE);
     fprintf(stderr, "%s [ERROR]: Error code %d, error message: %s; %s\n", timeString, (int)result->code, result->message, optionalMessage);
 }
 
-void logErrorM(const char* fmt, ...)
+void LogErrorM(const char* fmt, ...)
 {
     va_list args;
     va_start(args, fmt);
 
     char timeString[TIME_STRING_SIZE];
-    getTimeString(timeString, TIME_STRING_SIZE);
+    GetTimeString(timeString, TIME_STRING_SIZE);
     fprintf(stderr, "%s [ERROR]: ", timeString);
     vfprintf(stderr, fmt, args);
     fputc('\n', stderr);

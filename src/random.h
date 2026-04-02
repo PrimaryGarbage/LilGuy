@@ -5,20 +5,20 @@
 #include <time.h>
 #include "short_types.h"
 
-static inline void randomInit()
+static inline void RandomInit()
 {
     srand(time(NULL));
 }
 
 // from 0.0 to 1.0
-static inline float randomFloat()
+static inline float RandomFloat()
 {
     return (float)rand() / (float)RAND_MAX;
 }
 
-static inline i32 randomRange(i32 from, i32 to)
+static inline i32 RandomRange(i32 from, i32 to)
 {
-    return randomFloat() * (to - from);
+    return RandomFloat() * (to - from);
 }
 
 #endif // __RANDOM_H__

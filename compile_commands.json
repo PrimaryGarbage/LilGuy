@@ -1,0 +1,134 @@
+[
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -ID:/Projects/LilGuy/external -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/src -ID:/Projects/LilGuy/bin/external/minifb/generated -O0 -g -Xclang -gcodeview -std=gnu23 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\LilGuy.dir\\src\\main.c.obj -c D:\\Projects\\LilGuy\\src\\main.c",
+  "file": "D:/Projects/LilGuy/src/main.c",
+  "output": "D:/Projects/LilGuy/bin/CMakeFiles/LilGuy.dir/src/main.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -ID:/Projects/LilGuy/external -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/src -ID:/Projects/LilGuy/bin/external/minifb/generated -O0 -g -Xclang -gcodeview -std=gnu23 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\LilGuy.dir\\src\\logging.c.obj -c D:\\Projects\\LilGuy\\src\\logging.c",
+  "file": "D:/Projects/LilGuy/src/logging.c",
+  "output": "D:/Projects/LilGuy/bin/CMakeFiles/LilGuy.dir/src/logging.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -ID:/Projects/LilGuy/external -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/src -ID:/Projects/LilGuy/bin/external/minifb/generated -O0 -g -Xclang -gcodeview -std=gnu23 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\LilGuy.dir\\src\\memory_s.c.obj -c D:\\Projects\\LilGuy\\src\\memory_s.c",
+  "file": "D:/Projects/LilGuy/src/memory_s.c",
+  "output": "D:/Projects/LilGuy/bin/CMakeFiles/LilGuy.dir/src/memory_s.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -ID:/Projects/LilGuy/external -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/src -ID:/Projects/LilGuy/bin/external/minifb/generated -O0 -g -Xclang -gcodeview -std=gnu23 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\LilGuy.dir\\src\\math_helpers.c.obj -c D:\\Projects\\LilGuy\\src\\math_helpers.c",
+  "file": "D:/Projects/LilGuy/src/math_helpers.c",
+  "output": "D:/Projects/LilGuy/bin/CMakeFiles/LilGuy.dir/src/math_helpers.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -ID:/Projects/LilGuy/external -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/src -ID:/Projects/LilGuy/bin/external/minifb/generated -O0 -g -Xclang -gcodeview -std=gnu23 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\LilGuy.dir\\src\\vector2.c.obj -c D:\\Projects\\LilGuy\\src\\vector2.c",
+  "file": "D:/Projects/LilGuy/src/vector2.c",
+  "output": "D:/Projects/LilGuy/bin/CMakeFiles/LilGuy.dir/src/vector2.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -ID:/Projects/LilGuy/external -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/src -ID:/Projects/LilGuy/bin/external/minifb/generated -O0 -g -Xclang -gcodeview -std=gnu23 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\LilGuy.dir\\src\\timer.c.obj -c D:\\Projects\\LilGuy\\src\\timer.c",
+  "file": "D:/Projects/LilGuy/src/timer.c",
+  "output": "D:/Projects/LilGuy/bin/CMakeFiles/LilGuy.dir/src/timer.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -ID:/Projects/LilGuy/external -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/src -ID:/Projects/LilGuy/bin/external/minifb/generated -O0 -g -Xclang -gcodeview -std=gnu23 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -o CMakeFiles\\LilGuy.dir\\src\\graphics\\graphics.c.obj -c D:\\Projects\\LilGuy\\src\\graphics\\graphics.c",
+  "file": "D:/Projects/LilGuy/src/graphics/graphics.c",
+  "output": "D:/Projects/LilGuy/bin/CMakeFiles/LilGuy.dir/src/graphics/graphics.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/external/minifb/src -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\minifb.dir\\src\\MiniFB_common.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\src\\MiniFB_common.c",
+  "file": "D:/Projects/LilGuy/external/minifb/src/MiniFB_common.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/minifb.dir/src/MiniFB_common.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang++.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/external/minifb/src -O0 -g -Xclang -gcodeview -std=c++14 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\minifb.dir\\src\\MiniFB_cpp.cpp.obj -c D:\\Projects\\LilGuy\\external\\minifb\\src\\MiniFB_cpp.cpp",
+  "file": "D:/Projects/LilGuy/external/minifb/src/MiniFB_cpp.cpp",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/minifb.dir/src/MiniFB_cpp.cpp.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/external/minifb/src -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\minifb.dir\\src\\MiniFB_internal.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\src\\MiniFB_internal.c",
+  "file": "D:/Projects/LilGuy/external/minifb/src/MiniFB_internal.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/minifb.dir/src/MiniFB_internal.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/external/minifb/src -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\minifb.dir\\src\\MiniFB_timer.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\src\\MiniFB_timer.c",
+  "file": "D:/Projects/LilGuy/external/minifb/src/MiniFB_timer.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/minifb.dir/src/MiniFB_timer.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/external/minifb/src -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\minifb.dir\\src\\gl\\MiniFB_GL.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\src\\gl\\MiniFB_GL.c",
+  "file": "D:/Projects/LilGuy/external/minifb/src/gl/MiniFB_GL.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/minifb.dir/src/gl/MiniFB_GL.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -ID:/Projects/LilGuy/external/minifb/src -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\minifb.dir\\src\\windows\\WinMiniFB.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\src\\windows\\WinMiniFB.c",
+  "file": "D:/Projects/LilGuy/external/minifb/src/windows/WinMiniFB.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/minifb.dir/src/windows/WinMiniFB.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\minifb_version_info.dir\\examples\\version_info.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\examples\\version_info.c",
+  "file": "D:/Projects/LilGuy/external/minifb/examples/version_info.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/minifb_version_info.dir/examples/version_info.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\noise.dir\\examples\\noise.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\examples\\noise.c",
+  "file": "D:/Projects/LilGuy/external/minifb/examples/noise.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/noise.dir/examples/noise.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\input_events.dir\\examples\\input_events.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\examples\\input_events.c",
+  "file": "D:/Projects/LilGuy/external/minifb/examples/input_events.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/input_events.dir/examples/input_events.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang++.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -O0 -g -Xclang -gcodeview -std=c++14 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\input_events_cpp.dir\\examples\\input_events_cpp.cpp.obj -c D:\\Projects\\LilGuy\\external\\minifb\\examples\\input_events_cpp.cpp",
+  "file": "D:/Projects/LilGuy/external/minifb/examples/input_events_cpp.cpp",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/input_events_cpp.dir/examples/input_events_cpp.cpp.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\multiple_windows.dir\\examples\\multiple_windows.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\examples\\multiple_windows.c",
+  "file": "D:/Projects/LilGuy/external/minifb/examples/multiple_windows.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/multiple_windows.dir/examples/multiple_windows.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\hidpi.dir\\examples\\hidpi.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\examples\\hidpi.c",
+  "file": "D:/Projects/LilGuy/external/minifb/examples/hidpi.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/hidpi.dir/examples/hidpi.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\fullscreen.dir\\examples\\fullscreen.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\examples\\fullscreen.c",
+  "file": "D:/Projects/LilGuy/external/minifb/examples/fullscreen.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/fullscreen.dir/examples/fullscreen.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\timer.dir\\examples\\timer.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\examples\\timer.c",
+  "file": "D:/Projects/LilGuy/external/minifb/examples/timer.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/timer.dir/examples/timer.c.obj"
+},
+{
+  "directory": "D:/Projects/LilGuy/bin",
+  "command": "C:\\PROGRA~1\\LLVM\\bin\\clang.exe -DDEBUG -DUSE_OPENGL_API -D_DEBUG -D_WIN32_WINNT=0x0601 -ID:/Projects/LilGuy/bin/external/minifb/generated -ID:/Projects/LilGuy/external/minifb/include -O0 -g -Xclang -gcodeview -std=c11 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Wall -Wextra -Wno-switch -Wno-unused-function -Wno-unused-parameter -Wno-implicit-fallthrough -O0 -Wno-cast-function-type -o external\\minifb\\CMakeFiles\\hide_cursor.dir\\examples\\hide_cursor.c.obj -c D:\\Projects\\LilGuy\\external\\minifb\\examples\\hide_cursor.c",
+  "file": "D:/Projects/LilGuy/external/minifb/examples/hide_cursor.c",
+  "output": "D:/Projects/LilGuy/bin/external/minifb/CMakeFiles/hide_cursor.dir/examples/hide_cursor.c.obj"
+}
+]

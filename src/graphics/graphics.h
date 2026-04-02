@@ -7,18 +7,18 @@
 #include "vector2.h"
 #include "rect.h"
 
-Result graphics_init(const char* windowTitle, u32 windowWidth, u32 windowHeight);
+Result Graphics_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight);
 
 // Returns false when window should close
-bool graphics_update();
+bool Graphics_Update();
 
-void graphics_deinit();
+void Graphics_Deinit();
 
-void graphics_clearWindow(Color color);
-void graphics_drawRect(Rect rect, Color color, bool wireframe);
-void graphics_drawSquare(Vector2 position, float size, Color color, bool wireframe);
-void graphics_drawCircle(Vector2 position, float radius, Color color, bool wireframe);
-void graphics_drawLine(Vector2 a, Vector2 b, float width, Color color);
-Vector2 graphics_getMousePosition();
+void Graphics_ClearWindow(Color color);
+void Graphics_DrawRect(Rect rect, Color color, bool wireframe);
+void Graphics_DrawSquare(Vector2 position, float size, Color color, bool wireframe);
+void Graphics_DrawCircle(Vector2 position, float radius, Color color, bool wireframe);
+void Graphics_DrawLine(Vector2 a, Vector2 b, float width, Color color);
+Vector2 Graphics_GetMousePosition();
 
 #endif // __GRAPHICS_H__

@@ -3,9 +3,9 @@
 
 struct Result;
 
-void logInfo(const char* fmt, ...);
-void logWarning(const char* fmt, ...);
-void logError(const struct Result* result, const char* optionalMessage);
-void logErrorM(const char* fmt, ...);
+void LogInfo(const char* fmt, ...);
+void LogWarning(const char* fmt, ...);
+void LogError(const struct Result* result, const char* optionalMessage);
+void LogErrorM(const char* fmt, ...);
 
 #endif // __LOGGING_H__

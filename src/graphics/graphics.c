@@ -6,6 +6,7 @@
 #include "math_helpers.h"
 #include <string.h>
 #include <math.h>
+#include "screen_capture.h"
 
 #define GRAPHICS_CONTEXT_COUNT_MAX 4
 
@@ -13,49 +14,58 @@ static GraphicsContext* Context;
 static bool ContextInitialized;
 
 
-static inline Vector2_u rasterizePoint(float x, float y)
+static inline Vector2_u RasterizePoint(float x, float y)
 {
     return (Vector2_u){
-        roundf(clamp_f(x, 0.0f, Context->windowSize.x - 1)),
-        roundf(clamp_f(y, 0.0f, Context->windowSize.y - 1))
+        roundf(Clampf(x, 0.0f, Context->windowSize.x - 1)),
+        roundf(Clampf(y, 0.0f, Context->windowSize.y - 1))
     };
 }
 
-static inline Vector2_u rasterizePointV(Vector2 pos)
+static inline Vector2_u RasterizePointV(Vector2 pos)
 {
-    return rasterizePoint(pos.x, pos.y);
+    return RasterizePoint(pos.x, pos.y);
 }
 
-static inline void putPixel(u32 x, u32 y, Color color)
+static inline void PutPixel(u32 x, u32 y, Color color)
 {
     u32 idx = x + Context->windowSize.x * y;
     u32 packedBg = Context->buffer[idx];
-    Color bgColor = unpackColor(Context->buffer[idx]);
-    Context->buffer[idx] = packColor(blendColors(color, bgColor));
+    Color bgColor = UnpackColor(Context->buffer[idx]);
+    Context->buffer[idx] = PackColor(BlendColors(color, bgColor));
 }
 
-static inline void putPixelV(Vector2_u pos, Color color)
+static inline void PutPixelV(Vector2_u pos, Color color)
 {
-    putPixel(pos.x, pos.y, color);
+    PutPixel(pos.x, pos.y, color);
 }
 
-void windowMouseCallback(mfb_window* window, int x, int y)
+void WindowMouseCallback(mfb_window* window, int x, int y)
 {
-    Context->mousePosition.x = clamp_i(x, 0, Context->windowSize.x) + 0.5f;
-    Context->mousePosition.y = clamp_i(y, 0, Context->windowSize.y) + 0.5f;
+    Context->mousePosition.x = Clampi(x, 0, Context->windowSize.x) + 0.5f;
+    Context->mousePosition.y = Clampi(y, 0, Context->windowSize.y) + 0.5f;
 }
 
-Result graphics_init(const char* windowTitle, u32 windowWidth, u32 windowHeight)
+Result Graphics_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight)
 {
     Context = malloc_s(sizeof(GraphicsContext));
 
+    u32 screenCaptureWidth;
+    u32 screenCaptureHeight;
+    u32* screenCaptureData = CaptureScreen(&screenCaptureWidth, &screenCaptureHeight);
+    Context->screenCapture = (Image){
+        screenCaptureWidth,
+        screenCaptureHeight,
+        screenCaptureData
+    };
+
     struct mfb_window* window = mfb_open_ex("LilGuy", windowWidth, windowHeight, 0);
     if (window == NULL)
-        return error(RESULT_MINIFB_INITIALIZATION_ERROR, "Failed to initialize MiniFB window");
+        return Error(RESULT_MINIFB_INITIALIZATION_ERROR, "Failed to initialize MiniFB window");
 
     Context->window = window;
 
-    mfb_set_mouse_move_callback(window, windowMouseCallback);
+    mfb_set_mouse_move_callback(window, WindowMouseCallback);
 
     Context->bufferSize = windowWidth * windowHeight * sizeof(u32);
     Context->windowSize = (Vector2_u){ windowWidth, windowHeight };
@@ -66,11 +76,11 @@ Result graphics_init(const char* windowTitle, u32 windowWidth, u32 windowHeight)
     return result_success;
 }
 
-bool graphics_update()
+bool Graphics_Update()
 {
     if (!ContextInitialized)
     {
-        logErrorM("Using graphics functions without initializing context is forbidden");
+        LogErrorM("Using graphics functions without initializing context is forbidden");
         exit(1);
     }
 
@@ -81,7 +91,7 @@ bool graphics_update()
     {
         if (Context->windowUpdateState != MFB_STATE_EXIT)
         {
-            logErrorM("Window state returned '%d'", Context->windowUpdateState);
+            LogErrorM("Window state returned '%d'", Context->windowUpdateState);
             exit(1);
         }
 
@@ -91,46 +101,46 @@ bool graphics_update()
     return true;
 }
 
-void graphics_deinit()
+void Graphics_Deinit()
 {
     if (!ContextInitialized)
     {
-        logErrorM("Using graphics functions without initializing context is forbidden");
+        LogErrorM("Using graphics functions without initializing context is forbidden");
         exit(1);
     }
 
     free(Context->buffer);
-    free(Context);
+    Image_Free(&Context->screenCapture);
     ContextInitialized = false;
 }
 
-void graphics_clearWindow(Color color)
+void Graphics_ClearWindow(Color color)
 {
-    u32 packedColor = packColor(color);
+    u32 packedColor = PackColor(color);
 
     for(size_t i = 0u; i < Context->bufferSize / sizeof(u32); ++i)
         Context->buffer[i] = packedColor;
 }
 
-void graphics_drawRect(Rect rect, Color color, bool wireframe)
+void Graphics_DrawRect(Rect rect, Color color, bool wireframe)
 {
     Rect_u aabb = {
-        .a = rasterizePointV(rect.a),
-        .b = rasterizePointV(rect.b)
+        .a = RasterizePointV(rect.a),
+        .b = RasterizePointV(rect.b)
     };
 
     if (wireframe)
     {
         for (u32 i = aabb.a.x; i <= aabb.b.x; ++i)
         {
-            putPixel(i, aabb.a.y, color);
-            putPixel(i, aabb.b.y, color);
+            PutPixel(i, aabb.a.y, color);
+            PutPixel(i, aabb.b.y, color);
         }
 
         for (u32 j = aabb.a.y; j <= aabb.b.y; ++j)
         {
-            putPixel(aabb.a.x, j, color);
-            putPixel(aabb.b.x, j, color);
+            PutPixel(aabb.a.x, j, color);
+            PutPixel(aabb.b.x, j, color);
         }
     }
     else
@@ -139,25 +149,25 @@ void graphics_drawRect(Rect rect, Color color, bool wireframe)
         {
             for (u32 j = aabb.a.y; j <= aabb.b.y; ++j)
             {
-                putPixel(i, j, color);
+                PutPixel(i, j, color);
             }
         }
     }
 }
 
-void graphics_drawSquare(Vector2 position, float size, Color color, bool wireframe)
+void Graphics_DrawSquare(Vector2 position, float size, Color color, bool wireframe)
 {
-    graphics_drawRect((Rect){ .a = position, .b = Vector2_addScalar(position, size)}, color, wireframe);
+    Graphics_DrawRect((Rect){ .a = position, .b = Vector2_AddScalar(position, size)}, color, wireframe);
 }
 
-void graphics_drawCircle(Vector2 position, float radius, Color color, bool wireframe)
+void Graphics_DrawCircle(Vector2 position, float radius, Color color, bool wireframe)
 {
     if (radius < 0)
         radius = -radius;
 
     Rect_u aabb = {
-        .a = { roundf(clamp_f(position.x - radius - 0.5f, 0, Context->windowSize.x - 1)), roundf(clamp_f(position.y - radius - 0.5f, 0, Context->windowSize.y - 1)) },
-        .b = { roundf(clamp_f(position.x + radius + 0.5f, 0, Context->windowSize.x - 1)), roundf(clamp_f(position.y + radius + 0.5f, 0, Context->windowSize.y - 1)) },
+        .a = { roundf(Clampf(position.x - radius - 0.5f, 0, Context->windowSize.x - 1)), roundf(Clampf(position.y - radius - 0.5f, 0, Context->windowSize.y - 1)) },
+        .b = { roundf(Clampf(position.x + radius + 0.5f, 0, Context->windowSize.x - 1)), roundf(Clampf(position.y + radius + 0.5f, 0, Context->windowSize.y - 1)) },
     };
 
     float radiusSquared = SQUARED(radius);
@@ -171,23 +181,23 @@ void graphics_drawCircle(Vector2 position, float radius, Color color, bool wiref
             {
                 float hypotenuse = SQUARED(position.x - (i32)i) + SQUARED(position.y - (i32)j);
                 if (fabsf(hypotenuse - (i32)radiusSquared) < radiusSquaredWireframeDelta)
-                    putPixel(i, j, color);
+                    PutPixel(i, j, color);
             }
             else
             {
                 if (SQUARED((i32)position.x - (i32)i) + SQUARED((i32)position.y - (i32)j) <= radiusSquared)
-                    putPixel(i, j, color);
+                    PutPixel(i, j, color);
             }
         }
     }
 }
 
-void graphics_drawLine(Vector2 a, Vector2 b, float width, Color color)
+void Graphics_DrawLine(Vector2 a, Vector2 b, float width, Color color)
 {
-    a.x = clamp_f(a.x, 0.0f, Context->windowSize.x - 1);
-    a.y = clamp_f(a.y, 0.0f, Context->windowSize.y - 1);
-    b.x = clamp_f(b.x, 0.0f, Context->windowSize.x - 1);
-    b.y = clamp_f(b.y, 0.0f, Context->windowSize.y - 1);
+    a.x = Clampf(a.x, 0.0f, Context->windowSize.x - 1);
+    a.y = Clampf(a.y, 0.0f, Context->windowSize.y - 1);
+    b.x = Clampf(b.x, 0.0f, Context->windowSize.x - 1);
+    b.y = Clampf(b.y, 0.0f, Context->windowSize.y - 1);
 
     float dx = b.x - a.x;
     float dy = b.y - a.y;
@@ -196,10 +206,10 @@ void graphics_drawLine(Vector2 a, Vector2 b, float width, Color color)
     float yInc = dy / steps;
 
     for(u32 i = 0; i < steps; ++i)
-        putPixelV(rasterizePoint(a.x + xInc * i, a.y + yInc * i), color);
+        PutPixelV(RasterizePoint(a.x + xInc * i, a.y + yInc * i), color);
 }
 
-Vector2 graphics_getMousePosition()
+Vector2 Graphics_GetMousePosition()
 {
     return Context->mousePosition;
 }

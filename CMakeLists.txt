@@ -13,12 +13,15 @@ set(SRC_FILES
 	random.h
 	math_helpers.c math_helpers.h
 	vector2.c vector2.h
+	timer.c timer.h
 )
 
 set(GRAPHICS_FILES
 	color.h
 	graphics_context.h
 	graphics.c graphics.h
+	screen_capture.c screen_capture.h
+	image.c image.h
 )
 
 list(TRANSFORM SRC_FILES PREPEND "src/")
