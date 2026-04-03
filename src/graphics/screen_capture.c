@@ -2,7 +2,6 @@
 #include "screen_capture.h"
 #include <stdlib.h>
 #include "graphics/color.h"
-#include "result.h"
 
 #ifdef _WIN32
   #include <windows.h>
@@ -25,7 +24,8 @@ Result CaptureScreen(u32* width_out, u32* height_out)
     
     int bufferSize = (*width_out) * (*height_out) * 4;  // 4 bytes per pixel (BGRA)
     unsigned char* result = (unsigned char*)malloc(bufferSize);
-    if (!result) return NULL;
+    if (!result)
+        return Error(RESULT_SCREEN_CAPTURE_ERROR, "Failed to create screen capture bitmap");
     
     HDC hdcScreen = GetDC(NULL);
     HDC hdcMem = CreateCompatibleDC(hdcScreen);
@@ -46,7 +46,7 @@ Result CaptureScreen(u32* width_out, u32* height_out)
         free(result);
         ReleaseDC(NULL, hdcScreen);
         DeleteDC(hdcMem);
-        return NULL;
+        return Error(RESULT_SCREEN_CAPTURE_ERROR, "Failed to create screen capture bitmap");
     }
     
     // Select the DIB into memory DC and copy screen
