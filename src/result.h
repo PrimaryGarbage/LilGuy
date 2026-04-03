@@ -2,7 +2,8 @@
 #define __ERROR_H__
 
 #include <stdarg.h>
-#include <stdlib.h>
+#include <stddef.h>
+#include <stdio.h>
 
 #define IF_ERROR(result, code) \
 if (IsError(&result)) \
@@ -54,13 +55,12 @@ typedef enum ResultCode {
 
 typedef struct Result {
     ResultCode code;
-    void* value;
     const char* message;
 } Result;
 
-static inline Result Success(void* value)
+static inline Result Success()
 {
-    return (Result){ RESULT_SUCCESS, value, NULL };
+    return (Result){ RESULT_SUCCESS, NULL };
 }
 
 static inline bool IsError(const Result* result)
@@ -70,12 +70,12 @@ static inline bool IsError(const Result* result)
 
 static inline Result GenericError(const char* message)
 {
-    return (Result){ RESULT_GENERIC_ERROR, NULL, message };
+    return (Result){ RESULT_GENERIC_ERROR, message };
 }
 
 static inline Result Error(ResultCode code, const char* message)
 {
-    return (Result){ code, NULL, message };
+    return (Result){ code, message };
 }
 
 #endif // __ERROR_H__

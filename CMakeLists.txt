@@ -13,21 +13,26 @@ set(SRC_FILES
 	math_helpers.c math_helpers.h
 	vector2.c vector2.h
 	timer.c timer.h
+	screen_capture.c screen_capture.h
+)
+
+set(WINDOW_FILES
+	window_context.h
+	window.c window.h
 )
 
 set(GRAPHICS_FILES
-	color.h
-	graphics_context.h
 	graphics.c graphics.h
-	screen_capture.c screen_capture.h
 	image.c image.h
+	color.h
 	stb_implementation.c
 )
 
 list(TRANSFORM SRC_FILES PREPEND "src/")
-list(TRANSFORM GRAPHICS_FILES PREPEND "src/graphics/")
+list(TRANSFORM WINDOW_FILES PREPEND "src/window/")
+list(TRANSFORM GRAPHICS_FILES PREPEND "src/window/graphics/")
 
-add_executable(${PROJECT_NAME} ${SRC_FILES} ${GRAPHICS_FILES})
+add_executable(${PROJECT_NAME} ${SRC_FILES} ${WINDOW_FILES} ${GRAPHICS_FILES})
 
 add_subdirectory(external/minifb)
 

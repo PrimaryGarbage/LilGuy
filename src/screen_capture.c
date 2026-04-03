@@ -1,7 +1,5 @@
-#include <stdio.h>
 #include "screen_capture.h"
 #include <stdlib.h>
-#include "graphics/color.h"
 
 #ifdef _WIN32
   #include <windows.h>
@@ -9,6 +7,8 @@
 #elif __linux__
   #include <string.h>
   #include "stb_image.h"
+  #include <stdio.h>
+  #include "graphics/color.h"
 #else
   #error "Unsupported platform"
 #endif
@@ -16,15 +16,14 @@
 
 #ifdef _WIN32
 
-Result CaptureScreen(u32* width_out, u32* height_out)
+Result CaptureScreen(u32* width_out, u32* height_out, u32** data_out)
 {
-
     *width_out  = GetSystemMetrics(SM_CXSCREEN);
     *height_out = GetSystemMetrics(SM_CYSCREEN);
     
     int bufferSize = (*width_out) * (*height_out) * 4;  // 4 bytes per pixel (BGRA)
-    unsigned char* result = (unsigned char*)malloc(bufferSize);
-    if (!result)
+    *data_out = (u32*)malloc(bufferSize);
+    if (!*data_out)
         return Error(RESULT_SCREEN_CAPTURE_ERROR, "Failed to create screen capture bitmap");
     
     HDC hdcScreen = GetDC(NULL);
@@ -43,7 +42,7 @@ Result CaptureScreen(u32* width_out, u32* height_out)
     HBITMAP hBitmap = CreateDIBSection(hdcScreen, &bmi, DIB_RGB_COLORS, (void**)&bits, NULL, 0);
     if (!hBitmap || !bits) {
         // Fallback: use compatible bitmap + GetDIBits (rarely needed)
-        free(result);
+        free(*data_out);
         ReleaseDC(NULL, hdcScreen);
         DeleteDC(hdcMem);
         return Error(RESULT_SCREEN_CAPTURE_ERROR, "Failed to create screen capture bitmap");
@@ -54,15 +53,15 @@ Result CaptureScreen(u32* width_out, u32* height_out)
     BitBlt(hdcMem, 0, 0, *width_out, *height_out, hdcScreen, 0, 0, SRCCOPY);
     
     // Copy the BGRA data to our result buffer
-    memcpy(result, bits, bufferSize);
+    memcpy(*data_out, bits, bufferSize);
     
     // Cleanup
     SelectObject(hdcMem, oldBmp);
     DeleteObject(hBitmap);
     DeleteDC(hdcMem);
     ReleaseDC(NULL, hdcScreen);
-    
-    return Success(result);
+
+    return Success();
 }
 
 #endif
@@ -80,7 +79,7 @@ bool IsSpectacleAvailable() {
     return found && status == 0;
 }
 
-Result CaptureScreen(u32* width_out, u32* height_out)
+Result CaptureScreen(u32* width_out, u32* height_out, u32** data_out)
 {
     // 1. Check if spectacle available
     if (!IsSpectacleAvailable())
@@ -120,15 +119,15 @@ Result CaptureScreen(u32* width_out, u32* height_out)
 
     // 4. Decode the PNG data into RGBA format using stb_image.
     int width, height, channels;
-    u32* result = (u32*)stbi_load_from_memory(png_data, (int)png_size, &width, &height, &channels, 4);
+    *data_out = (u32*)stbi_load_from_memory(png_data, (int)png_size, &width, &height, &channels, 4);
 
     *width_out = width;
     *height_out = height;
 
     for(size_t i = 0; i < *width_out * *height_out; ++i)
-        result[i] = Color_SwapRAndB(result[i]);
+        (*data_out)[i] = Color_SwapRAndB(result[i]);
 
-    return Success(result);
+    return Success();
 }
 
 #endif
