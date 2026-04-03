@@ -11,20 +11,37 @@ if (IsError(&result)) \
 }
 
 #define IF_ERROR_RETURN(result) \
-if(IsError(&result)) return result
+if (IsError(&result)) return result
 
 #define IF_ERROR_PANIC(result) \
-if(IsError(&result)) exit(1)
+if (IsError(&result)) exit(1)
 
 #define IF_ERROR_PANIC_EX(result, code) \
-do \
-{ \
-if (IsError(&result)) \
-{ \
-    code \
-    exit(1); \
-} \
+do { \
+    if (IsError(&result)) \
+    { \
+        code \
+        exit(1); \
+    } \
 } while(0)
+
+#define PANIC() \
+do { \
+    fprintf(stderr, "Program panicked"); \
+    exit(1); \
+} while(0)
+
+#define MEMORY_PANIC() \
+do { \
+    fprintf(stderr, "Program panicked after failed memory allocation"); \
+} while(0)
+
+#define MEMORY_PANIC_EX(code) \
+do { \
+    fprintf(stderr, "Program panicked after failed memory allocation"); \
+    code; \
+} while(0)
+
 
 typedef enum ResultCode {
     RESULT_SUCCESS = 0,

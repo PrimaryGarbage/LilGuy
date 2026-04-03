@@ -51,6 +51,7 @@ void WindowMouseCallback(mfb_window* window, int x, int y)
 Result Graphics_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight)
 {
     Context = malloc(sizeof(GraphicsContext));
+    if (Context == NULL) MEMORY_PANIC();
 
     u32 screenCaptureWidth;
     u32 screenCaptureHeight;
