@@ -1,12 +1,13 @@
 #include "graphics.h"
+#include "MiniFB.h"
 #include "graphics_context.h"
-#include "memory_s.h"
 #include "logging.h"
 #include "rect.h"
 #include "math_helpers.h"
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
+#include "result.h"
 #include "screen_capture.h"
 #include "stb_image_write.h"
 
@@ -49,11 +50,14 @@ void WindowMouseCallback(mfb_window* window, int x, int y)
 
 Result Graphics_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight)
 {
-    Context = malloc_s(sizeof(GraphicsContext));
+    Context = malloc(sizeof(GraphicsContext));
 
     u32 screenCaptureWidth;
     u32 screenCaptureHeight;
-    u32* screenCaptureData = CaptureScreen(&screenCaptureWidth, &screenCaptureHeight);
+    Result captureScreenResult = CaptureScreen(&screenCaptureWidth, &screenCaptureHeight);
+    IF_ERROR_RETURN(captureScreenResult);
+    u32* screenCaptureData = captureScreenResult.value;
+
     Context->screenCapture = (Image){
         screenCaptureWidth,
         screenCaptureHeight,
@@ -71,11 +75,11 @@ Result Graphics_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight)
 
     Context->bufferSize = windowWidth * windowHeight * sizeof(u32);
     Context->windowSize = (Vector2u){ windowWidth, windowHeight };
-    Context->buffer = malloc_s(Context->bufferSize);
+    Context->buffer = malloc(Context->bufferSize);
 
     ContextInitialized = true;
 
-    return result_success;
+    return Success(NULL);
 }
 
 bool Graphics_Update()
@@ -86,7 +90,6 @@ bool Graphics_Update()
         exit(1);
     }
 
-    mfb_wait_sync(Context->window);
     Context->windowUpdateState = mfb_update_ex(Context->window, Context->buffer, Context->windowSize.x, Context->windowSize.y);
 
     if (Context->windowUpdateState != MFB_STATE_OK)
@@ -216,6 +219,12 @@ void Graphics_DrawLine(Vector2 a, Vector2 b, float width, Color color)
         PutPixelV(RasterizePoint(a.x + xInc * i, a.y + yInc * i), color);
 }
 
+void Graphics_WaitSync()
+{
+    if (Context->windowUpdateState == MFB_STATE_OK)
+        while(!mfb_wait_sync(Context->window));
+}
+
 Vector2 Graphics_GetMousePosition()
 {
     return Context->mousePosition;
@@ -262,7 +271,7 @@ void Graphics_WriteImageToPngFile(const Image* image, const char* filepath)
         case PIXEL_FORMAT_BGRA:
         {
             size_t pixelCount = image->width * image->height;
-            u32* tempBuffer = malloc_s(pixelCount * 4);
+            u32* tempBuffer = malloc(pixelCount * 4);
 
             for (size_t i = 0; i < pixelCount; ++i)
                 tempBuffer[i] = Color_SwapRAndB(image->data[i]);

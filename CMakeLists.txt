@@ -7,7 +7,6 @@ set(CMAKE_C_STANDARD 23)
 set(SRC_FILES 
     main.c
 	logging.c logging.h
-	memory_s.c memory_s.h
 	result.h 
 	short_types.h
 	random.h
@@ -40,7 +39,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE external src external/minifb/
 
 ### Uncomment this line if you want the standard libraries to be linked statically ###
 # target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)
-target_link_options(${PROJECT_NAME} PRIVATE -static)
+# target_link_options(${PROJECT_NAME} PRIVATE -static)
 
 ### Use this line to link external libraries
 target_link_libraries(${PROJECT_NAME} minifb)
