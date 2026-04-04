@@ -1,0 +1,47 @@
+#include "main_char_scene.h"
+#include "input/input.h"
+#include "graphics/graphics.h"
+#include <stdlib.h>
+
+#define CHAR_SIZE 50
+
+typedef struct MainChairSceneCustomData {
+
+} MainCharSceneCustomData;
+
+static void UpdateCallback(Scene* scene, double deltatime)
+{
+    const float moveSpeed = 500.0f;
+
+    if (Input_IsButtonPressed(INPUT_KB_KEY_A)) {
+        scene->transform.position.x -= moveSpeed * deltatime;
+    }
+    if (Input_IsButtonPressed(INPUT_KB_KEY_D)) {
+        scene->transform.position.x += moveSpeed * deltatime;
+    }
+    if (Input_IsButtonPressed(INPUT_KB_KEY_W)) {
+        scene->transform.position.y -= moveSpeed * deltatime;
+    }
+    if (Input_IsButtonPressed(INPUT_KB_KEY_S)) {
+        scene->transform.position.y += moveSpeed * deltatime;
+    }
+}
+
+static void DrawCallback(Scene* scene)
+{
+    const float charSizeAdjustment = CHAR_SIZE / 2.0f;
+
+    Graphics_DrawSquare(Vector2_AddScalar(scene->transform.position, charSizeAdjustment), CHAR_SIZE, COLOR_PURPLE, false);
+}
+
+Scene* MainCharScene_Create()
+{
+    Scene* scene = malloc(sizeof(Scene));
+
+    scene->updateFunction = UpdateCallback;
+    scene->drawFunction = DrawCallback;
+    scene->customData = malloc(sizeof(MainCharSceneCustomData));
+    scene->transform.position = (Vector2){ 100.0f, 100.0f };
+
+    return scene;
+}

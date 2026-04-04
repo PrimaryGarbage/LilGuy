@@ -1,63 +1,72 @@
-#include "window/input/input.h"
+#include "graphics/image.h"
+#include "input/input.h"
+#include "scene/scene.h"
 #include "window/window.h"
-#include "window/graphics/graphics.h"
+#include "graphics/graphics.h"
 #include "random.h"
 #include "result.h"
 #include "timer.h"
 #include "logging.h"
 #include "screen_capture.h"
+#include "scene/main_char_scene.h"
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 600
-
-Image CaptureScreenImage()
+int main(int argc, char* argv[])
 {
     u32 screenCaptureWidth;
     u32 screenCaptureHeight;
     u32* screenCaptureData;
     Result captureResult = CaptureScreen(&screenCaptureWidth, &screenCaptureHeight, &screenCaptureData);
     IF_ERROR_PANIC_EX(captureResult, LogError(&captureResult, NULL););
-    return (Image) {
+    Image screenCaptureImage = {
         .width = screenCaptureWidth,
         .height = screenCaptureHeight,
         .format = PIXEL_FORMAT_BGRA,
         .data = screenCaptureData,
+        .dataSize = screenCaptureWidth * screenCaptureHeight * 4
     };
-}
 
-int main(int argc, char* argv[])
-{
+    u32 windowWidth = screenCaptureWidth;
+    u32 windowHeight = screenCaptureHeight;
+
     RandomInit();
     Timer globalTimer = Timer_Create();
     double deltatime;
 
-    Image screenCaptureImage = CaptureScreenImage();
-
     WindowHandle windowHandle;
-    Result windowInitResult = Window_Init("LilGuy", WINDOW_WIDTH, WINDOW_HEIGHT, &windowHandle);
+    Result windowInitResult = Window_Init("LilGuy", windowWidth, windowHeight, &windowHandle);
     IF_ERROR_PANIC_EX(windowInitResult, LogError(&windowInitResult, NULL););
 
     Graphics_SetWindow(windowHandle);
+    Graphics_ClearWindowWithImage(&screenCaptureImage);
+
     Input_SetWindow(windowHandle);
+
+    Scene* mainCharScene = MainCharScene_Create();
 
     while(Window_Update(windowHandle))
     {
         Window_WaitSync(windowHandle);
 
+        SCENE_UPDATE(mainCharScene, deltatime);
+
         Graphics_ClearWindowWithImage(&screenCaptureImage);
 
-        LogInfo("Space pressed: %d", Input_IsButtonPressed(INPUT_KB_KEY_SPACE));
-        LogInfo("Space just pressed: %d", Input_IsButtonJustPressed(INPUT_KB_KEY_SPACE));
+        if (Input_IsButtonPressed(INPUT_KB_KEY_ESCAPE))
+            break;
 
         /////////////////
         /// DRAW HERE ///
         /////////////////
 
+        SCENE_DRAW(mainCharScene);
+
         deltatime = Timer_Reset(&globalTimer);
     }
 
-    Window_Destroy(windowHandle);
+    Scene_Destroy(mainCharScene);
+
     free(screenCaptureImage.data);
+    Window_Destroy(windowHandle);
 
     return 0;
 }

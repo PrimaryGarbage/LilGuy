@@ -35,12 +35,18 @@ set(INPUT_FILES
 	input.c input.h
 )
 
+set(SCENE_FILES
+	scene.c scene.h
+	main_char_scene.c main_char_scene.h
+)
+
 list(TRANSFORM SRC_FILES PREPEND "src/")
 list(TRANSFORM WINDOW_FILES PREPEND "src/window/")
-list(TRANSFORM GRAPHICS_FILES PREPEND "src/window/graphics/")
-list(TRANSFORM INPUT_FILES PREPEND "src/window/input/")
+list(TRANSFORM GRAPHICS_FILES PREPEND "src/graphics/")
+list(TRANSFORM INPUT_FILES PREPEND "src/input/")
+list(TRANSFORM SCENE_FILES PREPEND "src/scene/")
 
-add_executable(${PROJECT_NAME} ${SRC_FILES} ${WINDOW_FILES} ${GRAPHICS_FILES} ${INPUT_FILES})
+add_executable(${PROJECT_NAME} ${SRC_FILES} ${WINDOW_FILES} ${GRAPHICS_FILES} ${INPUT_FILES} ${SCENE_FILES})
 
 add_subdirectory(external/minifb)
 

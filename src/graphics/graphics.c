@@ -1,10 +1,13 @@
 #include "graphics.h"
-#include "../window_context.h"
+#include "graphics/color.h"
+#include "window/window_context.h"
 #include "math_helpers.h"
-#include "../window.h"
+#include "window/window.h"
 #include "stb_image_write.h"
+#include <assert.h>
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 static WindowHandle Window;
 
@@ -21,14 +24,17 @@ static inline Vector2u RasterizePointV(Vector2 pos)
     return RasterizePoint(pos.x, pos.y);
 }
 
-static inline void PutPixel(u32 x, u32 y, Color color)
+static inline void PutPixel(u32 x, u32 y, u32 color)
 {
     u32 idx = x + Window->windowSize.x * y;
-    Color bgColor = Color_Unpack(Window->buffer[idx]);
-    Window->buffer[idx] = Color_Pack(Color_Blend(color, bgColor));
+
+    //Color bgColor = Color_Unpack(Window->buffer[idx]);
+    //Window->buffer[idx] = Color_Pack(Color_Blend(color, bgColor));
+
+    Window->buffer[idx] = color;
 }
 
-static inline void PutPixelV(Vector2u pos, Color color)
+static inline void PutPixelV(Vector2u pos, u32 color)
 {
     PutPixel(pos.x, pos.y, color);
 }
@@ -40,6 +46,10 @@ void Graphics_SetWindow(WindowHandle handle)
 
 void Graphics_DrawRect(Rect rect, Color color, bool wireframe)
 {
+    assert(Window);
+
+    u32 packedColor = Color_Pack(color);
+
     Rect_u onScreenRect = {
         .a = RasterizePointV(rect.a),
         .b = RasterizePointV(rect.b)
@@ -49,14 +59,14 @@ void Graphics_DrawRect(Rect rect, Color color, bool wireframe)
     {
         for (u32 i = onScreenRect.a.x; i <= onScreenRect.b.x; ++i)
         {
-            PutPixel(i, onScreenRect.a.y, color);
-            PutPixel(i, onScreenRect.b.y, color);
+            PutPixel(i, onScreenRect.a.y, packedColor);
+            PutPixel(i, onScreenRect.b.y, packedColor);
         }
 
         for (u32 j = onScreenRect.a.y; j <= onScreenRect.b.y; ++j)
         {
-            PutPixel(onScreenRect.a.x, j, color);
-            PutPixel(onScreenRect.b.x, j, color);
+            PutPixel(onScreenRect.a.x, j, packedColor);
+            PutPixel(onScreenRect.b.x, j, packedColor);
         }
     }
     else
@@ -65,7 +75,7 @@ void Graphics_DrawRect(Rect rect, Color color, bool wireframe)
         {
             for (u32 j = onScreenRect.a.y; j <= onScreenRect.b.y; ++j)
             {
-                PutPixel(i, j, color);
+                PutPixel(i, j, packedColor);
             }
         }
     }
@@ -78,6 +88,10 @@ void Graphics_DrawSquare(Vector2 position, float size, Color color, bool wirefra
 
 void Graphics_DrawCircle(Vector2 position, float radius, Color color, bool wireframe)
 {
+    assert(Window);
+
+    u32 packedColor = Color_Pack(color);
+
     if (radius < 0)
         radius = -radius;
 
@@ -97,12 +111,12 @@ void Graphics_DrawCircle(Vector2 position, float radius, Color color, bool wiref
             {
                 float hypotenuse = SQUARED(position.x - (i32)i) + SQUARED(position.y - (i32)j);
                 if (fabsf(hypotenuse - (i32)radiusSquared) < radiusSquaredWireframeDelta)
-                    PutPixel(i, j, color);
+                    PutPixel(i, j, packedColor);
             }
             else
             {
                 if (SQUARED((i32)position.x - (i32)i) + SQUARED((i32)position.y - (i32)j) <= radiusSquared)
-                    PutPixel(i, j, color);
+                    PutPixel(i, j, packedColor);
             }
         }
     }
@@ -110,6 +124,10 @@ void Graphics_DrawCircle(Vector2 position, float radius, Color color, bool wiref
 
 void Graphics_DrawLine(Vector2 a, Vector2 b, float width, Color color)
 {
+    assert(Window);
+
+    u32 packedColor = Color_Pack(color);
+
     a.x = Clampf(a.x, 0.0f, Window->windowSize.x - 1);
     a.y = Clampf(a.y, 0.0f, Window->windowSize.y - 1);
     b.x = Clampf(b.x, 0.0f, Window->windowSize.x - 1);
@@ -122,11 +140,13 @@ void Graphics_DrawLine(Vector2 a, Vector2 b, float width, Color color)
     float yInc = dy / steps;
 
     for(u32 i = 0; i < steps; ++i)
-        PutPixelV(RasterizePoint(a.x + xInc * i, a.y + yInc * i), color);
+        PutPixelV(RasterizePoint(a.x + xInc * i, a.y + yInc * i), packedColor);
 }
 
 void Graphics_DrawImage(const Image* image, Rect rect)
 {
+    assert(Window);
+
     Rect_u onScreenRect = {
         .a = RasterizePointV(rect.a),
         .b = RasterizePointV(rect.b)
@@ -151,6 +171,8 @@ void Graphics_DrawImage(const Image* image, Rect rect)
 
 void Window_WriteImageToPngFile(WindowHandle handle, const Image* image, const char* filepath)
 {
+    assert(Window);
+
     switch(image->format)
     {
         case PIXEL_FORMAT_RGBA:
@@ -176,6 +198,8 @@ void Window_WriteImageToPngFile(WindowHandle handle, const Image* image, const c
 
 void Graphics_ClearWindow(Color color)
 {
+    assert(Window);
+
     u32 packedColor = Color_Pack(color);
 
     for(size_t i = 0u; i < Window->bufferSize / sizeof(u32); ++i)
@@ -184,10 +208,14 @@ void Graphics_ClearWindow(Color color)
 
 void Graphics_ClearWindowWithImage(const Image* image)
 {
-    Graphics_DrawImage(image, Window_GetWindowRect(Window));
+    assert(image->width == Window->windowSize.x && image->height == Window->windowSize.y);
+
+    memcpy_s(Window->buffer, Window->bufferSize, image->data, image->dataSize);
 }
 
 Image* Graphics_GetScreenCaptureImage()
 {
+    assert(Window);
+
     return &Window->screenCapture;
 }

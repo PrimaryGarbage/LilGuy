@@ -16,10 +16,12 @@ typedef struct Image {
     u32 height;
     PixelFormat format;
     u32* data;
+    size_t dataSize;
 } Image;
 
 void Image_Free(Image* image);
-Color Image_SampleNormalized(const Image* image, float x, float y);
-Color Image_SampleNormalizedV(const Image* image, Vector2 point);
+u32 Image_SampleNormalized(const Image* image, float x, float y);
+u32 Image_SampleNormalizedV(const Image* image, Vector2 point);
+Image Image_CreateResized(const Image* image, u32 newWidth, u32 newHeight);
 
 #endif // __IMAGE_H__

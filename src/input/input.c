@@ -5,6 +5,7 @@
 #include "input_context.h"
 #include "math_helpers.h"
 #include "MiniFB.h"
+#include <assert.h>
 
 static WindowHandle Window;
 static InputContext Context;
@@ -46,15 +47,21 @@ void Input_SetWindow(WindowHandle handle)
 
 bool Input_IsButtonPressed(InputButton button)
 {
+    assert(Window);
+
     return Context.buttonInfo[button].pressed;
 }
 
 bool Input_IsButtonJustPressed(InputButton button)
 {
+    assert(Window);
+
     return Context.buttonInfo[button].pressed && Context.buttonInfo[button].just;
 }
 
 Vector2 Input_GetMousePosition()
 {
+    assert(Window);
+
     return Context.mousePosition;
 }

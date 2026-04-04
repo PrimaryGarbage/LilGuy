@@ -1,5 +1,6 @@
 #include "window.h"
 #include "MiniFB.h"
+#include "MiniFB_enums.h"
 #include "window_callbacks.h"
 #include "window_context.h"
 #include "logging.h"
@@ -26,7 +27,7 @@ Result Window_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight, W
         screenCaptureData
     };
 
-    struct mfb_window* window = mfb_open_ex("LilGuy", windowWidth, windowHeight, 0);
+    struct mfb_window* window = mfb_open_ex("LilGuy", windowWidth, windowHeight, MFB_WF_ALWAYS_ON_TOP | MFB_WF_BORDERLESS | MFB_WF_FULLSCREEN);
     if (window == NULL)
         return Error(RESULT_MINIFB_INITIALIZATION_ERROR, "Failed to initialize MiniFB window");
 
