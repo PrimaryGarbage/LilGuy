@@ -18,6 +18,7 @@ set(SRC_FILES
 
 set(WINDOW_FILES
 	window_context.h
+	window_callbacks.h
 	window.c window.h
 )
 
@@ -28,11 +29,18 @@ set(GRAPHICS_FILES
 	stb_implementation.c
 )
 
+set(INPUT_FILES
+	input_button.h
+	input_context.h
+	input.c input.h
+)
+
 list(TRANSFORM SRC_FILES PREPEND "src/")
 list(TRANSFORM WINDOW_FILES PREPEND "src/window/")
 list(TRANSFORM GRAPHICS_FILES PREPEND "src/window/graphics/")
+list(TRANSFORM INPUT_FILES PREPEND "src/window/input/")
 
-add_executable(${PROJECT_NAME} ${SRC_FILES} ${WINDOW_FILES} ${GRAPHICS_FILES})
+add_executable(${PROJECT_NAME} ${SRC_FILES} ${WINDOW_FILES} ${GRAPHICS_FILES} ${INPUT_FILES})
 
 add_subdirectory(external/minifb)
 

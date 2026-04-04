@@ -32,6 +32,13 @@ do { \
     exit(1); \
 } while(0)
 
+#define PANIC_EX(code) \
+do { \
+    fprintf(stderr, "Program panicked"); \
+    code \
+    exit(1); \
+} while(0)
+
 #define MEMORY_PANIC() \
 do { \
     fprintf(stderr, "Program panicked after failed memory allocation"); \

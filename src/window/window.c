@@ -1,17 +1,12 @@
 #include "window.h"
 #include "MiniFB.h"
+#include "window_callbacks.h"
 #include "window_context.h"
 #include "logging.h"
 #include <math.h>
 #include "result.h"
 #include "screen_capture.h"
 #include "stb_image_write.h"
-
-void WindowMouseCallback(mfb_window* window, int x, int y)
-{
-    //Context->mousePosition.x = Clampi(x, 0, Context->windowSize.x) + 0.5f;
-    //Context->mousePosition.y = Clampi(y, 0, Context->windowSize.y) + 0.5f;
-}
 
 Result Window_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight, WindowHandle* handle_out)
 {
@@ -37,11 +32,10 @@ Result Window_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight, W
 
     context->mfbWindow = window;
 
-    mfb_set_mouse_move_callback(window, WindowMouseCallback);
-
     context->bufferSize = windowWidth * windowHeight * sizeof(u32);
     context->windowSize = (Vector2u){ windowWidth, windowHeight };
     context->buffer = malloc(context->bufferSize);
+    context->onUpdateCallbacksCount = 0u;
 
     *handle_out = context;
 
@@ -50,14 +44,16 @@ Result Window_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight, W
 
 bool Window_Update(WindowHandle handle)
 {
+    for(u32 i = 0u; i < handle->onUpdateCallbacksCount; ++i)
+        handle->onUpdateCallbacks[i]();
+
     handle->windowUpdateState = mfb_update_ex(handle->mfbWindow, handle->buffer, handle->windowSize.x, handle->windowSize.y);
 
     if (handle->windowUpdateState != MFB_STATE_OK)
     {
         if (handle->windowUpdateState != MFB_STATE_EXIT)
         {
-            LogErrorM("Window state returned '%d'", handle->windowUpdateState);
-            exit(1);
+            PANIC_EX(LogErrorM("Window state returned '%d'", handle->windowUpdateState););
         }
 
         return false;
@@ -79,9 +75,12 @@ void Window_WaitSync(WindowHandle handle)
         while(!mfb_wait_sync(handle->mfbWindow));
 }
 
-Vector2 Window_GetMousePosition(WindowHandle handle)
+void Window_AddOnUpdateCallback(WindowHandle handle, Window_OnUpdateCallback callback)
 {
-    return handle->mousePosition;
+    if (handle->onUpdateCallbacksCount == WINDOW_ON_UPDATE_CALLBACK_MAX)
+        PANIC_EX(LogErrorM("Max number of OnUpdateCallbacks exceeded"););
+
+    handle->onUpdateCallbacks[handle->onUpdateCallbacksCount++] = callback;
 }
 
 Rect Window_GetWindowRect(WindowHandle handle)
