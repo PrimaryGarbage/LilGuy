@@ -7,6 +7,8 @@
 typedef struct WindowContext* WindowHandle;
 
 void Input_SetWindow(WindowHandle handle);
+// Should be called before any event polling
+void Input_Refresh();
 bool Input_IsButtonPressed(InputButton button);
 bool Input_IsButtonJustPressed(InputButton button);
 Vector2 Input_GetMousePosition();

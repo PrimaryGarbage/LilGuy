@@ -29,7 +29,7 @@ static void UpdateCallback(Scene* scene, double deltatime)
 
 static void DrawCallback(Scene* scene)
 {
-    const float charSizeAdjustment = CHAR_SIZE / 2.0f;
+    const float charSizeAdjustment = - CHAR_SIZE / 2.0f;
 
     Graphics_DrawSquare(Vector2_AddScalar(scene->transform.position, charSizeAdjustment), CHAR_SIZE, COLOR_PURPLE, false);
 }
@@ -42,6 +42,7 @@ Scene* MainCharScene_Create()
     scene->drawFunction = DrawCallback;
     scene->customData = malloc(sizeof(MainCharSceneCustomData));
     scene->transform.position = (Vector2){ 100.0f, 100.0f };
+    scene->childrenCount = 0u;
 
     return scene;
 }

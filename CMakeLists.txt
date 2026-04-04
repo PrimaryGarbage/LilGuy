@@ -18,7 +18,6 @@ set(SRC_FILES
 
 set(WINDOW_FILES
 	window_context.h
-	window_callbacks.h
 	window.c window.h
 )
 

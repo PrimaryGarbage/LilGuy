@@ -14,8 +14,8 @@ static WindowHandle Window;
 static inline Vector2u RasterizePoint(float x, float y)
 {
     return (Vector2u){
-        roundf(Clampf(x, 0.0f, Window->windowSize.x - 1)),
-        roundf(Clampf(y, 0.0f, Window->windowSize.y - 1))
+        roundf(Clampf(x, 0.0f, Window->windowSize.x)),
+        roundf(Clampf(y, 0.0f, Window->windowSize.y))
     };
 }
 
@@ -57,13 +57,13 @@ void Graphics_DrawRect(Rect rect, Color color, bool wireframe)
 
     if (wireframe)
     {
-        for (u32 i = onScreenRect.a.x; i <= onScreenRect.b.x; ++i)
+        for (u32 i = onScreenRect.a.x; i < onScreenRect.b.x; ++i)
         {
             PutPixel(i, onScreenRect.a.y, packedColor);
             PutPixel(i, onScreenRect.b.y, packedColor);
         }
 
-        for (u32 j = onScreenRect.a.y; j <= onScreenRect.b.y; ++j)
+        for (u32 j = onScreenRect.a.y; j < onScreenRect.b.y; ++j)
         {
             PutPixel(onScreenRect.a.x, j, packedColor);
             PutPixel(onScreenRect.b.x, j, packedColor);
@@ -71,9 +71,9 @@ void Graphics_DrawRect(Rect rect, Color color, bool wireframe)
     }
     else
     {
-        for (u32 i = onScreenRect.a.x; i <= onScreenRect.b.x; ++i)
+        for (u32 i = onScreenRect.a.x; i < onScreenRect.b.x; ++i)
         {
-            for (u32 j = onScreenRect.a.y; j <= onScreenRect.b.y; ++j)
+            for (u32 j = onScreenRect.a.y; j < onScreenRect.b.y; ++j)
             {
                 PutPixel(i, j, packedColor);
             }

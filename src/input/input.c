@@ -10,12 +10,6 @@
 static WindowHandle Window;
 static InputContext Context;
 
-static void ClearButtonJustState()
-{
-    for(u32 i = 0u; i < INPUT_BUTTON_ENUM_MAX; ++i)
-        Context.buttonInfo[i].just = false;
-}
-
 static void MouseMoveCallback(mfb_window* window, int x, int y)
 {
     Context.mousePosition.x = Clampi(x, 0, Window->windowSize.x) + 0.5f;
@@ -39,10 +33,15 @@ static void KeyboardButtonCallback(mfb_window* window, mfb_key key, mfb_key_mod 
 void Input_SetWindow(WindowHandle handle)
 {
     Window = handle;
-    Window_AddOnUpdateCallback(handle, ClearButtonJustState);
     mfb_set_mouse_move_callback(Window->mfbWindow, MouseMoveCallback);
     mfb_set_mouse_button_callback(Window->mfbWindow, MouseButtonCallback);
     mfb_set_keyboard_callback(Window->mfbWindow, KeyboardButtonCallback);
+}
+
+void Input_Refresh()
+{
+    for(u32 i = 0u; i < INPUT_BUTTON_ENUM_MAX; ++i)
+        Context.buttonInfo[i].just = false;
 }
 
 bool Input_IsButtonPressed(InputButton button)

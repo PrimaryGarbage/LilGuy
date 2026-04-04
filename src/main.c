@@ -1,3 +1,4 @@
+#include "graphics/color.h"
 #include "graphics/image.h"
 #include "input/input.h"
 #include "scene/scene.h"
@@ -17,6 +18,7 @@ int main(int argc, char* argv[])
     u32* screenCaptureData;
     Result captureResult = CaptureScreen(&screenCaptureWidth, &screenCaptureHeight, &screenCaptureData);
     IF_ERROR_PANIC_EX(captureResult, LogError(&captureResult, NULL););
+
     Image screenCaptureImage = {
         .width = screenCaptureWidth,
         .height = screenCaptureHeight,
@@ -43,24 +45,32 @@ int main(int argc, char* argv[])
 
     Scene* mainCharScene = MainCharScene_Create();
 
-    while(Window_Update(windowHandle))
+    while(!Window_ShouldClose(windowHandle))
     {
-        Window_WaitSync(windowHandle);
+        Window_Refresh(windowHandle);
 
-        SCENE_UPDATE(mainCharScene, deltatime);
+        ///////////////////
+        /// UPDATE HERE ///
+        Scene_Update(mainCharScene, deltatime);
+        ///////////////////
 
         Graphics_ClearWindowWithImage(&screenCaptureImage);
+
+        Graphics_DrawSquare((Vector2){ -100.0f, 0.0f }, 100.0f, COLOR_RED, false);
 
         if (Input_IsButtonPressed(INPUT_KB_KEY_ESCAPE))
             break;
 
         /////////////////
         /// DRAW HERE ///
+        Scene_Draw(mainCharScene);
         /////////////////
 
-        SCENE_DRAW(mainCharScene);
-
         deltatime = Timer_Reset(&globalTimer);
+
+        Input_Refresh();
+
+        Window_WaitSync(windowHandle);
     }
 
     Scene_Destroy(mainCharScene);

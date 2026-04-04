@@ -5,9 +5,6 @@
 #include "short_types.h"
 #include "vector2.h"
 #include "graphics/image.h"
-#include "window_callbacks.h"
-
-#define WINDOW_ON_UPDATE_CALLBACK_MAX 32
 
 typedef struct mfb_window mfb_window;
 
@@ -18,8 +15,7 @@ typedef struct WindowContext {
     u32* buffer;
     size_t bufferSize;
     Image screenCapture;
-    Window_OnUpdateCallback onUpdateCallbacks[WINDOW_ON_UPDATE_CALLBACK_MAX];
-    u32 onUpdateCallbacksCount;
+    bool shouldClose;
 } WindowContext;
 
 #endif // __WINDOW_CONTEXT_H__

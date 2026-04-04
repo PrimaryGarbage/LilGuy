@@ -1,7 +1,6 @@
 #include "window.h"
 #include "MiniFB.h"
 #include "MiniFB_enums.h"
-#include "window_callbacks.h"
 #include "window_context.h"
 #include "logging.h"
 #include <math.h>
@@ -36,31 +35,31 @@ Result Window_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight, W
     context->bufferSize = windowWidth * windowHeight * sizeof(u32);
     context->windowSize = (Vector2u){ windowWidth, windowHeight };
     context->buffer = malloc(context->bufferSize);
-    context->onUpdateCallbacksCount = 0u;
+    context->shouldClose = false;
 
     *handle_out = context;
 
     return Success();
 }
 
-bool Window_Update(WindowHandle handle)
+void Window_Refresh(WindowHandle handle)
 {
-    for(u32 i = 0u; i < handle->onUpdateCallbacksCount; ++i)
-        handle->onUpdateCallbacks[i]();
-
-    handle->windowUpdateState = mfb_update_ex(handle->mfbWindow, handle->buffer, handle->windowSize.x, handle->windowSize.y);
+    handle->windowUpdateState = mfb_update(handle->mfbWindow, handle->buffer);
 
     if (handle->windowUpdateState != MFB_STATE_OK)
     {
+        handle->shouldClose = true;
+
         if (handle->windowUpdateState != MFB_STATE_EXIT)
         {
             PANIC_EX(LogErrorM("Window state returned '%d'", handle->windowUpdateState););
         }
-
-        return false;
     }
+}
 
-    return true;
+void Window_PollEvents(WindowHandle handle)
+{
+    mfb_update_events(handle->mfbWindow);
 }
 
 void Window_Destroy(WindowHandle handle)
@@ -76,18 +75,15 @@ void Window_WaitSync(WindowHandle handle)
         while(!mfb_wait_sync(handle->mfbWindow));
 }
 
-void Window_AddOnUpdateCallback(WindowHandle handle, Window_OnUpdateCallback callback)
-{
-    if (handle->onUpdateCallbacksCount == WINDOW_ON_UPDATE_CALLBACK_MAX)
-        PANIC_EX(LogErrorM("Max number of OnUpdateCallbacks exceeded"););
-
-    handle->onUpdateCallbacks[handle->onUpdateCallbacksCount++] = callback;
-}
-
 Rect Window_GetWindowRect(WindowHandle handle)
 {
     return (Rect) {
         .a = { 0.0f, 0.0f, },
         .b = { handle->windowSize.x, handle->windowSize.y }
     };
+}
+
+bool Window_ShouldClose(WindowHandle handle)
+{
+    return handle->shouldClose;
 }

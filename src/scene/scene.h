@@ -4,9 +4,6 @@
 #include "short_types.h"
 #include "transform.h"
 
-#define SCENE_DRAW(scene) do { scene->drawFunction(scene); } while(0)
-#define SCENE_UPDATE(scene, deltatime) do { scene->updateFunction(scene, deltatime); } while(0)
-
 #define SCENE_CHILDREN_MAX 128
 
 typedef struct Scene Scene;
@@ -26,5 +23,15 @@ typedef struct Scene {
 
 void Scene_Destroy(Scene* scene);
 void Scene_AddChild(Scene* scene, Scene* child);
+
+static inline void Scene_Update(Scene* scene, double deltatime)
+{
+    scene->updateFunction(scene, deltatime);
+}
+
+static inline void Scene_Draw(Scene* scene)
+{
+    scene->drawFunction(scene);
+}
 
 #endif // __SCENE_H__
