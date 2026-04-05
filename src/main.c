@@ -2,6 +2,7 @@
 #include "graphics/image.h"
 #include "input/input.h"
 #include "input/input_button.h"
+#include "raylib_wrapper.h"
 #include "scene/scene.h"
 #include "window/window.h"
 #include "graphics/graphics.h"
@@ -14,63 +15,53 @@
 
 int main(int argc, char* argv[])
 {
-    u32 screenCaptureWidth;
-    u32 screenCaptureHeight;
+    Vector2u windowSize;
     u32* screenCaptureData;
-    Result captureResult = CaptureScreen(&screenCaptureWidth, &screenCaptureHeight, &screenCaptureData);
+    Result captureResult = CaptureScreen(&windowSize.x, &windowSize.y, &screenCaptureData);
     IF_ERROR_PANIC_EX(captureResult, LogError(&captureResult, NULL););
 
     Image screenCaptureImage = {
-        .width = screenCaptureWidth,
-        .height = screenCaptureHeight,
+        .width = windowSize.x,
+        .height = windowSize.y,
         .format = PIXEL_FORMAT_RGBA,
         .data = screenCaptureData,
-        .dataSize = screenCaptureWidth * screenCaptureHeight * 4
+        .dataSize = windowSize.x * windowSize.y * 4
     };
     Image_SwapRAndBChannels(&screenCaptureImage);
-
-
-    u32 windowWidth = screenCaptureWidth;
-    u32 windowHeight = screenCaptureHeight;
 
     RandomInit();
     Timer globalTimer = Timer_Create();
     double deltatime;
 
-    WindowHandle windowHandle;
-    Result windowInitResult = Window_Init("LilGuy", windowWidth, windowHeight, &windowHandle);
-    IF_ERROR_PANIC_EX(windowInitResult, LogError(&windowInitResult, NULL););
-
-    Graphics_SetWindow(windowHandle);
+    Window_Init("LilGuy", windowSize);
+    Window_Hide();
 
     Texture2D screenCaptureTexture = Graphics_LoadTextureFromImage(&screenCaptureImage);
     Graphics_DrawTextureFullscreen(&screenCaptureTexture);
+    Graphics_Flush();
+    Window_Show();
 
     Scene* mainCharScene = MainCharScene_Create();
 
-    while(!Window_ShouldClose(windowHandle))
+    while(!Window_ShouldClose())
     {
-        Window_PollEvents(windowHandle);
+        Window_PollEvents();
+
+        if (Input_IsKeyPressed(INPUT_KEY_ESCAPE)) break;
 
         ///////////////////
         /// UPDATE HERE ///
         Scene_Update(mainCharScene, deltatime);
         ///////////////////
 
-        Graphics_ClearWindow(COLOR_NOCOLOR);
         Graphics_DrawTextureFullscreen(&screenCaptureTexture);
-
-        Graphics_DrawSquare((Vector2){ -100.0f, 0.0f }, 100.0f, COLOR_RED, false);
-
-        if (Input_IsKeyPressed(INPUT_KEY_ESCAPE))
-            break;
 
         /////////////////
         /// DRAW HERE ///
         Scene_Draw(mainCharScene);
         /////////////////
 
-        Window_DrawBuffer(windowHandle);
+        Graphics_Flush();
 
         deltatime = Timer_Reset(&globalTimer);
     }
@@ -78,7 +69,8 @@ int main(int argc, char* argv[])
     Scene_Destroy(mainCharScene);
 
     free(screenCaptureImage.data);
-    Window_Destroy(windowHandle);
+    Graphics_UnloadTexture(screenCaptureTexture);
+    Window_Destroy();
 
     return 0;
 }

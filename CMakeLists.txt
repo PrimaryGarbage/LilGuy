@@ -18,7 +18,6 @@ set(SRC_FILES
 )
 
 set(WINDOW_FILES
-	window_context.h
 	window.c window.h
 )
 
@@ -56,7 +55,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE external src external/minifb/
 # target_link_options(${PROJECT_NAME} PRIVATE -static)
 
 ### Use this line to link external libraries
-target_link_libraries(${PROJECT_NAME} raylib winmm)
+target_link_libraries(${PROJECT_NAME} raylib)
+
 if(WIN32)
 	target_link_libraries(${PROJECT_NAME} winmm)
 endif()

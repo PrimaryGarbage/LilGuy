@@ -137,9 +137,9 @@ static inline Rl_Texture2D TextureToRlTexture(Texture2D texture)
 
 void Raylib_InitWindow(u32 windowWidth, u32 windowHeight, const char* windowTitle)
 {
-    SetWindowState(FLAG_VSYNC_HINT);
     InitWindow(windowWidth, windowHeight, windowTitle);
-    //ToggleBorderlessWindowed();
+    SetWindowState(FLAG_VSYNC_HINT);
+    ToggleBorderlessWindowed();
 }
 
 bool Raylib_WindowShouldClose()
@@ -170,6 +170,16 @@ void Raylib_EndDrawing()
 void Raylib_SwapBuffers()
 {
     SwapScreenBuffer();
+}
+
+u32 Raylib_GetScreenWidth()
+{
+    return GetScreenWidth();
+}
+
+u32 Raylib_GetScreenHeight()
+{
+    return GetScreenHeight();
 }
 
 void Raylib_ClearBackground(Color color)
@@ -209,13 +219,12 @@ bool Raylib_IsMouseButtonDown(int button)
 
 Vector2 Raylib_GetMousePosition()
 {
-    Rl_Vector2 pos = GetMousePosition();
-    return (Vector2){ pos.x, pos.y };
+    return RlVector2ToVector2(GetMousePosition());
 }
 
 Image Raylib_LoadImageFromScreen()
 {
-    RlImageToImage(LoadImageFromScreen());
+    return RlImageToImage(LoadImageFromScreen());
 }
 
 Texture2D Raylib_LoadTextureFromImage(const Image* image)
@@ -228,12 +237,42 @@ void Raylib_UnloadTexture(Texture2D texture)
     UnloadTexture(TextureToRlTexture(texture));
 }
 
+void Raylib_rlDrawRenderBatchActive()
+{
+    rlDrawRenderBatchActive();
+}
+
+float Raylib_GetFrameTime()
+{
+    return GetFrameTime();
+}
+
+void Raylib_HideWindow()
+{
+    SetWindowState(FLAG_WINDOW_HIDDEN);
+}
+
+void Raylib_ShowWindow()
+{
+    ClearWindowState(FLAG_WINDOW_HIDDEN);
+}
+
 void Raylib_DrawTexturePro(Texture2D texture, Rect source, Rect dest, Vector2 origin, float rotation, Color tint)
 {
     DrawTexturePro(TextureToRlTexture(texture), RectToRlRect(source), RectToRlRect(dest), Vector2ToRlVector2(origin), rotation, ColorToRlColor(tint));
 }
 
-void Raylib_rlDrawRenderBatchActive()
+void Raylib_DrawRectanglePro(Rect rect, Vector2 origin, float rotation, Color color)
 {
-    rlDrawRenderBatchActive();
+    DrawRectanglePro(RectToRlRect(rect), Vector2ToRlVector2(origin), rotation, ColorToRlColor(color));
+}
+
+void Raylib_DrawLineEx(Vector2 startPos, Vector2 endPos, float thick, Color color)
+{
+    DrawLineEx(Vector2ToRlVector2(startPos), Vector2ToRlVector2(endPos), thick, ColorToRlColor(color));
+}
+
+void Raylib_DrawCircleV(Vector2 position, float radius, Color color)
+{
+    DrawCircleV(Vector2ToRlVector2(position), radius, ColorToRlColor(color));
 }

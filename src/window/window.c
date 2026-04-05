@@ -1,70 +1,41 @@
 #include "window.h"
-#include "window_context.h"
 #include <math.h>
-#include "result.h"
 #include "raylib_wrapper.h"
 
-static Image BufferImage;
-
-Result Window_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight, WindowHandle* handle_out)
+void Window_Init(const char* windowTitle, Vector2u windowSize)
 {
-    WindowContext* context = malloc(sizeof(WindowContext));
-    if (context == NULL) MEMORY_PANIC();
-
-    u32 screenCaptureWidth;
-    u32 screenCaptureHeight;
-    u32* screenCaptureData;
-
-    Raylib_InitWindow(windowWidth, windowHeight, windowTitle);
-
-    context->bufferSize = windowWidth * windowHeight * sizeof(u32);
-    context->windowSize = (Vector2u){ windowWidth, windowHeight };
-    context->buffer = malloc(context->bufferSize);
-    context->shouldClose = false;
-
-    *handle_out = context;
-    
-    BufferImage = (Image) {
-        .data = context->buffer,
-        .width = context->windowSize.x,
-        .height = context->windowSize.y,
-        .format = PIXEL_FORMAT_RGBA,
-        .dataSize = context->bufferSize
-    };
-
-    return Success();
+    Raylib_InitWindow(windowSize.x, windowSize.y, windowTitle);
 }
 
-void Window_DrawBuffer(WindowHandle handle)
-{
-    Texture2D bufferTexture = Raylib_LoadTextureFromImage(&BufferImage);
-    Rect destRect = {{0.0f, 0.0f}, {handle->windowSize.x, handle->windowSize.y}};
-    Raylib_DrawTexturePro(bufferTexture, destRect, destRect, Vector2_Zero(), 0.0f, COLOR_WHITE);
-    Raylib_rlDrawRenderBatchActive();
-    Raylib_SwapBuffers();
-    Raylib_UnloadTexture(bufferTexture);
-}
-
-void Window_PollEvents(WindowHandle handle)
+void Window_PollEvents()
 {
     Raylib_PollInputEvents();
 }
 
-void Window_Destroy(WindowHandle handle)
+void Window_Destroy()
 {
-    free(handle->buffer);
-    free(handle);
+    Raylib_CloseWindow();
 }
 
-Rect Window_GetWindowRect(WindowHandle handle)
+Rect Window_GetWindowRect()
 {
     return (Rect) {
         .a = { 0.0f, 0.0f, },
-        .b = { handle->windowSize.x, handle->windowSize.y }
+        .b = { Raylib_GetScreenWidth(), Raylib_GetScreenHeight() }
     };
 }
 
-bool Window_ShouldClose(WindowHandle handle)
+bool Window_ShouldClose()
 {
     return Raylib_WindowShouldClose();
+}
+
+void Window_Hide()
+{
+    Raylib_HideWindow();
+}
+
+void Window_Show()
+{
+    Raylib_ShowWindow();
 }

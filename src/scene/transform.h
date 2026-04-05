@@ -7,6 +7,7 @@ typedef struct Transform {
     Vector2 position;
     float rotation;
     Vector2 scale;
+    Vector2 origin;
 } Transform;
 
 #endif // __TRANSFORM_H__

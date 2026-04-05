@@ -3,8 +3,8 @@
 
 #include "short_types.h"
 
-#define COLOR_SCHEME_BGRA
-//#define COLOR_SCHEME_RGBA
+//#define COLOR_SCHEME_BGRA
+#define COLOR_SCHEME_RGBA
 
 
 #define COLOR_NOCOLOR   (Color){ 0.0f, 0.0f, 0.0f, 0.0f }
@@ -29,9 +29,9 @@ inline static u8 Color_ExtractA(u32 color)
     #ifdef COLOR_SCHEME_BGRA
         return (u8)(color >> 24);
     #elifdef COLOR_SCHEME_RGBA
-        return (u8)(color >> 24)
+        return (u8)(color >> 24);
     #else // Assume RGBA
-        return (u8)(color >> 24)
+        return (u8)(color >> 24);
     #endif
 }
 

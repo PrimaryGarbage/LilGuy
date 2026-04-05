@@ -3,7 +3,6 @@
 
 #include "short_types.h"
 #include "vector2.h"
-#include "color.h"
 
 typedef enum PixelFormat {
     PIXEL_FORMAT_RGBA,
