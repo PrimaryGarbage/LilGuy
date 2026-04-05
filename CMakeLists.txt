@@ -14,6 +14,7 @@ set(SRC_FILES
 	vector2.c vector2.h
 	timer.c timer.h
 	screen_capture.c screen_capture.h
+	raylib_wrapper.c raylib_wrapper.h
 )
 
 set(WINDOW_FILES
@@ -25,12 +26,10 @@ set(GRAPHICS_FILES
 	graphics.c graphics.h
 	image.c image.h
 	color.h
-	stb_implementation.c
 )
 
 set(INPUT_FILES
 	input_button.h
-	input_context.h
 	input.c input.h
 )
 
@@ -47,20 +46,20 @@ list(TRANSFORM SCENE_FILES PREPEND "src/scene/")
 
 add_executable(${PROJECT_NAME} ${SRC_FILES} ${WINDOW_FILES} ${GRAPHICS_FILES} ${INPUT_FILES} ${SCENE_FILES})
 
-add_subdirectory(external/minifb)
-
-
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX -d)
 
 ### Add include directories here ###
-target_include_directories(${PROJECT_NAME} PRIVATE external src external/minifb/include external/stb)
+target_include_directories(${PROJECT_NAME} PRIVATE external src external/minifb/include external/stb external/raylib/include)
 
 ### Uncomment this line if you want the standard libraries to be linked statically ###
 # target_link_options(${PROJECT_NAME} PRIVATE -static-libgcc -static-libstdc++)
 # target_link_options(${PROJECT_NAME} PRIVATE -static)
 
 ### Use this line to link external libraries
-target_link_libraries(${PROJECT_NAME} minifb)
+target_link_libraries(${PROJECT_NAME} raylib winmm)
+if(WIN32)
+	target_link_libraries(${PROJECT_NAME} winmm)
+endif()
 
 ### Add link directories here ###
-# target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/lib)
+target_link_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/raylib/lib)

@@ -1,6 +1,7 @@
 #include "graphics/color.h"
 #include "graphics/image.h"
 #include "input/input.h"
+#include "input/input_button.h"
 #include "scene/scene.h"
 #include "window/window.h"
 #include "graphics/graphics.h"
@@ -22,10 +23,12 @@ int main(int argc, char* argv[])
     Image screenCaptureImage = {
         .width = screenCaptureWidth,
         .height = screenCaptureHeight,
-        .format = PIXEL_FORMAT_BGRA,
+        .format = PIXEL_FORMAT_RGBA,
         .data = screenCaptureData,
         .dataSize = screenCaptureWidth * screenCaptureHeight * 4
     };
+    Image_SwapRAndBChannels(&screenCaptureImage);
+
 
     u32 windowWidth = screenCaptureWidth;
     u32 windowHeight = screenCaptureHeight;
@@ -39,26 +42,27 @@ int main(int argc, char* argv[])
     IF_ERROR_PANIC_EX(windowInitResult, LogError(&windowInitResult, NULL););
 
     Graphics_SetWindow(windowHandle);
-    Graphics_ClearWindowWithImage(&screenCaptureImage);
 
-    Input_SetWindow(windowHandle);
+    Texture2D screenCaptureTexture = Graphics_LoadTextureFromImage(&screenCaptureImage);
+    Graphics_DrawTextureFullscreen(&screenCaptureTexture);
 
     Scene* mainCharScene = MainCharScene_Create();
 
     while(!Window_ShouldClose(windowHandle))
     {
-        Window_Refresh(windowHandle);
+        Window_PollEvents(windowHandle);
 
         ///////////////////
         /// UPDATE HERE ///
         Scene_Update(mainCharScene, deltatime);
         ///////////////////
 
-        Graphics_ClearWindowWithImage(&screenCaptureImage);
+        Graphics_ClearWindow(COLOR_NOCOLOR);
+        Graphics_DrawTextureFullscreen(&screenCaptureTexture);
 
         Graphics_DrawSquare((Vector2){ -100.0f, 0.0f }, 100.0f, COLOR_RED, false);
 
-        if (Input_IsButtonPressed(INPUT_KB_KEY_ESCAPE))
+        if (Input_IsKeyPressed(INPUT_KEY_ESCAPE))
             break;
 
         /////////////////
@@ -66,11 +70,9 @@ int main(int argc, char* argv[])
         Scene_Draw(mainCharScene);
         /////////////////
 
+        Window_DrawBuffer(windowHandle);
+
         deltatime = Timer_Reset(&globalTimer);
-
-        Input_Refresh();
-
-        Window_WaitSync(windowHandle);
     }
 
     Scene_Destroy(mainCharScene);

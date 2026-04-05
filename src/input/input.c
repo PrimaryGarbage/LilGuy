@@ -1,66 +1,39 @@
 #include "input.h"
 #include "input_button.h"
-#include "window/window.h"
-#include "window/window_context.h"
-#include "input_context.h"
-#include "math_helpers.h"
-#include "MiniFB.h"
+#include "raylib_wrapper.h"
 #include <assert.h>
 
-static WindowHandle Window;
-static InputContext Context;
-
-static void MouseMoveCallback(mfb_window* window, int x, int y)
+bool Input_IsKeyPressed(InputKey key)
 {
-    Context.mousePosition.x = Clampi(x, 0, Window->windowSize.x) + 0.5f;
-    Context.mousePosition.y = Clampi(y, 0, Window->windowSize.y) + 0.5f;
+    return Raylib_IsKeyDown(key);
 }
 
-static void MouseButtonCallback(mfb_window* window, mfb_mouse_button button, mfb_key_mod mod, bool isPressed)
+bool Input_IsKeyJustPressed(InputKey key)
 {
-    ButtonInfo* buttonInfo = &Context.buttonInfo[button];
-    buttonInfo->just = isPressed ^ buttonInfo->pressed;
-    buttonInfo->pressed = isPressed;
+    return Raylib_IsKeyPressed(key);
 }
 
-static void KeyboardButtonCallback(mfb_window* window, mfb_key key, mfb_key_mod mod, bool isPressed)
+bool Input_IsKeyJustReleased(InputKey key)
 {
-    ButtonInfo* buttonInfo = &Context.buttonInfo[key];
-    buttonInfo->just = isPressed ^ buttonInfo->pressed;
-    buttonInfo->pressed = isPressed;
+    return Raylib_IsKeyReleased(key);
 }
 
-void Input_SetWindow(WindowHandle handle)
+bool Input_IsMouseButtonPressed(InputMouseButton button)
 {
-    Window = handle;
-    mfb_set_mouse_move_callback(Window->mfbWindow, MouseMoveCallback);
-    mfb_set_mouse_button_callback(Window->mfbWindow, MouseButtonCallback);
-    mfb_set_keyboard_callback(Window->mfbWindow, KeyboardButtonCallback);
+    return Raylib_IsMouseButtonDown(button);
 }
 
-void Input_Refresh()
+bool Input_IsMouseButtonJustPressed(InputMouseButton button)
 {
-    for(u32 i = 0u; i < INPUT_BUTTON_ENUM_MAX; ++i)
-        Context.buttonInfo[i].just = false;
+    return Raylib_IsMouseButtonPressed(button);
 }
 
-bool Input_IsButtonPressed(InputButton button)
+bool Input_IsMouseButtonJustReleased(InputMouseButton button)
 {
-    assert(Window);
-
-    return Context.buttonInfo[button].pressed;
-}
-
-bool Input_IsButtonJustPressed(InputButton button)
-{
-    assert(Window);
-
-    return Context.buttonInfo[button].pressed && Context.buttonInfo[button].just;
+    return Raylib_IsMouseButtonReleased(button);
 }
 
 Vector2 Input_GetMousePosition()
 {
-    assert(Window);
-
-    return Context.mousePosition;
+    return Raylib_GetMousePosition();
 }

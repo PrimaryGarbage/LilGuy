@@ -1,5 +1,6 @@
 #include "graphics.h"
 #include "graphics/color.h"
+#include "graphics/image.h"
 #include "window/window_context.h"
 #include "math_helpers.h"
 #include "window/window.h"
@@ -8,6 +9,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>
+#include "raylib_wrapper.h"
 
 static WindowHandle Window;
 
@@ -169,6 +171,27 @@ void Graphics_DrawImage(const Image* image, Rect rect)
     }
 }
 
+Texture2D Graphics_LoadTextureFromImage(const Image* image)
+{
+    return Raylib_LoadTextureFromImage(image);
+}
+
+void Graphics_UnloadTexture(Texture2D texture)
+{
+    Raylib_UnloadTexture(texture);
+}
+
+void Graphics_DrawTexture(const Texture2D* texture, Rect dest)
+{
+    Raylib_DrawTexturePro(*texture, (Rect){0.0f, 0.0f, texture->width, texture->height}, dest, (Vector2){ 0.0f, 0.0f }, 0.0f, COLOR_WHITE);
+}
+
+void Graphics_DrawTextureFullscreen(const Texture2D* texture)
+{
+    Raylib_DrawTexturePro(*texture, (Rect){0.0f, 0.0f, texture->width, texture->height}, (Rect){0.0f, 0.0f, Window->windowSize.x, Window->windowSize.y}, 
+        (Vector2){ 0.0f, 0.0f }, 0.0f, COLOR_WHITE);
+}
+
 void Window_WriteImageToPngFile(WindowHandle handle, const Image* image, const char* filepath)
 {
     assert(Window);
@@ -204,18 +227,4 @@ void Graphics_ClearWindow(Color color)
 
     for(size_t i = 0u; i < Window->bufferSize / sizeof(u32); ++i)
         Window->buffer[i] = packedColor;
-}
-
-void Graphics_ClearWindowWithImage(const Image* image)
-{
-    assert(image->width == Window->windowSize.x && image->height == Window->windowSize.y);
-
-    memcpy_s(Window->buffer, Window->bufferSize, image->data, image->dataSize);
-}
-
-Image* Graphics_GetScreenCaptureImage()
-{
-    assert(Window);
-
-    return &Window->screenCapture;
 }

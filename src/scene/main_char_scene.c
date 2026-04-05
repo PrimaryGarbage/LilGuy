@@ -13,16 +13,16 @@ static void UpdateCallback(Scene* scene, double deltatime)
 {
     const float moveSpeed = 500.0f;
 
-    if (Input_IsButtonPressed(INPUT_KB_KEY_A)) {
+    if (Input_IsKeyPressed(INPUT_KEY_A)) {
         scene->transform.position.x -= moveSpeed * deltatime;
     }
-    if (Input_IsButtonPressed(INPUT_KB_KEY_D)) {
+    if (Input_IsKeyPressed(INPUT_KEY_D)) {
         scene->transform.position.x += moveSpeed * deltatime;
     }
-    if (Input_IsButtonPressed(INPUT_KB_KEY_W)) {
+    if (Input_IsKeyPressed(INPUT_KEY_W)) {
         scene->transform.position.y -= moveSpeed * deltatime;
     }
-    if (Input_IsButtonPressed(INPUT_KB_KEY_S)) {
+    if (Input_IsKeyPressed(INPUT_KEY_S)) {
         scene->transform.position.y += moveSpeed * deltatime;
     }
 }

@@ -6,6 +6,8 @@
 #define COLOR_SCHEME_BGRA
 //#define COLOR_SCHEME_RGBA
 
+
+#define COLOR_NOCOLOR   (Color){ 0.0f, 0.0f, 0.0f, 0.0f }
 #define COLOR_WHITE   (Color){ 1.0f, 1.0f, 1.0f, 1.0f }
 #define COLOR_BLACK   (Color){ 0.0f, 0.0f, 0.0f, 1.0f }
 #define COLOR_RED     (Color){ 1.0f, 0.0f, 0.0f, 1.0f }

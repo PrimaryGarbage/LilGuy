@@ -1,4 +1,5 @@
 #include "screen_capture.h"
+#include "raylib_wrapper.h"
 #include <stdlib.h>
 
 #ifdef _WIN32

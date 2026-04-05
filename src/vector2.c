@@ -1,6 +1,6 @@
 #include "vector2.h"
 
-Vector2 Vector2_zero()
+Vector2 Vector2_Zero()
 {
     return (Vector2) { 0.0f , 0.0f };
 }

@@ -4,13 +4,12 @@
 #include "input_button.h"
 #include "vector2.h"
 
-typedef struct WindowContext* WindowHandle;
-
-void Input_SetWindow(WindowHandle handle);
-// Should be called before any event polling
-void Input_Refresh();
-bool Input_IsButtonPressed(InputButton button);
-bool Input_IsButtonJustPressed(InputButton button);
+bool Input_IsKeyPressed(InputKey key);
+bool Input_IsKeyJustPressed(InputKey key);
+bool Input_IsKeyJustReleased(InputKey key);
+bool Input_IsMouseButtonPressed(InputMouseButton buton);
+bool Input_IsMouseButtonJustPressed(InputMouseButton buton);
+bool Input_IsMouseButtonJustReleased(InputMouseButton buton);
 Vector2 Input_GetMousePosition();
 
 #endif // __INPUT_H__

@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "image.h"
+#include "color.h"
 #include "result.h"
 
 void Image_Free(Image* image)
@@ -37,4 +38,10 @@ Image Image_CreateResized(const Image* image, u32 newWidth, u32 newHeight)
             newImage.data[i + newWidth * j] = Image_SampleNormalized(image, (float)i / (float)newWidth, (float)j / (float)newHeight);
     
     return newImage;
+}
+
+void Image_SwapRAndBChannels(Image* image)
+{
+    for(size_t i = 0u; i < image->width * image->height; ++i)
+        image->data[i] = Color_SwapRAndB(image->data[i]);
 }

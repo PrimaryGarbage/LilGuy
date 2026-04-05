@@ -12,10 +12,9 @@ Result Window_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight, W
 // Returns false when window should close
 bool Window_Update(WindowHandle handle);
 // Also polls events
-void Window_Refresh(WindowHandle handle);
+void Window_DrawBuffer(WindowHandle handle);
 void Window_PollEvents(WindowHandle handle);
 void Window_Destroy(WindowHandle handle);
-void Window_WaitSync(WindowHandle handle);
 
 Rect Window_GetWindowRect(WindowHandle handle);
 bool Window_ShouldClose(WindowHandle handle);

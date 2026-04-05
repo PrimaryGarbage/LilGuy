@@ -1,12 +1,10 @@
 #include "window.h"
-#include "MiniFB.h"
-#include "MiniFB_enums.h"
 #include "window_context.h"
-#include "logging.h"
 #include <math.h>
 #include "result.h"
-#include "screen_capture.h"
-#include "stb_image_write.h"
+#include "raylib_wrapper.h"
+
+static Image BufferImage;
 
 Result Window_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight, WindowHandle* handle_out)
 {
@@ -16,21 +14,8 @@ Result Window_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight, W
     u32 screenCaptureWidth;
     u32 screenCaptureHeight;
     u32* screenCaptureData;
-    Result captureScreenResult = CaptureScreen(&screenCaptureWidth, &screenCaptureHeight, &screenCaptureData);
-    IF_ERROR_RETURN(captureScreenResult);
 
-    context->screenCapture = (Image){
-        screenCaptureWidth,
-        screenCaptureHeight,
-        PIXEL_FORMAT_BGRA,
-        screenCaptureData
-    };
-
-    struct mfb_window* window = mfb_open_ex("LilGuy", windowWidth, windowHeight, MFB_WF_ALWAYS_ON_TOP | MFB_WF_BORDERLESS | MFB_WF_FULLSCREEN);
-    if (window == NULL)
-        return Error(RESULT_MINIFB_INITIALIZATION_ERROR, "Failed to initialize MiniFB window");
-
-    context->mfbWindow = window;
+    Raylib_InitWindow(windowWidth, windowHeight, windowTitle);
 
     context->bufferSize = windowWidth * windowHeight * sizeof(u32);
     context->windowSize = (Vector2u){ windowWidth, windowHeight };
@@ -38,41 +23,37 @@ Result Window_Init(const char* windowTitle, u32 windowWidth, u32 windowHeight, W
     context->shouldClose = false;
 
     *handle_out = context;
+    
+    BufferImage = (Image) {
+        .data = context->buffer,
+        .width = context->windowSize.x,
+        .height = context->windowSize.y,
+        .format = PIXEL_FORMAT_RGBA,
+        .dataSize = context->bufferSize
+    };
 
     return Success();
 }
 
-void Window_Refresh(WindowHandle handle)
+void Window_DrawBuffer(WindowHandle handle)
 {
-    handle->windowUpdateState = mfb_update(handle->mfbWindow, handle->buffer);
-
-    if (handle->windowUpdateState != MFB_STATE_OK)
-    {
-        handle->shouldClose = true;
-
-        if (handle->windowUpdateState != MFB_STATE_EXIT)
-        {
-            PANIC_EX(LogErrorM("Window state returned '%d'", handle->windowUpdateState););
-        }
-    }
+    Texture2D bufferTexture = Raylib_LoadTextureFromImage(&BufferImage);
+    Rect destRect = {{0.0f, 0.0f}, {handle->windowSize.x, handle->windowSize.y}};
+    Raylib_DrawTexturePro(bufferTexture, destRect, destRect, Vector2_Zero(), 0.0f, COLOR_WHITE);
+    Raylib_rlDrawRenderBatchActive();
+    Raylib_SwapBuffers();
+    Raylib_UnloadTexture(bufferTexture);
 }
 
 void Window_PollEvents(WindowHandle handle)
 {
-    mfb_update_events(handle->mfbWindow);
+    Raylib_PollInputEvents();
 }
 
 void Window_Destroy(WindowHandle handle)
 {
     free(handle->buffer);
-    Image_Free(&handle->screenCapture);
     free(handle);
-}
-
-void Window_WaitSync(WindowHandle handle)
-{
-    if (handle->windowUpdateState == MFB_STATE_OK)
-        while(!mfb_wait_sync(handle->mfbWindow));
 }
 
 Rect Window_GetWindowRect(WindowHandle handle)
@@ -85,5 +66,5 @@ Rect Window_GetWindowRect(WindowHandle handle)
 
 bool Window_ShouldClose(WindowHandle handle)
 {
-    return handle->shouldClose;
+    return Raylib_WindowShouldClose();
 }

@@ -1,9 +1,8 @@
 #ifndef __ERROR_H__
 #define __ERROR_H__
 
-#include <stdarg.h>
-#include <stddef.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define IF_ERROR(result, code) \
 if (IsError(&result)) \
@@ -28,25 +27,25 @@ do { \
 
 #define PANIC() \
 do { \
-    fprintf(stderr, "Program panicked"); \
+    fprintf(stderr, "Program panicked\n"); \
     exit(1); \
 } while(0)
 
 #define PANIC_EX(code) \
 do { \
-    fprintf(stderr, "Program panicked"); \
+    fprintf(stderr, "Program panicked\n"); \
     code \
     exit(1); \
 } while(0)
 
 #define MEMORY_PANIC() \
 do { \
-    fprintf(stderr, "Program panicked after failed memory allocation"); \
+    fprintf(stderr, "Program panicked after failed memory allocation\n"); \
 } while(0)
 
 #define MEMORY_PANIC_EX(code) \
 do { \
-    fprintf(stderr, "Program panicked after failed memory allocation"); \
+    fprintf(stderr, "Program panicked after failed memory allocation\n"); \
     code; \
 } while(0)
 
