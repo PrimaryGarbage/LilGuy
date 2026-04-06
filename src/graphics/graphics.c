@@ -39,7 +39,7 @@ void Graphics_ClearTransform()
 void Graphics_DrawRect(Rect rect, Color color)
 {
     Raylib_DrawRectanglePro((Rect){ rect.x, rect.y, rect.width * s_transform->scale.x, rect.height * s_transform->scale.y}, 
-        Vector2_Mult(s_transform->origin, s_transform->scale), 0.0f, color);
+        Vector2_Mult(s_transform->origin, s_transform->scale), s_transform->rotation, color);
 }
 
 void Graphics_DrawSquare(Vector2 position, float size, Color color)

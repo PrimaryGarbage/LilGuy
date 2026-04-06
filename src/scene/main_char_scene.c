@@ -34,6 +34,7 @@ static void DrawCallback(Scene* scene)
     Graphics_SetTransform(&scene->transform);
     Graphics_DrawRect(Rect_FromVectors(scene->transform.position, Vector2_Uniform(CHAR_SIZE)), COLOR_PURPLE);
     Graphics_ClearTransform();
+    Graphics_DrawRect(Rect_FromVectors(scene->transform.position, Vector2_Uniform(2.0f)), COLOR_BLUE);
 }
 
 Scene* MainCharScene_Create()
@@ -44,8 +45,9 @@ Scene* MainCharScene_Create()
     scene->drawFunction = DrawCallback;
     scene->customData = malloc(sizeof(MainCharSceneCustomData));
     scene->transform.position = Vector2_Uniform(100.0f);
-    scene->transform.scale = Vector2_One();
+    scene->transform.scale = Vector2_New(1.0f, 1.0f);
     scene->transform.origin = Vector2_Uniform(CHAR_SIZE / 2.0f);
+    scene->transform.rotation = 0.0f;
     scene->childrenCount = 0u;
 
     return scene;

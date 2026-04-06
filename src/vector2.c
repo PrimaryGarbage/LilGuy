@@ -40,6 +40,16 @@ Vector2 Vector2_DivScalar(Vector2 vec, float value)
     return (Vector2){ vec.x / value, vec.y / value };
 }
 
+Vector2 Vector2_Add(Vector2 left, Vector2 right)
+{
+    return (Vector2){ left.x + right.x, left.y + right.y };
+}
+
+Vector2 Vector2_Sub(Vector2 left, Vector2 right)
+{
+    return (Vector2){ left.x - right.x, left.y - right.y };
+}
+
 Vector2 Vector2_Mult(Vector2 left, Vector2 right)
 {
     return (Vector2){ left.x * right.x, left.y * right.y };
@@ -48,4 +58,9 @@ Vector2 Vector2_Mult(Vector2 left, Vector2 right)
 Vector2 Vector2_Div(Vector2 left, Vector2 right)
 {
     return (Vector2){ left.x / right.x, left.y / right.y };
+}
+
+Vector2 Vector2_New(float x, float y)
+{
+    return (Vector2){ x, y };
 }

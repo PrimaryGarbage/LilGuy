@@ -18,6 +18,7 @@ typedef struct Vector2u {
     u32 y;
 } Vector2u;
 
+Vector2 Vector2_New(float x, float y);
 Vector2 Vector2_Zero();
 Vector2 Vector2_One();
 Vector2 Vector2_Uniform(float value);
@@ -27,6 +28,8 @@ Vector2i Vector2i_AddScalar(Vector2i vec, i32 value);
 Vector2u Vector2u_AddScalar(Vector2u vec, u32 value);
 Vector2 Vector2_MultScalar(Vector2 vec, float value);
 Vector2 Vector2_DivScalar(Vector2 vec, float value);
+Vector2 Vector2_Add(Vector2 left, Vector2 right);
+Vector2 Vector2_Sub(Vector2 left, Vector2 right);
 Vector2 Vector2_Mult(Vector2 left, Vector2 right);
 Vector2 Vector2_Div(Vector2 left, Vector2 right);
 
