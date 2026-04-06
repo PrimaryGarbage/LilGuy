@@ -2,24 +2,47 @@
 #include "graphics/color.h"
 #include "graphics/image.h"
 #include "result.h"
+#include "scene/transform.h"
 #include "stb_image_write.h"
 #include <assert.h>
 #include <math.h>
+#include <stddef.h>
 #include "raylib_wrapper.h"
 #include "screen_capture.h"
+#include "vector2.h"
 #include "window/window.h"
+
+static const Transform s_defaultTransform = {
+    (Vector2){ 0.0f, 0.0f },
+    0.0f,
+    (Vector2){ 1.0f, 1.0f },
+    (Vector2){ 0.0f, 0.0f }
+};
+
+static const Transform* s_transform = &s_defaultTransform;
 
 Result Graphics_CaptureScreen(Image* image_out)
 {
     return CaptureScreen(image_out);
 }
 
-void Graphics_DrawRect(Rect rect, Vector2 origin, Color color)
+void Graphics_SetTransform(const Transform* transform)
 {
-    Raylib_DrawRectanglePro(rect, Vector2_Zero(), 0.0f, color);
+    s_transform = transform;
 }
 
-void Graphics_DrawSquare(Vector2 position, Vector2 origin, float size, Color color)
+void Graphics_ClearTransform()
+{
+    s_transform = &s_defaultTransform;
+}
+
+void Graphics_DrawRect(Rect rect, Color color)
+{
+    Raylib_DrawRectanglePro((Rect){ rect.x, rect.y, rect.width * s_transform->scale.x, rect.height * s_transform->scale.y}, 
+        Vector2_Mult(s_transform->origin, s_transform->scale), 0.0f, color);
+}
+
+void Graphics_DrawSquare(Vector2 position, float size, Color color)
 {
     Graphics_DrawRect((Rect){
          .x = position.x,
@@ -27,7 +50,7 @@ void Graphics_DrawSquare(Vector2 position, Vector2 origin, float size, Color col
          .width = size,
          .height = size
     }, 
-    origin, color);
+    color);
 }
 
 void Graphics_DrawCircle(Vector2 position, float radius, Color color)

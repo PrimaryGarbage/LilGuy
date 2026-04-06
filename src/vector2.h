@@ -25,7 +25,9 @@ Vector2 Vector2_Uniform(float value);
 Vector2 Vector2_AddScalar(Vector2 vec, float value);
 Vector2i Vector2i_AddScalar(Vector2i vec, i32 value);
 Vector2u Vector2u_AddScalar(Vector2u vec, u32 value);
-
-Vector2 Vector2_Div(Vector2 vec, float value);
+Vector2 Vector2_MultScalar(Vector2 vec, float value);
+Vector2 Vector2_DivScalar(Vector2 vec, float value);
+Vector2 Vector2_Mult(Vector2 left, Vector2 right);
+Vector2 Vector2_Div(Vector2 left, Vector2 right);
 
 #endif // __VECTOR2_H__

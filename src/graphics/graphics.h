@@ -2,6 +2,7 @@
 #define __GRAPHICS_H__
 
 #include "rect.h"
+#include "scene/transform.h"
 #include "vector2.h"
 #include "color.h"
 #include "image.h"
@@ -10,8 +11,11 @@
 
 Result Graphics_CaptureScreen(Image* image_out);
 
-void Graphics_DrawRect(Rect rect, Vector2 origin, Color color);
-void Graphics_DrawSquare(Vector2 position, Vector2 origin, float size, Color color);
+void Graphics_SetTransform(const Transform* transform);
+void Graphics_ClearTransform();
+
+void Graphics_DrawRect(Rect rect, Color color);
+void Graphics_DrawSquare(Vector2 position, float size, Color color);
 void Graphics_DrawCircle(Vector2 position, float radius, Color color);
 void Graphics_DrawLine(Vector2 a, Vector2 b, float width, Color color);
 Texture2D Graphics_LoadTextureFromImage(const Image* image);

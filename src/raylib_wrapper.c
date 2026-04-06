@@ -1,3 +1,11 @@
+#include <string.h>
+
+#define TYPE_PUN(typeFrom, typeTo, valueFrom, valueTo) \
+do { \
+    static_assert(sizeof(typeFrom) == sizeof(typeTo), "Struct sizes mismatch!"); \
+    static_assert(_Alignof(typeFrom) == _Alignof(typeTo), "Struct alignments mismatch!"); \
+    memcpy(&valueTo, &valueFrom, sizeof(typeTo)); \
+} while(0)
 
 #define Vector2 Rl_Vector2
 #define Color Rl_Color
@@ -14,14 +22,6 @@
 #undef PixelFormat
 #undef Texture2D
 
-#include <string.h>
-
-#define TYPE_PUN(typeFrom, typeTo, valueFrom, valueTo) \
-do { \
-    static_assert(sizeof(typeFrom) == sizeof(typeTo), "Struct sizes mismatch!"); \
-    static_assert(_Alignof(typeFrom) == _Alignof(typeTo), "Struct alignments mismatch!"); \
-    memcpy(&valueTo, &valueFrom, sizeof(typeTo)); \
-} while(0)
 
 #include "raylib_wrapper.h"
 

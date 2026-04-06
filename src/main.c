@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
     Vector2u windowSize = { screenCaptureImage.width, screenCaptureImage.height };
 
     Window_Hide();
-    Window_Init("LilGuy", (Vector2u) { 500u, 500u });
+    Window_Init("LilGuy", windowSize);
 
     Texture2D screenCaptureTexture = Graphics_LoadTextureFromImage(&screenCaptureImage);
     Graphics_DrawTextureFullscreen(&screenCaptureTexture);

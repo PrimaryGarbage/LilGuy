@@ -1,6 +1,8 @@
 #include "main_char_scene.h"
 #include "input/input.h"
 #include "graphics/graphics.h"
+#include "rect.h"
+#include "vector2.h"
 #include <stdlib.h>
 
 #define CHAR_SIZE 50
@@ -29,7 +31,9 @@ static void UpdateCallback(Scene* scene, double deltatime)
 
 static void DrawCallback(Scene* scene)
 {
-    Graphics_DrawSquare(scene->transform.position, scene->transform.origin, CHAR_SIZE, COLOR_PURPLE);
+    Graphics_SetTransform(&scene->transform);
+    Graphics_DrawRect(Rect_FromVectors(scene->transform.position, Vector2_Uniform(CHAR_SIZE)), COLOR_PURPLE);
+    Graphics_ClearTransform();
 }
 
 Scene* MainCharScene_Create()
