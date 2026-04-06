@@ -5,9 +5,14 @@
 #include "stb_image_write.h"
 #include <assert.h>
 #include <math.h>
-#include <stdlib.h>
-#include <string.h>
 #include "raylib_wrapper.h"
+#include "screen_capture.h"
+#include "window/window.h"
+
+Result Graphics_CaptureScreen(Image* image_out)
+{
+    return CaptureScreen(image_out);
+}
 
 void Graphics_DrawRect(Rect rect, Vector2 origin, Color color)
 {
@@ -16,7 +21,13 @@ void Graphics_DrawRect(Rect rect, Vector2 origin, Color color)
 
 void Graphics_DrawSquare(Vector2 position, Vector2 origin, float size, Color color)
 {
-    Graphics_DrawRect((Rect){ .a = position, .b = Vector2_AddScalar(position, size)}, origin, color);
+    Graphics_DrawRect((Rect){
+         .x = position.x,
+         .y = position.y,
+         .width = size,
+         .height = size
+    }, 
+    origin, color);
 }
 
 void Graphics_DrawCircle(Vector2 position, float radius, Color color)
@@ -46,33 +57,7 @@ void Graphics_DrawTexture(const Texture2D* texture, Rect dest)
 
 void Graphics_DrawTextureFullscreen(const Texture2D* texture)
 {
-    Rect dest = { Vector2_Zero(), { Raylib_GetScreenWidth(), Raylib_GetScreenHeight() } };
-    Raylib_DrawTexturePro(*texture, (Rect){ 0.0f, 0.0f, texture->width, texture->height }, dest, (Vector2){ 0.0f, 0.0f }, 0.0f, COLOR_WHITE);
-}
-
-void Window_WriteImageToPngFile(const Image* image, const char* filepath)
-{
-    switch(image->format)
-    {
-        case PIXEL_FORMAT_RGBA:
-        {
-            stbi_write_png(filepath, image->width, image->height, 4, image->data, image->width * 4);
-            break;
-        }
-        case PIXEL_FORMAT_BGRA:
-        {
-            size_t pixelCount = image->width * image->height;
-            u32* tempBuffer = malloc(pixelCount * 4);
-            if(!tempBuffer) MEMORY_PANIC();
-
-            for (size_t i = 0; i < pixelCount; ++i)
-                tempBuffer[i] = Color_SwapRAndB(image->data[i]);
-
-            stbi_write_png(filepath, image->width, image->height, 4, tempBuffer, image->width * 4);
-            free(tempBuffer);
-            break;
-        }
-    }
+    Raylib_DrawTexturePro(*texture, (Rect){ 0.0f, 0.0f, texture->width, texture->height }, Window_GetWindowRect(), (Vector2){ 0.0f, 0.0f }, 0.0f, COLOR_WHITE);
 }
 
 void Graphics_ClearBackground(Color color)

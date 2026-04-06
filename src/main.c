@@ -1,40 +1,30 @@
-#include "graphics/color.h"
 #include "graphics/image.h"
 #include "input/input.h"
 #include "input/input_button.h"
-#include "raylib_wrapper.h"
 #include "scene/scene.h"
+#include "vector2.h"
 #include "window/window.h"
 #include "graphics/graphics.h"
 #include "random.h"
 #include "result.h"
 #include "timer.h"
 #include "logging.h"
-#include "screen_capture.h"
 #include "scene/main_char_scene.h"
 
 int main(int argc, char* argv[])
 {
-    Vector2u windowSize;
-    u32* screenCaptureData;
-    Result captureResult = CaptureScreen(&windowSize.x, &windowSize.y, &screenCaptureData);
-    IF_ERROR_PANIC_EX(captureResult, LogError(&captureResult, NULL););
-
-    Image screenCaptureImage = {
-        .width = windowSize.x,
-        .height = windowSize.y,
-        .format = PIXEL_FORMAT_RGBA,
-        .data = screenCaptureData,
-        .dataSize = windowSize.x * windowSize.y * 4
-    };
-    Image_SwapRAndBChannels(&screenCaptureImage);
-
     RandomInit();
     Timer globalTimer = Timer_Create();
     double deltatime;
 
-    Window_Init("LilGuy", windowSize);
+    Image screenCaptureImage;
+    Result captureResult = Graphics_CaptureScreen(&screenCaptureImage);
+    IF_ERROR_PANIC_EX(captureResult, LogError(&captureResult, NULL););
+
+    Vector2u windowSize = { screenCaptureImage.width, screenCaptureImage.height };
+
     Window_Hide();
+    Window_Init("LilGuy", (Vector2u) { 500u, 500u });
 
     Texture2D screenCaptureTexture = Graphics_LoadTextureFromImage(&screenCaptureImage);
     Graphics_DrawTextureFullscreen(&screenCaptureTexture);
@@ -54,13 +44,14 @@ int main(int argc, char* argv[])
         Scene_Update(mainCharScene, deltatime);
         ///////////////////
 
+        Graphics_ClearBackground(COLOR_BLUE);
         Graphics_DrawTextureFullscreen(&screenCaptureTexture);
 
         /////////////////
         /// DRAW HERE ///
         Scene_Draw(mainCharScene);
         /////////////////
-
+        
         Graphics_Flush();
 
         deltatime = Timer_Reset(&globalTimer);
@@ -68,7 +59,7 @@ int main(int argc, char* argv[])
 
     Scene_Destroy(mainCharScene);
 
-    free(screenCaptureImage.data);
+    Image_Free(&screenCaptureImage);
     Graphics_UnloadTexture(screenCaptureTexture);
     Window_Destroy();
 

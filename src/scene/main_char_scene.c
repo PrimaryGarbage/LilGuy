@@ -39,7 +39,9 @@ Scene* MainCharScene_Create()
     scene->updateFunction = UpdateCallback;
     scene->drawFunction = DrawCallback;
     scene->customData = malloc(sizeof(MainCharSceneCustomData));
-    scene->transform.position = (Vector2){ 100.0f, 100.0f };
+    scene->transform.position = Vector2_Uniform(100.0f);
+    scene->transform.scale = Vector2_One();
+    scene->transform.origin = Vector2_Uniform(CHAR_SIZE / 2.0f);
     scene->childrenCount = 0u;
 
     return scene;

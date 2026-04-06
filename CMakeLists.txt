@@ -13,7 +13,6 @@ set(SRC_FILES
 	math_helpers.c math_helpers.h
 	vector2.c vector2.h
 	timer.c timer.h
-	screen_capture.c screen_capture.h
 	raylib_wrapper.c raylib_wrapper.h
 )
 
@@ -24,6 +23,7 @@ set(WINDOW_FILES
 set(GRAPHICS_FILES
 	graphics.c graphics.h
 	image.c image.h
+	screen_capture.c screen_capture.h
 	color.h
 )
 

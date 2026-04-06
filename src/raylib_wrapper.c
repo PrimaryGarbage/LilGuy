@@ -1,6 +1,4 @@
-#include "graphics/image.h"
-#include "logging.h"
-#include "result.h"
+
 #define Vector2 Rl_Vector2
 #define Color Rl_Color
 #define Image Rl_Image
@@ -16,87 +14,64 @@
 #undef PixelFormat
 #undef Texture2D
 
+#include <string.h>
+
+#define TYPE_PUN(typeFrom, typeTo, valueFrom, valueTo) \
+do { \
+    static_assert(sizeof(typeFrom) == sizeof(typeTo), "Struct sizes mismatch!"); \
+    static_assert(_Alignof(typeFrom) == _Alignof(typeTo), "Struct alignments mismatch!"); \
+    memcpy(&valueTo, &valueFrom, sizeof(typeTo)); \
+} while(0)
+
 #include "raylib_wrapper.h"
 
 static inline Rl_Color ColorToRlColor(Color color)
 {
-    return (Rl_Color){
-        .r = color.r * 255,
-        .g = color.g * 255,
-        .b = color.b * 255,
-        .a = color.a * 255
-    };
+    Rl_Color out;
+    TYPE_PUN(Color, Rl_Color, color, out);
+    return out;
 }
 
 static inline Color RlColorToColor(Rl_Color color)
 {
-    return (Color){
-        .r = color.r / 255.0f,
-        .g = color.g / 255.0f,
-        .b = color.b / 255.0f,
-        .a = color.a / 255.0f
-    };
+    Color out;
+    TYPE_PUN(Rl_Color, Color, color, out);
+    return out;
 }
 
 static inline Rl_Vector2 Vector2ToRlVector2(Vector2 vec)
 {
-    return (Rl_Vector2){ vec.x, vec.y };
+    Rl_Vector2 out;
+    TYPE_PUN(Vector2, Rl_Vector2, vec, out);
+    return out;
 }
 
 static inline Vector2 RlVector2ToVector2(Rl_Vector2 vec)
 {
-    return (Vector2){ vec.x, vec.y };
+    Vector2 out;
+    TYPE_PUN(Rl_Vector2, Vector2, vec, out);
+    return out;
 }
 
 static inline Rectangle RectToRlRect(Rect rect)
 {
-    return (Rectangle){
-        .x = rect.a.x,
-        .y = rect.a.y,
-        .width = rect.b.x - rect.a.x,
-        .height = rect.b.y - rect.a.y
-    };
+    Rectangle out;
+    TYPE_PUN(Rect, Rectangle, rect, out);
+    return out;
 }
 
 static inline Rect RlRectToRect(Rectangle rect)
 {
-    return (Rect){
-        .a = { rect.x, rect.y },
-        .b = { rect.x + rect.width, rect.y + rect.height }
-    };
-}
-
-static PixelFormat RlPixelFormatToPixelFormat(Rl_PixelFormat format)
-{
-    switch(format)
-    {
-        case PIXELFORMAT_UNCOMPRESSED_R8G8B8A8:
-            return PIXEL_FORMAT_RGBA;
-            break;
-        default:
-            PANIC_EX(LogErrorM("Converting image with unsupported pixel format"););
-            break;
-    }
-}
-
-static Rl_PixelFormat PixelFormatToRlPixelFormat(PixelFormat format)
-{
-    switch(format)
-    {
-        case PIXEL_FORMAT_RGBA:
-            return PIXELFORMAT_UNCOMPRESSED_R8G8B8A8;
-            break;
-        default:
-            PANIC_EX(LogErrorM("Converting image with unsupported pixel format"););
-            break;
-    }
+    Rect out;
+    TYPE_PUN(Rectangle, Rect, rect, out);
+    return out;
 }
 
 static inline Image RlImageToImage(Rl_Image image)
 {
     return (Image) {
         .data = image.data,
-        .format = RlPixelFormatToPixelFormat(image.format),
+        .format = image.format,
         .width = image.width,
         .height = image.height,
         .dataSize = image.width * image.height * 4
@@ -107,7 +82,7 @@ static inline Rl_Image ImageToRlImage(Image image)
 {
     return (Rl_Image) {
         .data = image.data,
-        .format = PixelFormatToRlPixelFormat(image.format),
+        .format = image.format,
         .width = image.width,
         .height = image.height,
         .mipmaps = 1
@@ -118,7 +93,7 @@ static inline Texture2D RlTextureToTexture(Rl_Texture2D texture)
 {
     return (Texture2D) {
         .id = texture.id,
-        .format = RlPixelFormatToPixelFormat(texture.format),
+        .format = texture.format,
         .width = texture.width,
         .height = texture.height
     };
@@ -128,7 +103,7 @@ static inline Rl_Texture2D TextureToRlTexture(Texture2D texture)
 {
     return (Rl_Texture2D) {
         .id = texture.id,
-        .format = PixelFormatToRlPixelFormat(texture.format),
+        .format = texture.format,
         .width = texture.width,
         .height = texture.height,
         .mipmaps = 1

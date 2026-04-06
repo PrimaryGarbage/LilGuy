@@ -20,8 +20,10 @@ void Window_Destroy()
 Rect Window_GetWindowRect()
 {
     return (Rect) {
-        .a = { 0.0f, 0.0f, },
-        .b = { Raylib_GetScreenWidth(), Raylib_GetScreenHeight() }
+        .x = 0.0f, 
+        .y = 0.0f,
+        .width = Raylib_GetScreenWidth(), 
+        .height = Raylib_GetScreenHeight() 
     };
 }
 

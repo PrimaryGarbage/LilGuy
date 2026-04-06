@@ -1,5 +1,5 @@
 #include "screen_capture.h"
-#include "raylib_wrapper.h"
+#include "image.h"
 #include <stdlib.h>
 
 #ifdef _WIN32
@@ -17,15 +17,14 @@
 
 #ifdef _WIN32
 
-Result CaptureScreen(u32* width_out, u32* height_out, u32** data_out)
+Result CaptureScreen(Image* image_out)
 {
-    *width_out  = GetSystemMetrics(SM_CXSCREEN);
-    *height_out = GetSystemMetrics(SM_CYSCREEN);
+    u32 width  = GetSystemMetrics(SM_CXSCREEN);
+    u32 height = GetSystemMetrics(SM_CYSCREEN);
     
-    int bufferSize = (*width_out) * (*height_out) * 4;  // 4 bytes per pixel (BGRA)
-    *data_out = (u32*)malloc(bufferSize);
-    if (!*data_out)
-        return Error(RESULT_SCREEN_CAPTURE_ERROR, "Failed to create screen capture bitmap");
+    int bufferSize = height * width * 4;  // 4 bytes per pixel (BGRA)
+    u32* data = malloc(bufferSize);
+    if (!data) return Error(RESULT_SCREEN_CAPTURE_ERROR, "Failed to create screen capture bitmap");
     
     HDC hdcScreen = GetDC(NULL);
     HDC hdcMem = CreateCompatibleDC(hdcScreen);
@@ -33,17 +32,17 @@ Result CaptureScreen(u32* width_out, u32* height_out, u32** data_out)
     // Create a DIB section with guaranteed 32-bit BGRA
     BITMAPINFO bmi = {0};
     bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmi.bmiHeader.biWidth = *width_out;
-    bmi.bmiHeader.biHeight = -(*height_out);  // top-down
+    bmi.bmiHeader.biWidth = width;
+    bmi.bmiHeader.biHeight = -height;  // top-down
     bmi.bmiHeader.biPlanes = 1;
     bmi.bmiHeader.biBitCount = 32;
     bmi.bmiHeader.biCompression = BI_RGB;
     
-    unsigned char* bits = NULL;
+    u8* bits = NULL;
     HBITMAP hBitmap = CreateDIBSection(hdcScreen, &bmi, DIB_RGB_COLORS, (void**)&bits, NULL, 0);
     if (!hBitmap || !bits) {
         // Fallback: use compatible bitmap + GetDIBits (rarely needed)
-        free(*data_out);
+        free(data);
         ReleaseDC(NULL, hdcScreen);
         DeleteDC(hdcMem);
         return Error(RESULT_SCREEN_CAPTURE_ERROR, "Failed to create screen capture bitmap");
@@ -51,16 +50,26 @@ Result CaptureScreen(u32* width_out, u32* height_out, u32** data_out)
     
     // Select the DIB into memory DC and copy screen
     HGDIOBJ oldBmp = SelectObject(hdcMem, hBitmap);
-    BitBlt(hdcMem, 0, 0, *width_out, *height_out, hdcScreen, 0, 0, SRCCOPY);
+    BitBlt(hdcMem, 0, 0, width, height, hdcScreen, 0, 0, SRCCOPY);
     
     // Copy the BGRA data to our result buffer
-    memcpy(*data_out, bits, bufferSize);
+    memcpy(data, bits, bufferSize);
     
     // Cleanup
     SelectObject(hdcMem, oldBmp);
     DeleteObject(hBitmap);
     DeleteDC(hdcMem);
     ReleaseDC(NULL, hdcScreen);
+
+    *image_out = (Image){
+        .data = data,
+        .dataSize = bufferSize,
+        .width = width,
+        .height = height,
+        .format = PIXEL_FORMAT_UNCOMPRESSED_R8G8B8A8,
+    };
+
+    Image_SwapRAndBChannels(image_out);
 
     return Success();
 }
