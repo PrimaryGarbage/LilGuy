@@ -14,6 +14,8 @@ set(SRC_FILES
 	vector2.c vector2.h
 	timer.c timer.h
 	raylib_wrapper.c raylib_wrapper.h
+	twine.c twine.h
+	list.c list.h
 )
 
 set(WINDOW_FILES
@@ -33,8 +35,12 @@ set(INPUT_FILES
 )
 
 set(SCENE_FILES
+	scene_type.h
 	scene.c scene.h
 	main_char_scene.c main_char_scene.h
+	main_char_foot_scene.c main_char_foot_scene.h
+	empty_scene.c empty_scene.h
+	block_scene.c block_scene.h
 )
 
 list(TRANSFORM SRC_FILES PREPEND "src/")

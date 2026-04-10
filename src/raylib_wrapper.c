@@ -110,11 +110,16 @@ static inline Rl_Texture2D TextureToRlTexture(Texture2D texture)
     };
 }
 
-void Raylib_InitWindow(u32 windowWidth, u32 windowHeight, const char* windowTitle)
+void Raylib_InitWindow(u32 windowWidth, u32 windowHeight, const char* windowTitle, bool fullscreen)
 {
     InitWindow(windowWidth, windowHeight, windowTitle);
     SetWindowState(FLAG_VSYNC_HINT);
-    ToggleBorderlessWindowed();
+    if (fullscreen) ToggleBorderlessWindowed();
+}
+
+void Raylib_SetWindowMonitor(u8 monitor)
+{
+    SetWindowMonitor(monitor);
 }
 
 bool Raylib_WindowShouldClose()

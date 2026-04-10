@@ -2,9 +2,14 @@
 #include <math.h>
 #include "raylib_wrapper.h"
 
-void Window_Init(const char* windowTitle, Vector2u windowSize)
+void Window_Init(const char* windowTitle, Vector2u windowSize, bool fullscreen)
 {
-    Raylib_InitWindow(windowSize.x, windowSize.y, windowTitle);
+    Raylib_InitWindow(windowSize.x, windowSize.y, windowTitle, fullscreen);
+}
+
+void Window_SetMonitor(u8 monitor)
+{
+    Raylib_SetWindowMonitor(monitor);
 }
 
 void Window_PollEvents()

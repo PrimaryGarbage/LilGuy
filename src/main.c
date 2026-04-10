@@ -1,7 +1,9 @@
 #include "graphics/image.h"
 #include "input/input.h"
 #include "input/input_button.h"
+#include "scene/empty_scene.h"
 #include "scene/scene.h"
+#include "twine.h"
 #include "vector2.h"
 #include "window/window.h"
 #include "graphics/graphics.h"
@@ -24,14 +26,19 @@ int main(int argc, char* argv[])
     Vector2u windowSize = { screenCaptureImage.width, screenCaptureImage.height };
 
     Window_Hide();
-    Window_Init("LilGuy", windowSize);
+    Window_Init("LilGuy", windowSize, true);
+    Window_SetMonitor(1);
 
     Texture2D screenCaptureTexture = Graphics_LoadTextureFromImage(&screenCaptureImage);
     Graphics_DrawTextureFullscreen(&screenCaptureTexture);
     Graphics_Flush();
     Window_Show();
 
-    Scene* mainCharScene = MainCharScene_Create();
+    Scene* rootScene = EmptyScene_Create();
+    Scene* mainCharScene = MainCharScene_Create(NULL);
+    Scene_AddChild(rootScene, mainCharScene);
+
+    Scene_Start(rootScene);
 
     while(!Window_ShouldClose())
     {
@@ -41,15 +48,17 @@ int main(int argc, char* argv[])
 
         ///////////////////
         /// UPDATE HERE ///
-        Scene_Update(mainCharScene, deltatime);
+        Scene_Update(rootScene, deltatime);
         ///////////////////
+
+        Twine_Update(deltatime);
 
         Graphics_ClearBackground(COLOR_BLUE);
         Graphics_DrawTextureFullscreen(&screenCaptureTexture);
 
         /////////////////
         /// DRAW HERE ///
-        Scene_Draw(mainCharScene);
+        Scene_Draw(rootScene);
         /////////////////
         
         Graphics_Flush();
@@ -57,7 +66,7 @@ int main(int argc, char* argv[])
         deltatime = Timer_Reset(&globalTimer);
     }
 
-    Scene_Destroy(mainCharScene);
+    Scene_Free(mainCharScene);
 
     Image_Free(&screenCaptureImage);
     Graphics_UnloadTexture(screenCaptureTexture);

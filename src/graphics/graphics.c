@@ -10,13 +10,12 @@
 #include "raylib_wrapper.h"
 #include "screen_capture.h"
 #include "vector2.h"
-#include "window/window.h"
 
 static const Transform s_defaultTransform = {
-    (Vector2){ 0.0f, 0.0f },
-    0.0f,
-    (Vector2){ 1.0f, 1.0f },
-    (Vector2){ 0.0f, 0.0f }
+    .position = (Vector2){ 0.0f, 0.0f },
+    .rotation = 0.0f,
+    .scale = (Vector2){ 1.0f, 1.0f },
+    .origin = (Vector2){ 0.0f, 0.0f }
 };
 
 static const Transform* s_transform = &s_defaultTransform;
@@ -24,6 +23,31 @@ static const Transform* s_transform = &s_defaultTransform;
 Result Graphics_CaptureScreen(Image* image_out)
 {
     return CaptureScreen(image_out);
+}
+
+float Graphics_GetScreenHeight()
+{
+    return Raylib_GetScreenHeight();
+}
+
+float Graphics_GetScreenWidth()
+{
+    return Raylib_GetScreenWidth();
+}
+
+Vector2 Graphics_GetScreenSize()
+{
+    return (Vector2){ Raylib_GetScreenWidth(), Raylib_GetScreenHeight() };
+}
+
+Rect Graphics_GetScreenRect()
+{
+    return (Rect) {
+        .x = 0.0f, 
+        .y = 0.0f,
+        .width = Raylib_GetScreenWidth(), 
+        .height = Raylib_GetScreenHeight() 
+    };
 }
 
 void Graphics_SetTransform(const Transform* transform)
@@ -42,6 +66,12 @@ void Graphics_DrawRect(Rect rect, Color color)
         Vector2_Mult(s_transform->origin, s_transform->scale), s_transform->rotation, color);
 }
 
+void Graphics_DrawRectT(Vector2 size, Color color)
+{
+    Raylib_DrawRectanglePro((Rect){ s_transform->position.x, s_transform->position.y, size.x * s_transform->scale.x, size.y * s_transform->scale.y}, 
+        Vector2_Mult(s_transform->origin, s_transform->scale), s_transform->rotation, color);
+} 
+
 void Graphics_DrawSquare(Vector2 position, float size, Color color)
 {
     Graphics_DrawRect((Rect){
@@ -49,7 +79,7 @@ void Graphics_DrawSquare(Vector2 position, float size, Color color)
          .y = position.y,
          .width = size,
          .height = size
-    }, 
+    },
     color);
 }
 
@@ -80,7 +110,7 @@ void Graphics_DrawTexture(const Texture2D* texture, Rect dest)
 
 void Graphics_DrawTextureFullscreen(const Texture2D* texture)
 {
-    Raylib_DrawTexturePro(*texture, (Rect){ 0.0f, 0.0f, texture->width, texture->height }, Window_GetWindowRect(), (Vector2){ 0.0f, 0.0f }, 0.0f, COLOR_WHITE);
+    Raylib_DrawTexturePro(*texture, (Rect){ 0.0f, 0.0f, texture->width, texture->height }, Graphics_GetScreenRect(), (Vector2){ 0.0f, 0.0f }, 0.0f, COLOR_WHITE);
 }
 
 void Graphics_ClearBackground(Color color)

@@ -11,10 +11,16 @@
 
 Result Graphics_CaptureScreen(Image* image_out);
 
+float Graphics_GetScreenHeight();
+float Graphics_GetScreenWidth();
+Vector2 Graphics_GetScreenSize();
+Rect Graphics_GetScreenRect();
+
 void Graphics_SetTransform(const Transform* transform);
 void Graphics_ClearTransform();
 
 void Graphics_DrawRect(Rect rect, Color color);
+void Graphics_DrawRectT(Vector2 size, Color color);
 void Graphics_DrawSquare(Vector2 position, float size, Color color);
 void Graphics_DrawCircle(Vector2 position, float radius, Color color);
 void Graphics_DrawLine(Vector2 a, Vector2 b, float width, Color color);

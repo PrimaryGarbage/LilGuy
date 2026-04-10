@@ -3,13 +3,13 @@
 #include "result.h"
 #include <stdlib.h>
 
-void Scene_Destroy(Scene* scene)
+void Scene_Free(Scene* scene)
 {
     for(u32 i = 0u; i < scene->childrenCount; ++i)
-        Scene_Destroy(scene->children[i]);
+        Scene_Free(scene->children[i]);
 
-    if (scene->customData)
-        free(scene->customData);
+    if (scene->sceneData)
+        free(scene->sceneData);
 
     free(scene);
 }
@@ -21,4 +21,58 @@ void Scene_AddChild(Scene* scene, Scene* child)
 
     scene->children[scene->childrenCount++] = child;
     child->parent = scene;
+}
+
+void Scene_UpdateGlobalTransform(Scene* scene, bool recurse)
+{
+    if (!scene->parent || scene->transform.topLevel)
+    {
+        scene->globalTransform = scene->transform;
+        return;
+    }
+
+    if (recurse)
+        Scene_UpdateGlobalTransform(scene->parent, recurse);
+
+    scene->globalTransform = Transform_Combine(&scene->parent->globalTransform, &scene->transform);
+}
+
+static void Scene_StartChildren(Scene* scene)
+{
+    for(u32 i = 0; i < scene->childrenCount; ++i)
+        Scene_Start(scene->children[i]);
+}
+
+static void Scene_UpdateChildren(Scene* scene, double deltatime)
+{
+    for(u32 i = 0; i < scene->childrenCount; ++i)
+        Scene_Update(scene->children[i], deltatime);
+}
+
+static void Scene_DrawChildren(Scene* scene)
+{
+    for(u32 i = 0; i < scene->childrenCount; ++i)
+        Scene_Draw(scene->children[i]);
+}
+
+void Scene_Update(Scene* scene, double deltatime)
+{
+    if (scene->updateFunction)
+        scene->updateFunction(scene, deltatime);
+
+    Scene_UpdateGlobalTransform(scene, false);
+
+    Scene_UpdateChildren(scene, deltatime);
+}
+
+void Scene_Draw(Scene* scene)
+{
+    if (scene->drawFunction) scene->drawFunction(scene);
+    Scene_DrawChildren(scene);
+}
+
+void Scene_Start(Scene* scene)
+{
+    if (scene->startFunction) scene->startFunction(scene);
+    Scene_StartChildren(scene);
 }

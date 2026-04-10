@@ -8,7 +8,8 @@
 #include "graphics/texture2d.h"
 #include "rect.h"
 
-void Raylib_InitWindow(u32 windowWidth, u32 windowHeight, const char* windowTitle);
+void Raylib_InitWindow(u32 windowWidth, u32 windowHeight, const char* windowTitle, bool fullscreen);
+void Raylib_SetWindowMonitor(u8 monitor);
 bool Raylib_WindowShouldClose();
 void Raylib_CloseWindow();
 void Raylib_PollInputEvents();
