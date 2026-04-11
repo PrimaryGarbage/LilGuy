@@ -1,4 +1,5 @@
 #include "main_char_scene.h"
+#include "graphics/color.h"
 #include "input/input.h"
 #include "main_char_foot_scene.h"
 #include "math_helpers.h"
@@ -12,24 +13,24 @@
 typedef struct MainCharSceneData {
     Vector2 speed;
     bool onGround;
+    float fuel;
     Scene* leftFoot;
     Scene* rightFoot;
     bool movingLeftFoot;
     bool movingRightFoot;
 } MainCharSceneData;
 
-static const float c_bodyHeight = 30.0f;
-static const float c_bodyWidth = 10.0f;
-static const float c_legLength = 10.0f;
-static const float c_footIdleTargetOffsetX = 10.0f;
-static const float c_footGroundTargetOffsetY = c_legLength + c_bodyHeight * 0.5f;
-static const float c_footLiftedTargetOffsetY = c_legLength + c_bodyHeight * 0.3f;
-static const double c_footMoveAnimationLength = 0.05;
-static const float c_footMaxDistanceFromOriginX = 30.0f;
-static const float c_footStrideX = 28.0f;
+constexpr float c_maxFuel = 1.0f;
+constexpr float c_bodyHeight = 30.0f;
+constexpr float c_bodyWidth = 10.0f;
+constexpr float c_legLength = 10.0f;
+constexpr float c_footIdleTargetOffsetX = 10.0f;
+constexpr float c_footGroundTargetOffsetY = c_legLength + c_bodyHeight * 0.5f;
 
 static Vector2 GetNewFootPosition(Scene* scene)
 {
+    constexpr float c_footStrideX = 28.0f;
+
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR);
 
     MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
@@ -89,6 +90,8 @@ static void ClampOnScreenPosition(Transform* transform, MainCharSceneData* custo
 
 static void MoveFeet(Scene* scene)
 {
+    constexpr float footMaxDistanceFromOriginX = 30.0f;
+
     MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
 
     if (sceneData->onGround)
@@ -98,7 +101,7 @@ static void MoveFeet(Scene* scene)
         float leftFootDistance = fabsf(sceneData->leftFoot->transform.position.x - scene->globalTransform.position.x);
         float rightFootDistance = fabsf(sceneData->rightFoot->transform.position.x - scene->globalTransform.position.x);
 
-        if (leftFootDistance > c_footMaxDistanceFromOriginX || rightFootDistance > c_footMaxDistanceFromOriginX)
+        if (leftFootDistance > footMaxDistanceFromOriginX || rightFootDistance > footMaxDistanceFromOriginX)
         {
             if(leftFootDistance > rightFootDistance)
             {
@@ -124,46 +127,52 @@ static void MoveFeet(Scene* scene)
 
 static void MoveCharacter(Scene* scene, double deltatime)
 {
-    MainCharSceneData* customData = (MainCharSceneData*)scene->sceneData;
+    MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
 
-    const float moveAccel = 1000.0f;
-    const float jumpAccel = 1500.0f;
-    const float gravityAccel = 1000.0f;
-    const float maxGroundSpeedX = 200.0f;
-    const float maxAirSpeedX = 500.0f;
-    const float maxSpeedY = 2000.0f;
-    const float speedDissipationFactor = 0.8f;
+    constexpr float moveAccel = 1000.0f;
+    constexpr float jumpAccel = 1500.0f;
+    constexpr float gravityAccel = 1000.0f;
+    constexpr float maxGroundSpeedX = 200.0f;
+    constexpr float maxAirSpeedX = 500.0f;
+    constexpr float maxSpeedY = 2000.0f;
+    constexpr float speedDissipationFactor = 0.8f;
+    constexpr float fuelBurnRate = 0.5f;
+    constexpr float fuelRefillRate = 0.3f;
 
-    customData->speed.y += gravityAccel * deltatime;
+    sceneData->speed.y += gravityAccel * deltatime;
 
     bool tryingToMove = false;
 
     if (Input_IsKeyPressed(INPUT_KEY_A)) {
-        customData->speed.x -= moveAccel * deltatime;
+        sceneData->speed.x -= moveAccel * deltatime;
         tryingToMove = true;
     }
     if (Input_IsKeyPressed(INPUT_KEY_D)) {
-        customData->speed.x += moveAccel * deltatime;
+        sceneData->speed.x += moveAccel * deltatime;
         tryingToMove = true;
     }
-    if (Input_IsKeyPressed(INPUT_KEY_SPACE)) {
-        customData->speed.y -= jumpAccel * deltatime;
-        customData->onGround = false;
-        tryingToMove = true;
+    if (Input_IsKeyPressed(INPUT_KEY_SPACE) && sceneData->fuel > 0.0f) {
+        sceneData->fuel -= fuelBurnRate * deltatime;
+        sceneData->speed.y -= jumpAccel * deltatime;
+        sceneData->onGround = false;
+    }
+    else if (sceneData->fuel < c_maxFuel)
+    {
+        sceneData->fuel += fuelRefillRate * deltatime;
     }
 
     if (!tryingToMove)
-        customData->speed.x *= speedDissipationFactor;
+        sceneData->speed.x *= speedDissipationFactor;
 
-    ClampOnScreenPosition(&scene->transform, customData);
+    ClampOnScreenPosition(&scene->transform, sceneData);
 
-    float speedLimitX = customData->onGround ? maxGroundSpeedX : maxAirSpeedX;
+    float speedLimitX = sceneData->onGround ? maxGroundSpeedX : maxAirSpeedX;
 
-    customData->speed.x = Clampf(-speedLimitX, speedLimitX, customData->speed.x);
-    customData->speed.y = Clampf(-maxSpeedY, maxSpeedY, customData->speed.y);
+    sceneData->speed.x = Clampf(-speedLimitX, speedLimitX, sceneData->speed.x);
+    sceneData->speed.y = Clampf(-maxSpeedY, maxSpeedY, sceneData->speed.y);
 
-    scene->transform.position.x += customData->speed.x * deltatime;
-    scene->transform.position.y += customData->speed.y * deltatime;
+    scene->transform.position.x += sceneData->speed.x * deltatime;
+    scene->transform.position.y += sceneData->speed.y * deltatime;
 
     Scene_UpdateGlobalTransform(scene, false);
 }
@@ -184,11 +193,42 @@ static void DrawCharacter(Scene* scene)
     Graphics_ClearTransform();
 }
 
+static void DrawUi(Scene* scene)
+{
+    constexpr float fuelMeterOffsetX = 30.0f;
+    constexpr float fuelMeterWidth = 4.0f;
+    constexpr float fuelMeterHeight = 30.0f;
+    constexpr Color fuelMeterColor = (Color){ 0, 255, 0, 255 };
+    constexpr Color fuelMeterBackgroundColor = (Color){ 0, 0, 0, 150 };
+
+    MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
+
+    if (sceneData->fuel >= 1.0f) return;
+
+    Rect fuelMeterBackgroundRect = {
+        .x = scene->globalTransform.position.x - fuelMeterOffsetX,
+        .y = scene->globalTransform.position.y - c_bodyHeight,
+        .width = fuelMeterWidth,
+        .height = fuelMeterHeight
+    };
+
+    Rect fuelMeterRect = {
+        .x = scene->globalTransform.position.x - fuelMeterOffsetX,
+        .y = scene->globalTransform.position.y - c_bodyHeight,
+        .width = fuelMeterWidth,
+        .height = fuelMeterHeight * Clampf(0.0f, c_maxFuel, sceneData->fuel)
+    };
+
+    Graphics_DrawRect(fuelMeterBackgroundRect, fuelMeterBackgroundColor);
+    Graphics_DrawRect(fuelMeterRect, fuelMeterColor);
+}
+
 static void DrawCallback(Scene* scene)
 {
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR);
 
     DrawCharacter(scene);
+    DrawUi(scene);
 
     // Draw point at origin
     Graphics_DrawRect(Rect_FromVectors(scene->transform.position, Vector2_Uniform(2.0f)), COLOR_WHITE);
@@ -201,6 +241,7 @@ Scene* MainCharScene_Create(Scene* parent)
     MainCharSceneData* customData = malloc(sizeof(MainCharSceneData));
     customData->speed = Vector2_Zero();
     customData->onGround = false;
+    customData->fuel = c_maxFuel;
 
     scene->sceneData = customData;
     scene->type = SCENE_TYPE_MAIN_CHAR;
@@ -218,10 +259,6 @@ Scene* MainCharScene_Create(Scene* parent)
     Scene* rightFoot = MainCharFootScene_Create(scene, GetNewFootPosition);
     leftFoot->transform.topLevel = true;
     rightFoot->transform.topLevel = true;
-    leftFoot->transform.position.x = scene->globalTransform.position.x - c_footIdleTargetOffsetX;
-    leftFoot->transform.position.y = scene->globalTransform.position.y + c_legLength + c_bodyHeight * 0.5f;
-    rightFoot->transform.position.x = scene->globalTransform.position.x + c_footIdleTargetOffsetX;
-    rightFoot->transform.position.y = scene->globalTransform.position.y + c_legLength + c_bodyHeight * 0.5f;
 
     customData->leftFoot = leftFoot;
     customData->rightFoot = rightFoot;

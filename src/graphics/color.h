@@ -25,6 +25,11 @@ typedef struct Color {
     u8 a;
 } Color;
 
+inline static Color Color_New(u8 r, u8 g, u8 b, u8 a)
+{
+    return (Color){ .r = r, .g = g, .b = b, .a = a };
+}
+
 inline static u8 Color_ExtractA(u32 color)
 {
     #ifdef COLOR_SCHEME_BGRA
