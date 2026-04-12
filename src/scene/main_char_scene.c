@@ -11,8 +11,10 @@
 #include "scene/scene.h"
 #include "scene_type.h"
 #include "physics/transform.h"
+#include "tween.h"
 #include "vector2.h"
 #include "graphics/graphics.h"
+#include "tween.h"
 #include <math.h>
 
 typedef struct MainCharSceneData {
@@ -33,6 +35,7 @@ constexpr float c_bodyWidth = 10.0f;
 constexpr float c_legLength = 10.0f;
 constexpr float c_footIdleTargetOffsetX = 10.0f;
 constexpr float c_footGroundTargetOffsetY = c_legLength + c_bodyHeight * 0.5f;
+constexpr double c_landingAnimationLength = 0.2f;
 
 static Vector2 GetNewFootPosition(Scene* scene)
 {
@@ -95,6 +98,15 @@ static void MoveFeet(Scene* scene)
     }
 }
 
+static void LandingTweenAnimationCallback(Scene* scene, double elapsed)
+{
+    constexpr float animationMaxOffsetY = 10.0f;
+
+    float weight = elapsed / c_landingAnimationLength;
+    float offsetWeight = weight < 0.5f ? weight * 2.0f : 2.0f - weight * 2.0f;
+    scene->transform.position.y += animationMaxOffsetY * offsetWeight;
+}
+
 static void OnLanding(Scene* scene)
 {
     MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
@@ -103,6 +115,8 @@ static void OnLanding(Scene* scene)
     sceneData->leftFoot->transform.position.y = scene->globalTransform.position.y + c_footGroundTargetOffsetY;
     sceneData->rightFoot->transform.position.x = scene->globalTransform.position.x + c_footIdleTargetOffsetX;
     sceneData->rightFoot->transform.position.y = scene->globalTransform.position.y + c_footGroundTargetOffsetY;
+
+    Tween_CreateFunction(c_landingAnimationLength, scene, LandingTweenAnimationCallback);
 }
 
 static void MoveCharacter(Scene* scene, double deltatime)
@@ -112,8 +126,8 @@ static void MoveCharacter(Scene* scene, double deltatime)
     constexpr float moveAccel = 1000.0f;
     constexpr float jumpAccel = 1500.0f;
     constexpr float gravityAccel = 1000.0f;
-    constexpr float maxSpeedX = 200.0f;
-    constexpr float maxJetpackSpeedX = 500.0f;
+    constexpr float maxSpeedX = 180.0f;
+    constexpr float maxJetpackSpeedX = 400.0f;
     constexpr float maxSpeedY = 1000.0f;
     constexpr float speedDissipationFactor = 0.8f;
     constexpr float fuelBurnRate = 0.5f;
@@ -124,7 +138,7 @@ static void MoveCharacter(Scene* scene, double deltatime)
     bool tryingToMove = false;
 
     bool onGround = RaycastScene_CheckForCollision(sceneData->onGroundRaycast, NULL);
-    if (onGround != sceneData->onGround) OnLanding(scene);
+    if (!sceneData->onGround && onGround != sceneData->onGround) OnLanding(scene);
     sceneData->onGround = onGround;
 
     if (Input_IsKeyPressed(INPUT_KEY_A)) {
@@ -153,7 +167,8 @@ static void MoveCharacter(Scene* scene, double deltatime)
 
     float speedLimitX = jetpacking ? maxJetpackSpeedX : maxSpeedX;
 
-    sceneData->speed.x = Clampf(-speedLimitX, speedLimitX, sceneData->speed.x);
+    // Clamp max speed smoothly
+    sceneData->speed.x = Lerpf(sceneData->speed.x, Clampf(-speedLimitX, speedLimitX, sceneData->speed.x), 0.2f);
     sceneData->speed.y = Clampf(-maxSpeedY, maxSpeedY, sceneData->speed.y);
 
     scene->transform.position.x += sceneData->speed.x * deltatime;
@@ -315,7 +330,7 @@ Scene* MainCharScene_Create(Scene* parent)
     Scene* colliderScene = ColliderScene_Create(scene, colliderSize);
     sceneData->bodyCollider = colliderScene;
     colliderScene->transform.position = colliderPosition;
-    ColliderScene_SetVisible(colliderScene, true);
+    ColliderScene_SetVisible(colliderScene, false);
     ColliderScene_SetOnCollisionCallback(colliderScene, scene, OnBodyCollision);
     ColliderScene_SetCollisionLayers(colliderScene, COLLIDER_LAYER_MAIN_CHAR);
     ColliderScene_SetCollisionScan(colliderScene, COLLIDER_LAYER_WORLD);

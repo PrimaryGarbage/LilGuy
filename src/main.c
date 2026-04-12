@@ -2,7 +2,7 @@
 #include "input/input.h"
 #include "input/input_button.h"
 #include "scene/main_scene.h"
-#include "twine.h"
+#include "tween.h"
 #include "vector2.h"
 #include "window/window.h"
 #include "graphics/graphics.h"
@@ -50,8 +50,7 @@ int main(int argc, char* argv[])
         Scene_Update(rootScene, deltatime);
         ///////////////////
 
-        Twine_Update(deltatime);
-
+        Tween_Update(deltatime);
 
         /////////////////
         /// DRAW HERE ///

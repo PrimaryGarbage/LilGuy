@@ -14,7 +14,7 @@ set(SRC_FILES
 	vector2.c vector2.h
 	timer.c timer.h
 	raylib_wrapper.c raylib_wrapper.h
-	twine.c twine.h
+	tween.c tween.h
 	list.c list.h
 )
 
