@@ -7,6 +7,7 @@ typedef enum SceneType {
     SCENE_TYPE_BLOCK,
     SCENE_TYPE_MAIN_CHAR,
     SCENE_TYPE_MAIN_CHAR_FOOT,
+    SCENE_TYPE_COLLIDER
 } SceneType;
 
 #endif // __SCENE_TAGS_H__

@@ -13,4 +13,18 @@ float Clampf(float min, float max, float val);
 float Lerpf(float a, float b, float w);
 float Signf(float val);
 
+static inline float DegToRad(float deg)
+{
+    constexpr float twoPi = 2.0f * 3.14159265f;
+
+    return twoPi * deg / 360.0f;
+}
+
+static inline float RadToDeg(float rad)
+{
+    constexpr float twoPi = 2.0f * 3.14159265f;
+
+    return 360.0f * rad / twoPi;
+}
+
 #endif // __MATH_HELPERS_H__

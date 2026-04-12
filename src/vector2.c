@@ -1,4 +1,5 @@
 #include "vector2.h"
+#include "math_helpers.h"
 #include <math.h>
 
 Vector2 Vector2_Zero()
@@ -64,6 +65,24 @@ Vector2 Vector2_Mult(Vector2 left, Vector2 right)
 Vector2 Vector2_Div(Vector2 left, Vector2 right)
 {
     return (Vector2){ left.x / right.x, left.y / right.y };
+}
+
+Vector2 Vector2_Rotate(Vector2 vec, float angle)
+{
+    float rad = DegToRad(angle);
+    float cos = cosf(rad);
+    float sin = sinf(rad);
+
+    return (Vector2){
+        .x = cos * vec.x - sin * vec.y,
+        .y = sin * vec.x + cos * vec.y
+    };
+}
+
+Vector2 Vector2_Normalize(Vector2 vec)
+{
+    float length = Vector2_Length(vec);
+    return Vector2_DivScalar(vec, length);
 }
 
 float Vector2_Length(Vector2 vec)

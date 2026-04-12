@@ -5,6 +5,8 @@
 
 void Scene_Free(Scene* scene)
 {
+    Scene_Cleanup(scene);
+
     for(u32 i = 0u; i < scene->childrenCount; ++i)
         Scene_Free(scene->children[i]);
 
@@ -55,12 +57,22 @@ static void Scene_DrawChildren(Scene* scene)
         Scene_Draw(scene->children[i]);
 }
 
+static void Scene_CleanupChildren(Scene* scene)
+{
+    for(u32 i = 0; i < scene->childrenCount; ++i)
+        Scene_Cleanup(scene->children[i]);
+}
+
 void Scene_Update(Scene* scene, double deltatime)
 {
     if (scene->updateFunction)
+    {
+        Scene_UpdateGlobalTransform(scene, false);
         scene->updateFunction(scene, deltatime);
+    }
 
     Scene_UpdateGlobalTransform(scene, false);
+
 
     Scene_UpdateChildren(scene, deltatime);
 }
@@ -69,6 +81,27 @@ void Scene_Draw(Scene* scene)
 {
     if (scene->drawFunction) scene->drawFunction(scene);
     Scene_DrawChildren(scene);
+}
+
+void Scene_DefaultInit(Scene* scene)
+{
+    scene->sceneData = NULL;
+    scene->childrenCount = 0u;
+    scene->transform = Transform_Zero();
+
+    scene->startFunction = NULL;
+    scene->updateFunction = NULL;
+    scene->drawFunction = NULL;
+    scene->cleanupFunction = NULL;
+    scene->parent = NULL;
+
+    Scene_UpdateGlobalTransform(scene, false);
+}
+
+void Scene_Cleanup(Scene* scene)
+{
+    if (scene->cleanupFunction) scene->cleanupFunction(scene);
+    Scene_CleanupChildren(scene);
 }
 
 void Scene_Start(Scene* scene)

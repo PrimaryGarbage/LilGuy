@@ -2,7 +2,7 @@
 #include "graphics/color.h"
 #include "graphics/image.h"
 #include "result.h"
-#include "scene/transform.h"
+#include "physics/transform.h"
 #include "stb_image_write.h"
 #include <assert.h>
 #include <math.h>
@@ -88,9 +88,25 @@ void Graphics_DrawCircle(Vector2 position, float radius, Color color)
     Raylib_DrawCircleV(position, radius, color);
 }
 
+void Graphics_DrawLineSimple(Vector2 a, Vector2 b, Color color)
+{
+    Raylib_DrawLineV(a, b, color);
+}
+
 void Graphics_DrawLine(Vector2 a, Vector2 b, float width, Color color)
 {
     Raylib_DrawLineEx(a, b, width, color);
+}
+
+void Graphics_DrawVector(Vector2 a, Vector2 b, Color color)
+{
+    constexpr float arrowSize = 15.0f;
+    constexpr float arrowAngle = 20.0f;
+    Vector2 arrowVec = Vector2_Normalize(Vector2_Sub(a, b));
+
+    Raylib_DrawLineV(a, b, color);
+    Raylib_DrawLineV(b, Vector2_Add(b, Vector2_MultScalar(Vector2_Rotate(arrowVec, arrowAngle), arrowSize)), color);
+    Raylib_DrawLineV(b, Vector2_Add(b, Vector2_MultScalar(Vector2_Rotate(arrowVec, -arrowAngle), arrowSize)), color);
 }
 
 Texture2D Graphics_LoadTextureFromImage(const Image* image)

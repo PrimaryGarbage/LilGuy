@@ -1,8 +1,7 @@
 #include "graphics/image.h"
 #include "input/input.h"
 #include "input/input_button.h"
-#include "scene/empty_scene.h"
-#include "scene/scene.h"
+#include "scene/main_scene.h"
 #include "twine.h"
 #include "vector2.h"
 #include "window/window.h"
@@ -11,7 +10,6 @@
 #include "result.h"
 #include "timer.h"
 #include "logging.h"
-#include "scene/main_char_scene.h"
 
 int main(int argc, char* argv[])
 {
@@ -34,9 +32,7 @@ int main(int argc, char* argv[])
     Graphics_Flush();
     Window_Show();
 
-    Scene* rootScene = EmptyScene_Create();
-    Scene* mainCharScene = MainCharScene_Create(NULL);
-    Scene_AddChild(rootScene, mainCharScene);
+    Scene* rootScene = MainScene_Create();
 
     Scene_Start(rootScene);
 
@@ -46,6 +42,9 @@ int main(int argc, char* argv[])
 
         if (Input_IsKeyPressed(INPUT_KEY_ESCAPE)) break;
 
+        Graphics_ClearBackground(COLOR_BLUE);
+        Graphics_DrawTextureFullscreen(&screenCaptureTexture);
+
         ///////////////////
         /// UPDATE HERE ///
         Scene_Update(rootScene, deltatime);
@@ -53,8 +52,6 @@ int main(int argc, char* argv[])
 
         Twine_Update(deltatime);
 
-        Graphics_ClearBackground(COLOR_BLUE);
-        Graphics_DrawTextureFullscreen(&screenCaptureTexture);
 
         /////////////////
         /// DRAW HERE ///
@@ -66,7 +63,7 @@ int main(int argc, char* argv[])
         deltatime = Timer_Reset(&globalTimer);
     }
 
-    Scene_Free(mainCharScene);
+    Scene_Free(rootScene);
 
     Image_Free(&screenCaptureImage);
     Graphics_UnloadTexture(screenCaptureTexture);

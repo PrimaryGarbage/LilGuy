@@ -37,7 +37,15 @@ void Raylib_ShowWindow();
 // Draw functions
 void Raylib_DrawTexturePro(Texture2D texture, Rect source, Rect dest, Vector2 origin, float rotation, Color tint);
 void Raylib_DrawRectanglePro(Rect rect, Vector2 origin, float rotation, Color color);
+void Raylib_DrawLineV(Vector2 startPos, Vector2 endPos, Color color);
 void Raylib_DrawLineEx(Vector2 startPos, Vector2 endPos, float thick, Color color);
 void Raylib_DrawCircleV(Vector2 position, float radius, Color color);
+
+
+// Collision
+bool Raylib_CheckCollisionRects(Rect a, Rect b);
+bool Raylib_CheckCollisionPointRect(Vector2 point, Rect rect);
+Rect Raylib_GetCollisionRect(Rect a, Rect b);
+bool CheckCollisionPointRect(Vector2 point, Rect rect); 
 
 #endif // __RAYLIB_WRAPPER_H__

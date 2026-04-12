@@ -41,6 +41,14 @@ set(SCENE_FILES
 	main_char_foot_scene.c main_char_foot_scene.h
 	empty_scene.c empty_scene.h
 	block_scene.c block_scene.h
+	collider_scene.c collider_scene.h
+	main_scene.c main_scene.h
+)
+
+set(PHYSICS_FILES
+	collider.c collider.h
+	transform.h
+	raycast.c raycast.h
 )
 
 list(TRANSFORM SRC_FILES PREPEND "src/")
@@ -48,8 +56,9 @@ list(TRANSFORM WINDOW_FILES PREPEND "src/window/")
 list(TRANSFORM GRAPHICS_FILES PREPEND "src/graphics/")
 list(TRANSFORM INPUT_FILES PREPEND "src/input/")
 list(TRANSFORM SCENE_FILES PREPEND "src/scene/")
+list(TRANSFORM PHYSICS_FILES PREPEND "src/physics/")
 
-add_executable(${PROJECT_NAME} ${SRC_FILES} ${WINDOW_FILES} ${GRAPHICS_FILES} ${INPUT_FILES} ${SCENE_FILES})
+add_executable(${PROJECT_NAME} ${SRC_FILES} ${WINDOW_FILES} ${GRAPHICS_FILES} ${INPUT_FILES} ${SCENE_FILES} ${PHYSICS_FILES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX -d)
 

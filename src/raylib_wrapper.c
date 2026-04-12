@@ -247,6 +247,11 @@ void Raylib_DrawRectanglePro(Rect rect, Vector2 origin, float rotation, Color co
     DrawRectanglePro(RectToRlRect(rect), Vector2ToRlVector2(origin), rotation, ColorToRlColor(color));
 }
 
+void Raylib_DrawLineV(Vector2 startPos, Vector2 endPos, Color color)
+{
+    DrawLineV(Vector2ToRlVector2(startPos), Vector2ToRlVector2(endPos), ColorToRlColor(color));
+}
+
 void Raylib_DrawLineEx(Vector2 startPos, Vector2 endPos, float thick, Color color)
 {
     DrawLineEx(Vector2ToRlVector2(startPos), Vector2ToRlVector2(endPos), thick, ColorToRlColor(color));
@@ -255,4 +260,24 @@ void Raylib_DrawLineEx(Vector2 startPos, Vector2 endPos, float thick, Color colo
 void Raylib_DrawCircleV(Vector2 position, float radius, Color color)
 {
     DrawCircleV(Vector2ToRlVector2(position), radius, ColorToRlColor(color));
+}
+
+bool Raylib_CheckCollisionRects(Rect a, Rect b)
+{
+    return CheckCollisionRecs(RectToRlRect(a), RectToRlRect(b));
+}
+
+bool Raylib_CheckCollisionPointRect(Vector2 point, Rect rect)
+{
+    return CheckCollisionPointRec(Vector2ToRlVector2(point), RectToRlRect(rect));
+}
+
+Rect Raylib_GetCollisionRect(Rect a, Rect b)
+{
+    return RlRectToRect(GetCollisionRec(RectToRlRect(a), RectToRlRect(b)));
+}
+
+bool CheckCollisionPointRect(Vector2 point, Rect rect)
+{
+    return CheckCollisionPointRec(Vector2ToRlVector2(point), RectToRlRect(rect));
 }

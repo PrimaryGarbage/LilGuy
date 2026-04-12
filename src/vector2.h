@@ -32,6 +32,8 @@ Vector2 Vector2_Add(Vector2 left, Vector2 right);
 Vector2 Vector2_Sub(Vector2 left, Vector2 right);
 Vector2 Vector2_Mult(Vector2 left, Vector2 right);
 Vector2 Vector2_Div(Vector2 left, Vector2 right);
+Vector2 Vector2_Rotate(Vector2 vec, float angle);
+Vector2 Vector2_Normalize(Vector2 vec);
 float Vector2_Length(Vector2 vec);
 float Vector2_LengthSquared(Vector2 vec);
 Vector2 Vector2_Lerp(Vector2 a, Vector2 b, float w);

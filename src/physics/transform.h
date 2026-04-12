@@ -11,6 +11,16 @@ typedef struct Transform {
     bool topLevel;
 } Transform;
 
+static inline Transform Transform_Zero()
+{
+    return (Transform) {
+        .position = Vector2_Zero(),
+        .origin = Vector2_Zero(),
+        .rotation = 0.0f,
+        .scale = Vector2_Uniform(1.0f)
+    };
+}
+
 static inline Transform Transform_Combine(Transform* left, Transform* right)
 {
     return (Transform) {

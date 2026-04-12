@@ -2,7 +2,7 @@
 #include "graphics/graphics.h"
 #include "scene.h"
 #include "scene_type.h"
-#include "transform.h"
+#include "physics/transform.h"
 #include "vector2.h"
 #include <stdint.h>
 #include <stdlib.h>
@@ -19,7 +19,7 @@ const float c_footSize = 7.0f;
 const double c_animationLength = 0.07;
 const float c_animationFootYMaxOffset = 10.0f;
 
-static void UpdateCallback(Scene* scene, double deltatime)
+static void Update(Scene* scene, double deltatime)
 {
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_FOOT);
 
@@ -43,7 +43,7 @@ static void UpdateCallback(Scene* scene, double deltatime)
     }
 }
 
-static void DrawCallback(Scene* scene)
+static void Draw(Scene* scene)
 {
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_FOOT);
 
@@ -75,8 +75,9 @@ Scene* MainCharFootScene_Create(Scene* parent, GetNewFootPositionCallback footPo
     scene->parent = parent;
     
     scene->startFunction = NULL;
-    scene->updateFunction = UpdateCallback;
-    scene->drawFunction = DrawCallback;
+    scene->updateFunction = Update;
+    scene->drawFunction = Draw;
+    scene->cleanupFunction = NULL;
 
     return scene;
 }
