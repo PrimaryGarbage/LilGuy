@@ -27,6 +27,7 @@ void Graphics_DrawCircle(Vector2 position, float radius, Color color);
 void Graphics_DrawLineSimple(Vector2 a, Vector2 b, Color color);
 void Graphics_DrawLine(Vector2 a, Vector2 b, float width, Color color);
 void Graphics_DrawVector(Vector2 a, Vector2 b, Color color);
+void Graphics_DrawVectorFromPoint(Vector2 point, Vector2 vec, Color color);
 Texture2D Graphics_LoadTextureFromImage(const Image* image);
 void Graphics_UnloadTexture(Texture2D texture);
 void Graphics_DrawTexture(const Texture2D* texture, Rect dest);

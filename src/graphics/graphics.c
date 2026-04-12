@@ -109,6 +109,18 @@ void Graphics_DrawVector(Vector2 a, Vector2 b, Color color)
     Raylib_DrawLineV(b, Vector2_Add(b, Vector2_MultScalar(Vector2_Rotate(arrowVec, -arrowAngle), arrowSize)), color);
 }
 
+void Graphics_DrawVectorFromPoint(Vector2 point, Vector2 vec, Color color)
+{
+    constexpr float arrowSize = 15.0f;
+    constexpr float arrowAngle = 20.0f;
+    Vector2 sum = Vector2_Add(point, vec);
+    Vector2 arrowVec = Vector2_Normalize(Vector2_MultScalar(vec, -1.0f));
+
+    Raylib_DrawLineV(point, sum, color);
+    Raylib_DrawLineV(sum, Vector2_Add(sum, Vector2_MultScalar(Vector2_Rotate(arrowVec, arrowAngle), arrowSize)), color);
+    Raylib_DrawLineV(sum, Vector2_Add(sum, Vector2_MultScalar(Vector2_Rotate(arrowVec, -arrowAngle), arrowSize)), color);
+}
+
 Texture2D Graphics_LoadTextureFromImage(const Image* image)
 {
     return Raylib_LoadTextureFromImage(image);

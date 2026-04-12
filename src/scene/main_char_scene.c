@@ -130,7 +130,7 @@ static void MoveCharacter(Scene* scene, double deltatime)
     constexpr float maxJetpackSpeedX = 400.0f;
     constexpr float maxSpeedY = 1000.0f;
     constexpr float speedDissipationFactor = 0.8f;
-    constexpr float fuelBurnRate = 0.5f;
+    constexpr float fuelBurnRate = 0.4f;
     constexpr float fuelRefillRate = 0.3f;
 
     sceneData->speed.y += gravityAccel * deltatime;
@@ -188,9 +188,14 @@ static void Update(Scene* scene, double deltatime)
 
 static void DrawCharacter(Scene* scene)
 {
+    MainCharSceneData* sceneData = scene->sceneData;
+
     Graphics_SetTransform(&scene->transform);
     Graphics_DrawRectT(Vector2_New(c_bodyWidth, c_bodyHeight), COLOR_PURPLE);
     Graphics_ClearTransform();
+
+    // Draw speed
+    //Graphics_DrawVectorFromPoint(scene->globalTransform.position, sceneData->speed, COLOR_GREEN);
 }
 
 static void DrawUi(Scene* scene)
@@ -249,13 +254,11 @@ static void OnBodyCollision(Scene* scene, CollisionInfo info)
         if (info.collisionRect.y > pos.y)
         {
             scene->transform.position.y -= info.collisionRect.height;
-            //Graphics_DrawVector(Vector2_Add(pos,(Vector2){ 0.0f, 50.0f }), pos, COLOR_GREEN);
         }
         // Up
         else
         {
             scene->transform.position.y += info.collisionRect.height;
-            //Graphics_DrawVector(Vector2_Add(pos,(Vector2){ 0.0f, -50.0f }), pos, COLOR_GREEN);
         }
     }
     // Horizontal collision
@@ -267,13 +270,11 @@ static void OnBodyCollision(Scene* scene, CollisionInfo info)
         if (info.collisionRect.x > pos.x)
         {
             scene->transform.position.x -= info.collisionRect.width;
-            //Graphics_DrawVector(Vector2_Add(pos,(Vector2){ 50.0f, 0.0f }), pos, COLOR_GREEN);
         }
         // Left
         else
         {
             scene->transform.position.x += info.collisionRect.width;
-            //Graphics_DrawVector(Vector2_Add(pos,(Vector2){ -50.0f, 0.0f }), pos, COLOR_GREEN);
         }
     }
 
@@ -339,7 +340,6 @@ Scene* MainCharScene_Create(Scene* parent)
     Scene* onGroundRaycastScene = RaycastScene_Create(scene, Vector2_Down(), c_legLength + c_bodyHeight * 0.5f + 1.0f);
     sceneData->onGroundRaycast = onGroundRaycastScene;
     Scene_AddChild(scene, onGroundRaycastScene);
-
 
     return scene;
 }
