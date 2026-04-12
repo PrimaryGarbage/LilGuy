@@ -6,23 +6,23 @@
 #include "input/input.h"
 #include "main_char_foot_scene.h"
 #include "math_helpers.h"
+#include "raycast_scene.h"
 #include "scene.h"
 #include "scene/scene.h"
 #include "scene_type.h"
 #include "physics/transform.h"
 #include "vector2.h"
 #include "graphics/graphics.h"
-#include "physics/raycast.h"
 #include <math.h>
 
 typedef struct MainCharSceneData {
     Vector2 speed;
     bool onGround;
-    Raycast onGroundRaycast;
     float fuel;
     Scene* leftFoot;
     Scene* rightFoot;
-    Scene* collider;
+    Scene* bodyCollider;
+    Scene* onGroundRaycast;
     bool movingLeftFoot;
     bool movingRightFoot;
 } MainCharSceneData;
@@ -95,6 +95,16 @@ static void MoveFeet(Scene* scene)
     }
 }
 
+static void OnLanding(Scene* scene)
+{
+    MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
+
+    sceneData->leftFoot->transform.position.x = scene->globalTransform.position.x - c_footIdleTargetOffsetX;
+    sceneData->leftFoot->transform.position.y = scene->globalTransform.position.y + c_footGroundTargetOffsetY;
+    sceneData->rightFoot->transform.position.x = scene->globalTransform.position.x + c_footIdleTargetOffsetX;
+    sceneData->rightFoot->transform.position.y = scene->globalTransform.position.y + c_footGroundTargetOffsetY;
+}
+
 static void MoveCharacter(Scene* scene, double deltatime)
 {
     MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
@@ -103,8 +113,8 @@ static void MoveCharacter(Scene* scene, double deltatime)
     constexpr float jumpAccel = 1500.0f;
     constexpr float gravityAccel = 1000.0f;
     constexpr float maxGroundSpeedX = 200.0f;
-    constexpr float maxAirSpeedX = 500.0f;
-    constexpr float maxSpeedY = 2000.0f;
+    constexpr float maxAirSpeedX = 350.0f;
+    constexpr float maxSpeedY = 1000.0f;
     constexpr float speedDissipationFactor = 0.8f;
     constexpr float fuelBurnRate = 0.5f;
     constexpr float fuelRefillRate = 0.3f;
@@ -113,7 +123,9 @@ static void MoveCharacter(Scene* scene, double deltatime)
 
     bool tryingToMove = false;
 
-    sceneData->onGround = Raycast_CheckForCollision(&sceneData->onGroundRaycast, scene->globalTransform.position, NULL);
+    bool onGround = RaycastScene_CheckForCollision(sceneData->onGroundRaycast, NULL);
+    if (onGround != sceneData->onGround) OnLanding(scene);
+    sceneData->onGround = onGround;
 
     if (Input_IsKeyPressed(INPUT_KEY_A)) {
         sceneData->speed.x -= moveAccel * deltatime;
@@ -161,11 +173,6 @@ static void DrawCharacter(Scene* scene)
     Graphics_SetTransform(&scene->transform);
     Graphics_DrawRectT(Vector2_New(c_bodyWidth, c_bodyHeight), COLOR_PURPLE);
     Graphics_ClearTransform();
-
-    // REMOVE
-    MainCharSceneData* sceneData = scene->sceneData;
-    Graphics_DrawVector(scene->globalTransform.position, Vector2_Add(scene->globalTransform.position, 
-        Vector2_MultScalar(sceneData->onGroundRaycast.direction, sceneData->onGroundRaycast.length)), COLOR_GREEN);
 }
 
 static void DrawUi(Scene* scene)
@@ -209,7 +216,7 @@ static void Draw(Scene* scene)
     Graphics_DrawRect(Rect_FromVectors(scene->transform.position, Vector2_Uniform(2.0f)), COLOR_WHITE);
 }
 
-static void OnCollision(Scene* scene, CollisionInfo info)
+static void OnBodyCollision(Scene* scene, CollisionInfo info)
 {
     MainCharSceneData* sceneData = scene->sceneData;
 
@@ -251,6 +258,9 @@ static void OnCollision(Scene* scene, CollisionInfo info)
             //Graphics_DrawVector(Vector2_Add(pos,(Vector2){ -50.0f, 0.0f }), pos, COLOR_GREEN);
         }
     }
+
+    Scene_UpdateGlobalTransform(scene, false);
+    ColliderScene_ForceUpdate(sceneData->bodyCollider);
 }
 
 Scene* MainCharScene_Create(Scene* parent)
@@ -261,7 +271,6 @@ Scene* MainCharScene_Create(Scene* parent)
     sceneData->speed = Vector2_Zero();
     sceneData->onGround = false;
     sceneData->fuel = c_maxFuel;
-    sceneData->onGroundRaycast = Raycast_Create(Vector2_New(0.0f, 1.0f), c_legLength + c_bodyHeight * 0.5f + 1.0f);
 
     scene->sceneData = sceneData;
     scene->type = SCENE_TYPE_MAIN_CHAR;
@@ -273,6 +282,11 @@ Scene* MainCharScene_Create(Scene* parent)
     scene->childrenCount = 0u;
     scene->parent = parent;
 
+    scene->startFunction = NULL;
+    scene->updateFunction = Update;
+    scene->drawFunction = Draw;
+    scene->cleanupFunction = NULL;
+
     Scene_UpdateGlobalTransform(scene, false);
 
     Scene* leftFoot = MainCharFootScene_Create(scene, GetNewFootPosition);
@@ -282,6 +296,9 @@ Scene* MainCharScene_Create(Scene* parent)
 
     sceneData->leftFoot = leftFoot;
     sceneData->rightFoot = rightFoot;
+
+    Scene_AddChild(scene, leftFoot);
+    Scene_AddChild(scene, rightFoot);
 
     Vector2 colliderPosition = {
         .x = -scene->transform.origin.x - 10.0f,
@@ -293,21 +310,18 @@ Scene* MainCharScene_Create(Scene* parent)
     };
 
     Scene* colliderScene = ColliderScene_Create(scene, colliderSize);
-    sceneData->collider = colliderScene;
+    sceneData->bodyCollider = colliderScene;
     colliderScene->transform.position = colliderPosition;
     ColliderScene_SetVisible(colliderScene, true);
-    ColliderScene_SetOnCollisionCallback(colliderScene, OnCollision);
+    ColliderScene_SetOnCollisionCallback(colliderScene, scene, OnBodyCollision);
     ColliderScene_SetCollisionLayers(colliderScene, COLLIDER_LAYER_MAIN_CHAR);
     ColliderScene_SetCollisionScan(colliderScene, COLLIDER_LAYER_WORLD);
-
-    Scene_AddChild(scene, leftFoot);
-    Scene_AddChild(scene, rightFoot);
     Scene_AddChild(scene, colliderScene);
 
-    scene->startFunction = NULL;
-    scene->updateFunction = Update;
-    scene->drawFunction = Draw;
-    scene->cleanupFunction = NULL;
+    Scene* onGroundRaycastScene = RaycastScene_Create(scene, Vector2_Down(), c_legLength + c_bodyHeight * 0.5f + 1.0f);
+    sceneData->onGroundRaycast = onGroundRaycastScene;
+    Scene_AddChild(scene, onGroundRaycastScene);
+
 
     return scene;
 }

@@ -3,7 +3,7 @@
 #include "collider.h"
 #include <math.h>
 
-Raycast Raycast_Create(Vector2 direction, float length)
+Raycast Raycast_New(Vector2 direction, float length)
 {
     direction = Vector2_Normalize(direction);
     

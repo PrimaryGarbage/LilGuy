@@ -43,6 +43,7 @@ set(SCENE_FILES
 	block_scene.c block_scene.h
 	collider_scene.c collider_scene.h
 	main_scene.c main_scene.h
+	raycast_scene.c raycast_scene.h
 )
 
 set(PHYSICS_FILES

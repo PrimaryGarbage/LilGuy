@@ -34,7 +34,7 @@ typedef struct Scene {
 void Scene_Free(Scene* scene);
 void Scene_AddChild(Scene* scene, Scene* child);
 void Scene_UpdateGlobalTransform(Scene* scene, bool recurse);
-void Scene_DefaultInit(Scene* scene);
+void Scene_DefaultInit(Scene* scene, SceneType type);
 
 void Scene_Start(Scene* scene);
 void Scene_Update(Scene* scene, double deltatime);

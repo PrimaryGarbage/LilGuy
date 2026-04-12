@@ -20,6 +20,10 @@ typedef struct Vector2u {
 
 Vector2 Vector2_New(float x, float y);
 Vector2 Vector2_Zero();
+Vector2 Vector2_Up();
+Vector2 Vector2_Down();
+Vector2 Vector2_Right();
+Vector2 Vector2_Left();
 Vector2 Vector2_One();
 Vector2 Vector2_Uniform(float value);
 

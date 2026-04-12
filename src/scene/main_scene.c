@@ -4,13 +4,14 @@
 #include "main_char_scene.h"
 #include "scene.h"
 #include "graphics/graphics.h"
+#include "scene_type.h"
 #include <stdlib.h>
 
 Scene* MainScene_Create()
 {
     Scene* scene = malloc(sizeof(Scene));
     
-    Scene_DefaultInit(scene);
+    Scene_DefaultInit(scene, SCENE_TYPE_MAIN);
 
     Vector2 screenSize = Graphics_GetScreenSize();
 
