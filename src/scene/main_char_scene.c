@@ -112,8 +112,8 @@ static void MoveCharacter(Scene* scene, double deltatime)
     constexpr float moveAccel = 1000.0f;
     constexpr float jumpAccel = 1500.0f;
     constexpr float gravityAccel = 1000.0f;
-    constexpr float maxGroundSpeedX = 200.0f;
-    constexpr float maxAirSpeedX = 350.0f;
+    constexpr float maxSpeedX = 200.0f;
+    constexpr float maxJetpackSpeedX = 500.0f;
     constexpr float maxSpeedY = 1000.0f;
     constexpr float speedDissipationFactor = 0.8f;
     constexpr float fuelBurnRate = 0.5f;
@@ -128,27 +128,30 @@ static void MoveCharacter(Scene* scene, double deltatime)
     sceneData->onGround = onGround;
 
     if (Input_IsKeyPressed(INPUT_KEY_A)) {
-        sceneData->speed.x -= moveAccel * deltatime;
         tryingToMove = true;
+        sceneData->speed.x -= moveAccel * deltatime;
     }
     if (Input_IsKeyPressed(INPUT_KEY_D)) {
-        sceneData->speed.x += moveAccel * deltatime;
         tryingToMove = true;
+        sceneData->speed.x += moveAccel * deltatime;
     }
     if (Input_IsKeyPressed(INPUT_KEY_SPACE) && sceneData->fuel > 0.0f) {
-        sceneData->fuel -= fuelBurnRate * deltatime;
-        sceneData->speed.y -= jumpAccel * deltatime;
-        sceneData->onGround = false;
-    }
-    else if (sceneData->fuel < c_maxFuel)
-    {
-        sceneData->fuel += fuelRefillRate * deltatime;
+        tryingToMove = true;
+        if (sceneData->fuel > 0.0f)
+            sceneData->speed.y -= jumpAccel * deltatime;
     }
 
+    bool jetpacking = tryingToMove && !onGround && sceneData->fuel > 0.0f;
+
+    if (jetpacking) 
+        sceneData->fuel -= fuelBurnRate * deltatime;
+    else if (sceneData->fuel < c_maxFuel) 
+        sceneData->fuel += fuelRefillRate * deltatime;
+            
     if (!tryingToMove)
         sceneData->speed.x *= speedDissipationFactor;
 
-    float speedLimitX = sceneData->onGround ? maxGroundSpeedX : maxAirSpeedX;
+    float speedLimitX = jetpacking ? maxJetpackSpeedX : maxSpeedX;
 
     sceneData->speed.x = Clampf(-speedLimitX, speedLimitX, sceneData->speed.x);
     sceneData->speed.y = Clampf(-maxSpeedY, maxSpeedY, sceneData->speed.y);
