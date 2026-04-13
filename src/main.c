@@ -1,3 +1,4 @@
+#include "debug.h"
 #include "graphics/image.h"
 #include "input/input.h"
 #include "input/input_button.h"
@@ -35,6 +36,8 @@ int main(int argc, char* argv[])
     Scene* rootScene = MainScene_Create();
 
     Scene_Start(rootScene);
+
+    Debug_PrintSceneTree(rootScene);
 
     while(!Window_ShouldClose())
     {

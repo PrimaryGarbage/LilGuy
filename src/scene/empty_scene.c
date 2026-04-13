@@ -5,20 +5,7 @@ Scene* EmptyScene_Create()
 {
     Scene* scene = malloc(sizeof(Scene));
 
-    scene->type = SCENE_TYPE_EMPTY;
-    scene->transform.position = Vector2_Zero();
-    scene->transform.scale = Vector2_Uniform(1.0f);
-    scene->transform.origin = Vector2_Zero();
-    scene->transform.rotation = 0.0f;
-    scene->transform.topLevel = false;
-    scene->childrenCount = 0u;
-    scene->parent = NULL;
-
-    Scene_UpdateGlobalTransform(scene, false);
-
-    scene->startFunction = NULL;
-    scene->updateFunction = NULL;
-    scene->drawFunction = NULL;
+    Scene_DefaultInit(scene, SCENE_TYPE_EMPTY, "Empty Scene");
 
     return scene;
 }

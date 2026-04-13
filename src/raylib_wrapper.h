@@ -41,7 +41,6 @@ void Raylib_DrawLineV(Vector2 startPos, Vector2 endPos, Color color);
 void Raylib_DrawLineEx(Vector2 startPos, Vector2 endPos, float thick, Color color);
 void Raylib_DrawCircleV(Vector2 position, float radius, Color color);
 
-
 // Collision
 bool Raylib_CheckCollisionRects(Rect a, Rect b);
 bool Raylib_CheckCollisionPointRect(Vector2 point, Rect rect);

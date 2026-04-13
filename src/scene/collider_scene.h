@@ -6,7 +6,7 @@
 
 typedef void (*ColliderScene_OnCollisionCallback)(Scene* scene, CollisionInfo info);
 
-Scene* ColliderScene_Create(Scene* parent, Vector2 size);
+Scene* ColliderScene_Create(Scene* parent, Vector2 size, const char* name);
 void ColliderScene_SetRect(Scene* scene, Rect rect);
 void ColliderScene_SetOnCollisionCallback(Scene* scene, Scene* callbackOwner, ColliderScene_OnCollisionCallback callback);
 void ColliderScene_SetVisible(Scene* scene, bool on);

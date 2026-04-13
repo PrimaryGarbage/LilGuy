@@ -10,6 +10,8 @@ typedef enum SceneType {
     SCENE_TYPE_MAIN,
     SCENE_TYPE_COLLIDER,
     SCENE_TYPE_RAYCAST,
+    SCENE_TYPE_MAIN_CHAR_HAND,
+    SCENE_TYPE_MAIN_CHAR_EYE,
 } SceneType;
 
 #endif // __SCENE_TAGS_H__

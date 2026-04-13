@@ -54,7 +54,7 @@ static void Draw(Scene* scene)
     Graphics_DrawSquare(scene->globalTransform.position, 1.0f, COLOR_WHITE);
 }
 
-Scene* MainCharFootScene_Create(Scene* parent, GetNewFootPositionCallback footPositionCallback)
+Scene* MainCharFootScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
 
@@ -72,6 +72,7 @@ Scene* MainCharFootScene_Create(Scene* parent, GetNewFootPositionCallback footPo
     scene->transform.rotation = 0.0f;
     scene->transform.topLevel = false;
     scene->childrenCount = 0u;
+    scene->name = "Main Char Foot Scene";
     scene->parent = parent;
     
     scene->startFunction = NULL;

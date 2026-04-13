@@ -42,7 +42,7 @@ static void SearchCollisions(Scene* scene)
     }
 }
 
-static void Update(Scene* scene, double deltatime)
+static void Update(Scene* scene, double _)
 {
     SearchCollisions(scene);
 }
@@ -67,7 +67,7 @@ static void Cleanup(Scene* scene)
     Collider_Unregister(&sceneData->collider);
 }
 
-Scene* ColliderScene_Create(Scene* parent, Vector2 size)
+Scene* ColliderScene_Create(Scene* parent, Vector2 size, const char* name)
 {
     Scene* scene = malloc(sizeof(Scene));
 
@@ -89,6 +89,7 @@ Scene* ColliderScene_Create(Scene* parent, Vector2 size)
     scene->transform.rotation = 0.0f;
     scene->transform.topLevel = false;
     scene->childrenCount = 0u;
+    scene->name = name;
     scene->parent = parent;
 
     Scene_UpdateGlobalTransform(scene, false);

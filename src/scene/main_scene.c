@@ -11,17 +11,17 @@ Scene* MainScene_Create()
 {
     Scene* scene = malloc(sizeof(Scene));
     
-    Scene_DefaultInit(scene, SCENE_TYPE_MAIN);
+    Scene_DefaultInit(scene, SCENE_TYPE_MAIN, "Main Scene");
 
     Vector2 screenSize = Graphics_GetScreenSize();
 
-    Scene* upperWorldColliderScene = ColliderScene_Create(scene, screenSize);
+    Scene* upperWorldColliderScene = ColliderScene_Create(scene, screenSize, "Upper Screen Bound Collider");
     upperWorldColliderScene->transform.position.y = -screenSize.y;
-    Scene* lowerWorldColliderScene = ColliderScene_Create(scene, screenSize);
+    Scene* lowerWorldColliderScene = ColliderScene_Create(scene, screenSize, "Lower Screen Bound Collider");
     lowerWorldColliderScene->transform.position.y = screenSize.y;
-    Scene* leftWorldColliderScene = ColliderScene_Create(scene, screenSize);
+    Scene* leftWorldColliderScene = ColliderScene_Create(scene, screenSize, "Left Screen Bound Collider");
     leftWorldColliderScene->transform.position.x = -screenSize.x;
-    Scene* rightWorldColliderScene = ColliderScene_Create(scene, screenSize);
+    Scene* rightWorldColliderScene = ColliderScene_Create(scene, screenSize, "Right Screen Bound Collider");
     rightWorldColliderScene->transform.position.x = screenSize.x;
     Scene_AddChild(scene, upperWorldColliderScene);
     Scene_AddChild(scene, lowerWorldColliderScene);

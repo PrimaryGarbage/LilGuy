@@ -35,9 +35,10 @@ Scene* BlockScene_Create(Scene* parent, Rect rect, Color color)
     scene->transform.rotation = 0.0f;
     scene->transform.topLevel = false;
     scene->childrenCount = 0u;
-    scene->parent = NULL;
+    scene->name = "Block Scene";
+    scene->parent = parent;
 
-    Scene* colliderScene = ColliderScene_Create(scene, Rect_GetSize(&rect));
+    Scene* colliderScene = ColliderScene_Create(scene, Rect_GetSize(&rect), "Block Scene Collider");
     ColliderScene_SetCollisionLayers(colliderScene, COLLIDER_LAYER_WORLD);
     ColliderScene_SetCollisionScan(colliderScene, COLLIDER_LAYER_WORLD);
 

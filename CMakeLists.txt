@@ -16,6 +16,7 @@ set(SRC_FILES
 	raylib_wrapper.c raylib_wrapper.h
 	tween.c tween.h
 	list.c list.h
+	debug.c debug.h
 )
 
 set(WINDOW_FILES
@@ -39,6 +40,8 @@ set(SCENE_FILES
 	scene.c scene.h
 	main_char_scene.c main_char_scene.h
 	main_char_foot_scene.c main_char_foot_scene.h
+	main_char_hand_scene.c main_char_hand_scene.h
+	main_char_eye_scene.c main_char_eye_scene.h
 	empty_scene.c empty_scene.h
 	block_scene.c block_scene.h
 	collider_scene.c collider_scene.h
@@ -62,6 +65,8 @@ list(TRANSFORM PHYSICS_FILES PREPEND "src/physics/")
 add_executable(${PROJECT_NAME} ${SRC_FILES} ${WINDOW_FILES} ${GRAPHICS_FILES} ${INPUT_FILES} ${SCENE_FILES} ${PHYSICS_FILES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX -d)
+
+target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Werror=return-type)
 
 ### Add include directories here ###
 target_include_directories(${PROJECT_NAME} PRIVATE external src external/minifb/include external/stb external/raylib/include)

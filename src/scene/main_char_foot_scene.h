@@ -5,7 +5,7 @@
 
 typedef Vector2(*GetNewFootPositionCallback)(Scene* scene);
 
-Scene* MainCharFootScene_Create(Scene* parent, GetNewFootPositionCallback getNewFootPositionCallback);
+Scene* MainCharFootScene_Create(Scene* parent);
 void MainCharFootScene_MoveFoot(Scene* scene, Vector2 point);
 bool MainCharFootScene_InAnimation(Scene* scene);
 

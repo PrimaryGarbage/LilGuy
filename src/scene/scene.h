@@ -28,13 +28,14 @@ typedef struct Scene {
     SceneUpdateFunction updateFunction;
     SceneDrawFunction drawFunction;
     SceneCleanupFunction cleanupFunction;
+    const char* name;
     void* sceneData;
 } Scene;
 
 void Scene_Free(Scene* scene);
 void Scene_AddChild(Scene* scene, Scene* child);
 void Scene_UpdateGlobalTransform(Scene* scene, bool recurse);
-void Scene_DefaultInit(Scene* scene, SceneType type);
+void Scene_DefaultInit(Scene* scene, SceneType type, const char* name);
 
 void Scene_Start(Scene* scene);
 void Scene_Update(Scene* scene, double deltatime);

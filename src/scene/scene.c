@@ -83,12 +83,13 @@ void Scene_Draw(Scene* scene)
     Scene_DrawChildren(scene);
 }
 
-void Scene_DefaultInit(Scene* scene, SceneType type)
+void Scene_DefaultInit(Scene* scene, SceneType type, const char* name)
 {
     scene->sceneData = NULL;
     scene->type = type;
     scene->childrenCount = 0u;
     scene->transform = Transform_Zero();
+    scene->name = name;
 
     scene->startFunction = NULL;
     scene->updateFunction = NULL;

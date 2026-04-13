@@ -26,7 +26,7 @@ void Update(Scene* scene, double deltatime)
 Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length)
 {
     Scene* scene = malloc(sizeof(Scene));
-    Scene_DefaultInit(scene, SCENE_TYPE_RAYCAST);
+    Scene_DefaultInit(scene, SCENE_TYPE_RAYCAST, "Raycast Scene");
     RaycastSceneData* sceneData = malloc(sizeof(RaycastSceneData));
     sceneData->raycast = Raycast_New(direction, length);
     sceneData->onCollisionCallback = NULL;
