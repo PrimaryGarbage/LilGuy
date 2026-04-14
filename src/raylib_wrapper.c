@@ -189,7 +189,7 @@ bool Raylib_IsMouseButtonPressed(int button)
 
 bool Raylib_IsMouseButtonReleased(int button)
 {
-    return Raylib_IsMouseButtonReleased(button);
+    return IsMouseButtonReleased(button);
 }
 
 bool Raylib_IsMouseButtonDown(int button)
@@ -207,9 +207,19 @@ Image Raylib_LoadImageFromScreen()
     return RlImageToImage(LoadImageFromScreen());
 }
 
+Image Raylib_LoadImage(const char* path)
+{
+    return RlImageToImage(LoadImage(path));
+}
+
 Texture2D Raylib_LoadTextureFromImage(const Image* image)
 {
     return RlTextureToTexture(LoadTextureFromImage(ImageToRlImage(*image)));
+}
+
+Texture2D Raylib_LoadTexture(const char* imagePath)
+{
+    return RlTextureToTexture(LoadTexture(imagePath));
 }
 
 void Raylib_UnloadTexture(Texture2D texture)

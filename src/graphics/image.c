@@ -3,6 +3,7 @@
 #include "image.h"
 #include "color.h"
 #include "result.h"
+#include "raylib_wrapper.h"
 
 void Image_Free(Image* image)
 {
@@ -44,4 +45,9 @@ void Image_SwapRAndBChannels(Image* image)
 {
     for(size_t i = 0u; i < image->width * image->height; ++i)
         image->data[i] = Color_SwapRAndB(image->data[i]);
+}
+
+Image Image_Load(const char* path)
+{
+    return Raylib_LoadImage(path);
 }

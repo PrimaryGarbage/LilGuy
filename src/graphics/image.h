@@ -44,5 +44,6 @@ u32 Image_SampleNormalized(const Image* image, float x, float y);
 u32 Image_SampleNormalizedV(const Image* image, Vector2 point);
 Image Image_CreateResized(const Image* image, u32 newWidth, u32 newHeight);
 void Image_SwapRAndBChannels(Image* image);
+Image Image_Load(const char* path);
 
 #endif // __IMAGE_H__

@@ -12,7 +12,7 @@
 #include "timer.h"
 #include "logging.h"
 
-int main(int argc, char* argv[])
+int main()
 {
     RandomInit();
     Timer globalTimer = Timer_Create();

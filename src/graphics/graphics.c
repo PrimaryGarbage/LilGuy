@@ -126,6 +126,11 @@ Texture2D Graphics_LoadTextureFromImage(const Image* image)
     return Raylib_LoadTextureFromImage(image);
 }
 
+Texture2D Graphics_LoadTexture(const char* imagePath)
+{
+    return Raylib_LoadTexture(imagePath);
+}
+
 void Graphics_UnloadTexture(Texture2D texture)
 {
     Raylib_UnloadTexture(texture);
@@ -134,6 +139,13 @@ void Graphics_UnloadTexture(Texture2D texture)
 void Graphics_DrawTexture(const Texture2D* texture, Rect dest)
 {
     Raylib_DrawTexturePro(*texture, (Rect){ 0.0f, 0.0f, texture->width, texture->height }, dest, (Vector2){ 0.0f, 0.0f }, 0.0f, COLOR_WHITE);
+}
+
+void Graphics_DrawTextureT(const Texture2D* texture)
+{
+    Rect src = (Rect){ 0.0f, 0.0f, texture->width, texture->height };
+    Rect dest = (Rect){ s_transform->position.x, s_transform->position.y, texture->width, texture->height };
+    Raylib_DrawTexturePro(*texture, src, dest, s_transform->origin, s_transform->rotation, COLOR_WHITE);
 }
 
 void Graphics_DrawTextureFullscreen(const Texture2D* texture)

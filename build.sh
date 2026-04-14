@@ -21,6 +21,11 @@ BUILD_TYPE=Debug
 POSTFIX='-d'
 GENERATOR=Ninja
 
+copy_res_dir() {
+	echo -e "Copying res directory..."
+	cp -r res $CMAKE_BUILD_DIR
+}
+
 configure() {
 	echo -e "Configuring Cmake..."
 	CMAKE_VARS=( \
@@ -47,7 +52,7 @@ configure() {
 
 build() {
 	echo -e "Building..."
-	{ cmake --build $CMAKE_BUILD_DIR --config $BUILD_TYPE --verbose; } \
+	{ cmake --build $CMAKE_BUILD_DIR --config $BUILD_TYPE --verbose; copy_res_dir; } \
 	|| { configure && cmake --build $CMAKE_BUILD_DIR --config $BUILD_TYPE --verbose; } \
 	|| { echo -e "${RED}Building failure${NOCOLOR}"; false; }
 }

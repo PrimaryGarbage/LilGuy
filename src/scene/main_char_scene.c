@@ -24,6 +24,7 @@ typedef struct MainCharSceneData {
     Vector2 speed;
     bool onGround;
     float fuel;
+    Texture2D bodyTexture;
     Scene* leftFoot;
     Scene* rightFoot;
     Scene* leftHand;
@@ -33,21 +34,14 @@ typedef struct MainCharSceneData {
     Scene* bodyCollider;
     Scene* onGroundRaycast;
     float elapsedSinceLastBlink;
+    float bodyToFootMaxDistance;
     bool movingLeftFoot;
     bool movingRightFoot;
 } MainCharSceneData;
 
 constexpr float c_maxFuel = 1.0f;
-constexpr float c_bodyHeight = 30.0f;
-constexpr float c_bodyWidth = 10.0f;
-constexpr float c_legLength = 10.0f;
-constexpr float c_handOffset = 15.0f;
-constexpr float c_eyeOffsetX = 4.0f;
-constexpr float c_eyeOffsetY = 20.0f;
-constexpr float c_footIdleTargetOffsetX = 10.0f;
-constexpr float c_footGroundTargetOffsetY = c_legLength + c_bodyHeight * 0.5f;
+constexpr float c_idleDistanceBetweenFeet = 10.0f;
 constexpr double c_landingAnimationLength = 0.2f;
-constexpr float c_blinkProbability = 0.05f;
 
 static Vector2 GetNewFootPosition(Scene* scene)
 {
@@ -62,12 +56,12 @@ static Vector2 GetNewFootPosition(Scene* scene)
     if (sceneData->onGround)
     {
         newPos.x += Signf(sceneData->speed.x) * c_footStrideX;
-        newPos.y += c_footGroundTargetOffsetY;
+        newPos.y += sceneData->bodyToFootMaxDistance;
     }
     else
     {
-        newPos.x += c_footIdleTargetOffsetX;
-        newPos.y += c_footGroundTargetOffsetY;
+        newPos.x += c_idleDistanceBetweenFeet;
+        newPos.y += sceneData->bodyToFootMaxDistance;
     }
 
     return newPos;
@@ -75,11 +69,13 @@ static Vector2 GetNewFootPosition(Scene* scene)
 
 static void Blink(Scene* scene, double deltatime)
 {
+    constexpr float blinkProbability = 0.05f;
+
     MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
 
     sceneData->elapsedSinceLastBlink += deltatime;
 
-    if (c_blinkProbability * deltatime * sceneData->elapsedSinceLastBlink > RandomFloat())
+    if (blinkProbability * deltatime * sceneData->elapsedSinceLastBlink > RandomFloat())
     {
         MainCharEyeScene_Blink(sceneData->leftEye);
         MainCharEyeScene_Blink(sceneData->rightEye);
@@ -117,10 +113,10 @@ static void MoveFeet(Scene* scene)
     else
     {
         const float lerpWeight = 0.5f;
-        sceneData->leftFoot->transform.position.x = Lerpf(sceneData->leftFoot->transform.position.x, scene->globalTransform.position.x - c_footIdleTargetOffsetX, lerpWeight);
-        sceneData->leftFoot->transform.position.y = Lerpf(sceneData->leftFoot->transform.position.y, scene->globalTransform.position.y + c_footGroundTargetOffsetY, lerpWeight);
-        sceneData->rightFoot->transform.position.x = Lerpf(sceneData->rightFoot->transform.position.x, scene->globalTransform.position.x + c_footIdleTargetOffsetX, lerpWeight);
-        sceneData->rightFoot->transform.position.y = Lerpf(sceneData->rightFoot->transform.position.y, scene->globalTransform.position.y + c_footGroundTargetOffsetY, lerpWeight);
+        sceneData->leftFoot->transform.position.x = Lerpf(sceneData->leftFoot->transform.position.x, scene->globalTransform.position.x - c_idleDistanceBetweenFeet, lerpWeight);
+        sceneData->leftFoot->transform.position.y = Lerpf(sceneData->leftFoot->transform.position.y, scene->globalTransform.position.y + sceneData->bodyToFootMaxDistance, lerpWeight);
+        sceneData->rightFoot->transform.position.x = Lerpf(sceneData->rightFoot->transform.position.x, scene->globalTransform.position.x + c_idleDistanceBetweenFeet, lerpWeight);
+        sceneData->rightFoot->transform.position.y = Lerpf(sceneData->rightFoot->transform.position.y, scene->globalTransform.position.y + sceneData->bodyToFootMaxDistance, lerpWeight);
     }
 }
 
@@ -137,10 +133,10 @@ static void OnLanding(Scene* scene)
 {
     MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
 
-    sceneData->leftFoot->transform.position.x = scene->globalTransform.position.x - c_footIdleTargetOffsetX;
-    sceneData->leftFoot->transform.position.y = scene->globalTransform.position.y + c_footGroundTargetOffsetY;
-    sceneData->rightFoot->transform.position.x = scene->globalTransform.position.x + c_footIdleTargetOffsetX;
-    sceneData->rightFoot->transform.position.y = scene->globalTransform.position.y + c_footGroundTargetOffsetY;
+    sceneData->leftFoot->transform.position.x = scene->globalTransform.position.x - c_idleDistanceBetweenFeet;
+    sceneData->leftFoot->transform.position.y = scene->globalTransform.position.y + sceneData->bodyToFootMaxDistance;
+    sceneData->rightFoot->transform.position.x = scene->globalTransform.position.x + c_idleDistanceBetweenFeet;
+    sceneData->rightFoot->transform.position.y = scene->globalTransform.position.y + sceneData->bodyToFootMaxDistance;
 
     Tween_CreateFunction(c_landingAnimationLength, scene, LandingTweenAnimationCallback);
 }
@@ -216,10 +212,11 @@ static void Update(Scene* scene, double deltatime)
 
 static void DrawCharacter(Scene* scene)
 {
-    //MainCharSceneData* sceneData = scene->sceneData;
+    MainCharSceneData* sceneData = scene->sceneData;
 
     Graphics_SetTransform(&scene->transform);
-    Graphics_DrawRectT(Vector2_New(c_bodyWidth, c_bodyHeight), COLOR_PURPLE);
+    //Graphics_DrawRectT(Vector2_New(c_bodyWidth, c_bodyHeight), COLOR_PURPLE);
+    Graphics_DrawTextureT(&sceneData->bodyTexture);
     Graphics_ClearTransform();
 
     // Draw speed
@@ -240,14 +237,14 @@ static void DrawUi(Scene* scene)
 
     Rect fuelMeterBackgroundRect = {
         .x = scene->globalTransform.position.x - fuelMeterOffsetX,
-        .y = scene->globalTransform.position.y - c_bodyHeight,
+        .y = scene->globalTransform.position.y - sceneData->bodyTexture.height,
         .width = fuelMeterWidth,
         .height = fuelMeterHeight
     };
 
     Rect fuelMeterRect = {
         .x = scene->globalTransform.position.x - fuelMeterOffsetX,
-        .y = scene->globalTransform.position.y - c_bodyHeight,
+        .y = scene->globalTransform.position.y - sceneData->bodyTexture.height,
         .width = fuelMeterWidth,
         .height = fuelMeterHeight * Clampf(0.0f, c_maxFuel, sceneData->fuel)
     };
@@ -310,21 +307,32 @@ static void OnBodyCollision(Scene* scene, CollisionInfo info)
     ColliderScene_ForceUpdate(sceneData->bodyCollider);
 }
 
+static void Cleanup(Scene* scene)
+{
+    MainCharSceneData* sceneData = scene->sceneData;
+    Graphics_UnloadTexture(sceneData->bodyTexture);
+}
+
 Scene* MainCharScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
+
+    constexpr float legLength = 10.0f;
+    constexpr float handsDistance = 20.0f;
 
     MainCharSceneData* sceneData = malloc(sizeof(MainCharSceneData));
     sceneData->speed = Vector2_Zero();
     sceneData->onGround = false;
     sceneData->fuel = c_maxFuel;
     sceneData->elapsedSinceLastBlink = 0.0f;
+    sceneData->bodyTexture = Graphics_LoadTexture("res/images/main_char/MainCharBody.png");
+    sceneData->bodyToFootMaxDistance = sceneData->bodyTexture.height * 0.5f + legLength;
 
     scene->sceneData = sceneData;
     scene->type = SCENE_TYPE_MAIN_CHAR;
     scene->transform.position = Vector2_Zero();
     scene->transform.scale = Vector2_New(1.0f, 1.0f);
-    scene->transform.origin = Vector2_New(c_bodyWidth * 0.5f, c_bodyHeight * 0.5f + c_legLength);
+    scene->transform.origin = Vector2_New(sceneData->bodyTexture.width * 0.5f, sceneData->bodyTexture.height * 0.5f + legLength);
     scene->transform.rotation = 0.0f;
     scene->transform.topLevel = false;
     scene->childrenCount = 0u;
@@ -334,7 +342,7 @@ Scene* MainCharScene_Create(Scene* parent)
     scene->startFunction = NULL;
     scene->updateFunction = Update;
     scene->drawFunction = Draw;
-    scene->cleanupFunction = NULL;
+    scene->cleanupFunction = Cleanup;
 
     Scene_UpdateGlobalTransform(scene, false);
 
@@ -349,18 +357,20 @@ Scene* MainCharScene_Create(Scene* parent)
 
     Scene* leftHand = MainCharHandScene_Create(scene);
     Scene* rightHand = MainCharHandScene_Create(scene);
-    leftHand->transform.position.x -= c_handOffset;
-    rightHand->transform.position.x += c_handOffset;
+    leftHand->transform.position.x -= handsDistance;
+    rightHand->transform.position.x += handsDistance;
     sceneData->leftHand = leftHand;
     sceneData->rightHand = rightHand;
     Scene_AddChild(scene, leftHand);
     Scene_AddChild(scene, rightHand);
 
+    constexpr float c_eyeOffsetX = 4.0f;
+    constexpr float c_eyeOffsetY = 20.0f;
     Scene* leftEye = MainCharEyeScene_Create(scene);
     Scene* rightEye = MainCharEyeScene_Create(scene);
-    leftEye->transform.position.y -= c_bodyHeight * 0.5f + c_eyeOffsetY;
+    leftEye->transform.position.y -= sceneData->bodyTexture.height * 0.5f + c_eyeOffsetY;
     leftEye->transform.position.x -= c_eyeOffsetX;
-    rightEye->transform.position.y -= c_bodyHeight * 0.5f + c_eyeOffsetY;
+    rightEye->transform.position.y -= sceneData->bodyTexture.height * 0.5f + c_eyeOffsetY;
     rightEye->transform.position.x += c_eyeOffsetX;
     sceneData->leftEye = leftEye;
     sceneData->rightEye = rightEye;
@@ -385,7 +395,7 @@ Scene* MainCharScene_Create(Scene* parent)
     ColliderScene_SetCollisionScan(colliderScene, COLLIDER_LAYER_WORLD);
     Scene_AddChild(scene, colliderScene);
 
-    Scene* onGroundRaycastScene = RaycastScene_Create(scene, Vector2_Down(), c_legLength + c_bodyHeight * 0.5f + 1.0f);
+    Scene* onGroundRaycastScene = RaycastScene_Create(scene, Vector2_Down(), legLength + sceneData->bodyTexture.height * 0.5f + 1.0f);
     sceneData->onGroundRaycast = onGroundRaycastScene;
     Scene_AddChild(scene, onGroundRaycastScene);
 
