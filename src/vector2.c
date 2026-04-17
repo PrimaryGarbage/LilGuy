@@ -9,12 +9,12 @@ Vector2 Vector2_Zero()
 
 Vector2 Vector2_Up()
 {
-    return (Vector2) { 0.0f , -1.0f };
+    return (Vector2) { 0.0f , 1.0f };
 }
 
 Vector2 Vector2_Down()
 {
-    return (Vector2) { 0.0f , 1.0f };
+    return (Vector2) { 0.0f , -1.0f };
 }
 
 Vector2 Vector2_Right()
@@ -97,6 +97,11 @@ Vector2 Vector2_Rotate(Vector2 vec, float angle)
         .x = cos * vec.x - sin * vec.y,
         .y = sin * vec.x + cos * vec.y
     };
+}
+
+float Vector2_Angle(Vector2 vec)
+{
+    return RadToDeg(atan2f(vec.y, vec.x));
 }
 
 Vector2 Vector2_Normalize(Vector2 vec)

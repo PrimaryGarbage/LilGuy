@@ -1,4 +1,6 @@
 #include "raycast_scene.h"
+#include "graphics/color.h"
+#include "graphics/graphics.h"
 #include "physics/raycast.h"
 #include "scene.h"
 #include "scene/scene.h"
@@ -9,9 +11,10 @@ typedef struct RaycastSceneData {
     Raycast raycast;
     RaycastScene_OnCollisionCallback onCollisionCallback;
     Scene* onCollisioonCallbackOwner;
+    bool visible;
 } RaycastSceneData;
 
-void Update(Scene* scene, double deltatime)
+void Update(Scene* scene, double _)
 {
     RaycastSceneData* sceneData = scene->sceneData;
 
@@ -23,6 +26,15 @@ void Update(Scene* scene, double deltatime)
     }
 }
 
+void Draw(Scene* scene)
+{
+    RaycastSceneData* sceneData = scene->sceneData;
+
+    if (!sceneData->visible) return;
+
+    Graphics_DrawVectorFromPointW(scene->globalTransform.position, Vector2_MultScalar(sceneData->raycast.direction, sceneData->raycast.length), COLOR_GREEN);
+}
+
 Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length)
 {
     Scene* scene = malloc(sizeof(Scene));
@@ -30,9 +42,13 @@ Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length)
     RaycastSceneData* sceneData = malloc(sizeof(RaycastSceneData));
     sceneData->raycast = Raycast_New(direction, length);
     sceneData->onCollisionCallback = NULL;
+    sceneData->visible = false;
     scene->sceneData = sceneData;
 
+    scene->parent = parent;
+
     scene->updateFunction = Update;
+    scene->drawFunction = Draw;
 
     return scene;
 }
@@ -62,4 +78,11 @@ bool RaycastScene_CheckForCollision(Scene* scene, Vector2* collisionPoint_out)
     }
 
     return false;
+}
+
+void RaycastScene_SetVisible(Scene* scene, bool on)
+{
+    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_RAYCAST);
+
+    ((RaycastSceneData*)scene->sceneData)->visible = on;
 }

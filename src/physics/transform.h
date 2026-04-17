@@ -2,6 +2,7 @@
 #define __TRANSFORM_H__
 
 #include "vector2.h"
+#include <assert.h>
 
 typedef struct Transform {
     Vector2 position;
@@ -17,7 +18,7 @@ static inline Transform Transform_Zero()
         .position = Vector2_Zero(),
         .origin = Vector2_Zero(),
         .rotation = 0.0f,
-        .scale = Vector2_Uniform(1.0f)
+        .scale = Vector2_Uniform(1.0f),
     };
 }
 
@@ -27,7 +28,7 @@ static inline Transform Transform_Combine(Transform* left, Transform* right)
         .position = Vector2_Add(left->position, right->position),
         .origin = right->origin,
         .rotation = left->rotation + right->rotation,
-        .scale = Vector2_Mult(left->scale, right->scale)
+        .scale = Vector2_Mult(left->scale, right->scale),
     };
 }
 

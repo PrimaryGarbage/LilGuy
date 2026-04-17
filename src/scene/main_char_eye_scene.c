@@ -33,7 +33,7 @@ static void Draw(Scene* scene)
 {
     MainCharEyeSceneData* sceneData = scene->sceneData;
 
-    Graphics_SetTransform(&scene->globalTransform);
+    Graphics_SetTransformW(&scene->globalTransform);
     Graphics_DrawRectT(c_eyeSize, COLOR_WHITE);
     Graphics_DrawRectT((Vector2) { c_eyeSize.x, sceneData->eyelidHeight }, COLOR_BLACK);
     Graphics_ClearTransform();

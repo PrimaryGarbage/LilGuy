@@ -30,6 +30,7 @@ inline static Color Color_New(u8 r, u8 g, u8 b, u8 a)
     return (Color){ .r = r, .g = g, .b = b, .a = a };
 }
 
+
 inline static u8 Color_ExtractA(u32 color)
 {
     #ifdef COLOR_SCHEME_BGRA
@@ -77,11 +78,11 @@ inline static u8 Color_ExtractB(u32 color)
 inline static u32 Color_Pack(Color color)
 {
     #ifdef COLOR_SCHEME_BGRA
-        return ((u32)(color.a)) << 24 | ((u32)(color.r)) << 16 | ((u32)(color.g)) << 8 | (u32)(color.b);
+        return (u32)(color.a) << 24 | (u32)(color.r) << 16 | (u32)(color.g) << 8 | (u32)(color.b);
     #elifdef COLOR_SCHEME_RGBA
-        return ((u32)(color.a)) << 24 | ((u32)(color.b)) << 16 | ((u32)(color.g * 255.0f)) << 8 | (u32)(color.r);
+        return (u32)(color.a) << 24 | (u32)(color.b) << 16 | (u32)(color.g) << 8 | (u32)(color.r);
     #else // Assume RGBA
-        ((u32)(color.a)) << 24 | ((u32)(color.b)) << 16 | ((u32)(color.g)) << 8 | (u32)(color.r);
+        (u32)(color.a) << 24 | (u32)(color.b) << 16 | (u32)(color.g) << 8 | (u32)(color.r);
     #endif
 }
 
@@ -93,6 +94,11 @@ inline static Color Color_Unpack(u32 color)
         .g = Color_ExtractG(color),
         .b = Color_ExtractB(color)
     };
+}
+
+inline static Color Color_FromHex(u32 hex)
+{
+    return Color_Unpack(hex);
 }
 
 inline static Color Color_Blend(Color fg, Color bg)

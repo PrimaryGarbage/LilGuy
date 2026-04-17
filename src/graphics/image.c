@@ -51,3 +51,13 @@ Image Image_Load(const char* path)
 {
     return Raylib_LoadImage(path);
 }
+
+void Image_FlipVertical(Image* image)
+{
+    Raylib_ImageFlipVertical(image);
+}
+
+void Image_FlipHorizontal(Image* image)
+{
+    Raylib_ImageFlipHorizontal(image);
+}

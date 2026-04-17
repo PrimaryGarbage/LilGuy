@@ -2,6 +2,7 @@
 #include "raylib_wrapper.h"
 #include "result.h"
 #include "logging.h"
+#include "graphics/graphics.h"
 
 #define STATIC_COLLIDER_COUNT_MAX 256
 
@@ -22,7 +23,7 @@ const Collider* Collider_CheckForCollision(const Collider* collider)
     {
         if(s_colliders[i] && s_colliders[i] != collider)
         {
-            if (Raylib_CheckCollisionRects(collider->rect, s_colliders[i]->rect) && collider->scan & s_colliders[i]->layers)
+            if (Raylib_CheckCollisionRects(Graphics_WorldToScreenRect(collider->rect), Graphics_WorldToScreenRect(s_colliders[i]->rect)) && collider->scan & s_colliders[i]->layers)
             {
                 return s_colliders[i];
             }
@@ -38,7 +39,7 @@ const Collider* Collider_CheckForPointCollision(Vector2 point, u32 scan)
     {
         if(s_colliders[i])
         {
-            if (Raylib_CheckCollisionPointRect(point, s_colliders[i]->rect) && scan & s_colliders[i]->layers)
+            if (Raylib_CheckCollisionPointRect(Graphics_WorldToScreen(point), Graphics_WorldToScreenRect(s_colliders[i]->rect)) && scan & s_colliders[i]->layers)
                 return s_colliders[i];
         }
     }
@@ -48,7 +49,7 @@ const Collider* Collider_CheckForPointCollision(Vector2 point, u32 scan)
 
 Rect Collider_GetCollisionRect(const Collider* colliderA, const Collider* colliderB)
 {
-    return Raylib_GetCollisionRect(colliderA->rect, colliderB->rect);
+    return Graphics_ScreenToWorldRect(Raylib_GetCollisionRect(Graphics_WorldToScreenRect(colliderA->rect), Graphics_WorldToScreenRect(colliderB->rect)));
 }
 
 void Collider_Register(const Collider* collider)

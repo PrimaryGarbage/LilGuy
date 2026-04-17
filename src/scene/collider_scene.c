@@ -49,13 +49,13 @@ static void Update(Scene* scene, double _)
 
 static void Draw(Scene* scene)
 {
-    constexpr Color colliderColor = { .r = 100, .g = 20, .b = 20, .a = 100 };
+    constexpr Color colliderColor = { .r = 100, .g = 20, .b = 20, .a = 200 };
 
     ColliderSceneData* sceneData = scene->sceneData;
 
     if(!sceneData->visible) return;
 
-    Graphics_SetTransform(&scene->globalTransform);
+    Graphics_SetTransformW(&scene->globalTransform);
     Graphics_DrawRectT((Vector2){ sceneData->collider.rect.width, sceneData->collider.rect.height }, colliderColor);
     Graphics_ClearTransform();
 }
@@ -84,7 +84,7 @@ Scene* ColliderScene_Create(Scene* parent, Vector2 size, const char* name)
     scene->sceneData = sceneData;
     scene->type = SCENE_TYPE_COLLIDER;
     scene->transform.position = Vector2_Zero();
-    scene->transform.scale = Vector2_New(1.0f, 1.0f);
+    scene->transform.scale = Vector2_One();
     scene->transform.origin = Vector2_Zero();
     scene->transform.rotation = 0.0f;
     scene->transform.topLevel = false;

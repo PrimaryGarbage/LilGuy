@@ -47,6 +47,7 @@ set(SCENE_FILES
 	collider_scene.c collider_scene.h
 	main_scene.c main_scene.h
 	raycast_scene.c raycast_scene.h
+	main_char_gun_scene.c main_char_gun_scene.h
 )
 
 set(PHYSICS_FILES

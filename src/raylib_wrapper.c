@@ -212,6 +212,20 @@ Image Raylib_LoadImage(const char* path)
     return RlImageToImage(LoadImage(path));
 }
 
+void Raylib_ImageFlipHorizontal(Image* image)
+{
+    Rl_Image rlImage = ImageToRlImage(*image); 
+    ImageFlipHorizontal(&rlImage);
+    *image =  RlImageToImage(rlImage);
+}
+
+void Raylib_ImageFlipVertical(Image* image)
+{
+    Rl_Image rlImage = ImageToRlImage(*image); 
+    ImageFlipVertical(&rlImage);
+    *image = RlImageToImage(rlImage);
+}
+
 Texture2D Raylib_LoadTextureFromImage(const Image* image)
 {
     return RlTextureToTexture(LoadTextureFromImage(ImageToRlImage(*image)));

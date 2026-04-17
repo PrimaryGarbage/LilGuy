@@ -1,4 +1,5 @@
 #include "main_char_foot_scene.h"
+#include "graphics/color.h"
 #include "graphics/graphics.h"
 #include "scene.h"
 #include "scene_type.h"
@@ -15,7 +16,7 @@ typedef struct MainCharFootSceneData {
     double animationElapsed;
 } MainCharFootSceneData;
 
-const float c_footSize = 7.0f;
+const float c_footSize = 4.0f;
 const double c_animationLength = 0.07;
 const float c_animationFootYMaxOffset = 10.0f;
 
@@ -34,7 +35,7 @@ static void Update(Scene* scene, double deltatime)
             float weightX = sceneData->animationElapsed / c_animationLength;
             float weightY = weightX < 0.5f ? weightX * 2.0f : 2.0f - weightX * 2.0f;
             scene->transform.position = Vector2_Lerp(sceneData->animationInitialPoint, sceneData->animationTargetPoint, weightX);
-            scene->transform.position.y -= weightY * c_animationFootYMaxOffset;
+            scene->transform.position.y += weightY * c_animationFootYMaxOffset;
         }
         else
         {
@@ -45,13 +46,15 @@ static void Update(Scene* scene, double deltatime)
 
 static void Draw(Scene* scene)
 {
+    constexpr Color color = (Color) { .r = 150, .g = 150, .b = 120, .a = 255 };
+
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_FOOT);
 
-    Graphics_SetTransform(&scene->globalTransform);
-    Graphics_DrawRectT(Vector2_Uniform(c_footSize), COLOR_RED);
+    Graphics_SetTransformW(&scene->globalTransform);
+    Graphics_DrawCircleT(c_footSize, color);
     Graphics_ClearTransform();
 
-    Graphics_DrawSquare(scene->globalTransform.position, 1.0f, COLOR_WHITE);
+    Graphics_DrawSquareW(scene->globalTransform.position, 1.0f, COLOR_WHITE);
 }
 
 Scene* MainCharFootScene_Create(Scene* parent)
@@ -68,7 +71,7 @@ Scene* MainCharFootScene_Create(Scene* parent)
     scene->type = SCENE_TYPE_MAIN_CHAR_FOOT;
     scene->transform.position = Vector2_Zero();
     scene->transform.scale = Vector2_New(1.0f, 1.0f);
-    scene->transform.origin = Vector2_New(c_footSize * 0.5f, c_footSize);
+    scene->transform.origin = Vector2_New(c_footSize * 0.5f, 0.0f);
     scene->transform.rotation = 0.0f;
     scene->transform.topLevel = false;
     scene->childrenCount = 0u;

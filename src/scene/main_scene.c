@@ -2,9 +2,12 @@
 #include "block_scene.h"
 #include "collider_scene.h"
 #include "main_char_scene.h"
+#include "physics/transform.h"
+#include "rect.h"
 #include "scene.h"
 #include "graphics/graphics.h"
 #include "scene_type.h"
+#include "vector2.h"
 #include <stdlib.h>
 
 Scene* MainScene_Create()
@@ -16,9 +19,9 @@ Scene* MainScene_Create()
     Vector2 screenSize = Graphics_GetScreenSize();
 
     Scene* upperWorldColliderScene = ColliderScene_Create(scene, screenSize, "Upper Screen Bound Collider");
-    upperWorldColliderScene->transform.position.y = -screenSize.y;
+    upperWorldColliderScene->transform.position.y = screenSize.y;
     Scene* lowerWorldColliderScene = ColliderScene_Create(scene, screenSize, "Lower Screen Bound Collider");
-    lowerWorldColliderScene->transform.position.y = screenSize.y;
+    lowerWorldColliderScene->transform.position.y = -screenSize.y;
     Scene* leftWorldColliderScene = ColliderScene_Create(scene, screenSize, "Left Screen Bound Collider");
     leftWorldColliderScene->transform.position.x = -screenSize.x;
     Scene* rightWorldColliderScene = ColliderScene_Create(scene, screenSize, "Right Screen Bound Collider");
@@ -34,7 +37,7 @@ Scene* MainScene_Create()
 
     Rect blockSceneRect = {
         .x = 300.0f,
-        .y = 900.0f,
+        .y = 300.0f,
         .width = 100.0f,
         .height = 20.0f
     };
