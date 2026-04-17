@@ -28,6 +28,7 @@ typedef struct Scene {
     SceneUpdateFunction updateFunction;
     SceneDrawFunction drawFunction;
     SceneCleanupFunction cleanupFunction;
+    bool visible;
     const char* name;
     void* sceneData;
 } Scene;

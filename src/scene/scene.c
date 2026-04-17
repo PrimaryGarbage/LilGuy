@@ -79,6 +79,8 @@ void Scene_Update(Scene* scene, double deltatime)
 
 void Scene_Draw(Scene* scene)
 {
+    if (!scene->visible) return;
+
     if (scene->drawFunction) scene->drawFunction(scene);
     Scene_DrawChildren(scene);
 }
@@ -89,6 +91,7 @@ void Scene_DefaultInit(Scene* scene, SceneType type, const char* name)
     scene->type = type;
     scene->childrenCount = 0u;
     scene->transform = Transform_Zero();
+    scene->visible = true;
     scene->name = name;
 
     scene->startFunction = NULL;

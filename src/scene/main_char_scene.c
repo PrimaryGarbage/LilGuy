@@ -2,6 +2,7 @@
 #include "logging.h"
 #include "main_char_gun_scene.h"
 #include "main_char_eye_scene.h"
+#include "main_char_jetpack_fire_scene.h"
 #include "physics/collider.h"
 #include "collider_scene.h"
 #include "graphics/color.h"
@@ -32,10 +33,12 @@ typedef struct MainCharSceneData {
     Scene* bodyCollider;
     Scene* onGroundRaycast;
     Scene* gun;
+    Scene* jetpackFire;
     float elapsedSinceLastBlink;
     float bodyToFootMaxDistance;
     bool movingLeftFoot;
     bool movingRightFoot;
+    bool usingJetpack;
 } MainCharSceneData;
 
 constexpr float c_maxFuel = 1.0f;
@@ -190,9 +193,15 @@ static void MoveCharacter(Scene* scene, double deltatime)
             sceneData->speed.y += jumpAccel * deltatime;
     }
 
-    bool jetpacking = tryingToMove && !onGround && sceneData->fuel > 0.0f;
+    sceneData->usingJetpack = tryingToMove && !onGround && sceneData->fuel > 0.0f;
 
-    if (jetpacking) 
+    if (sceneData->usingJetpack)
+        MainCharJetpackFireScene_Show(sceneData->jetpackFire);
+    else
+        MainCharJetpackFireScene_Hide(sceneData->jetpackFire);
+
+
+    if (sceneData->usingJetpack) 
         sceneData->fuel -= fuelBurnRate * deltatime;
     else if (sceneData->fuel < c_maxFuel) 
         sceneData->fuel += fuelRefillRate * deltatime;
@@ -200,7 +209,7 @@ static void MoveCharacter(Scene* scene, double deltatime)
     if (!tryingToMove)
         sceneData->speed.x *= speedDissipationFactor;
 
-    float speedLimitX = jetpacking ? maxJetpackSpeedX : maxSpeedX;
+    float speedLimitX = sceneData->usingJetpack ? maxJetpackSpeedX : maxSpeedX;
 
     // Clamp max speed smoothly
     sceneData->speed.x = Lerpf(sceneData->speed.x, Clampf(-speedLimitX, speedLimitX, sceneData->speed.x), 0.2f);
@@ -356,6 +365,11 @@ Scene* MainCharScene_Create(Scene* parent)
 
     Scene_UpdateGlobalTransform(scene, false);
 
+    Scene* jetpackFire = MainCharJetpackFireScene_Create(scene);
+    sceneData->jetpackFire = jetpackFire;
+    jetpackFire->transform.position.y += -(float)sceneData->bodyTexture.height * 0.5f;
+    Scene_AddChild(scene, jetpackFire);
+
     Scene* leftFoot = MainCharFootScene_Create(scene);
     Scene* rightFoot = MainCharFootScene_Create(scene);
     leftFoot->transform.topLevel = true;
@@ -364,17 +378,6 @@ Scene* MainCharScene_Create(Scene* parent)
     sceneData->rightFoot = rightFoot;
     Scene_AddChild(scene, leftFoot);
     Scene_AddChild(scene, rightFoot);
-
-    // constexpr float handsDistance = 20.0f;
-    // Scene* leftHand = MainCharHandScene_Create(scene);
-    // Scene* rightHand = MainCharHandScene_Create(scene);
-    // leftHand->transform.position.x -= handsDistance;
-    // rightHand->transform.position.x += handsDistance;
-    // sceneData->leftHand = leftHand;
-    // sceneData->rightHand = rightHand;
-    // Scene_AddChild(scene, leftHand);
-    // Scene_AddChild(scene, rightHand);
-
 
     constexpr float c_eyeOffsetX = 5.0f;
     constexpr float c_eyeOffsetY = 10.0f;

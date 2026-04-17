@@ -252,9 +252,19 @@ void Graphics_DrawTexture(const Texture2D* texture, Rect dest)
 void Graphics_DrawTextureT(const Texture2D* texture)
 {
     Rect src = (Rect){ 0.0f, 0.0f, texture->width, texture->height };
-    Rect dest = (Rect){ s_transform.position.x, s_transform.position.y, texture->width, texture->height };
+    Rect dest = (Rect){ s_transform.position.x, s_transform.position.y, texture->width * s_transform.scale.x, texture->height * s_transform.scale.y };
+    Vector2 origin = WorldToScreenOrigin(s_transform.origin, (Vector2){ .x = texture->width, .y = texture->height });
 
-    Raylib_DrawTexturePro(*texture, src, dest, s_transform.origin, -s_transform.rotation, COLOR_WHITE);
+    Raylib_DrawTexturePro(*texture, src, dest, origin, -s_transform.rotation, COLOR_WHITE);
+}
+
+void Graphics_DrawTintedTextureT(const Texture2D* texture, Color tint)
+{
+    Rect src = (Rect){ 0.0f, 0.0f, texture->width, texture->height };
+    Rect dest = (Rect){ s_transform.position.x, s_transform.position.y, texture->width * s_transform.scale.x, texture->height * s_transform.scale.y };
+    Vector2 origin = WorldToScreenOrigin(s_transform.origin, (Vector2){ .x = texture->width, .y = texture->height });
+
+    Raylib_DrawTexturePro(*texture, src, dest, origin, -s_transform.rotation, tint);
 }
 
 void Graphics_DrawTextureFullscreen(const Texture2D* texture)

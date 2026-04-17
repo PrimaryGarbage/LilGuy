@@ -13,6 +13,7 @@ typedef enum SceneType {
     SCENE_TYPE_MAIN_CHAR_HAND,
     SCENE_TYPE_MAIN_CHAR_EYE,
     SCENE_TYPE_MAIN_CHAR_GUN,
+    SCENE_TYPE_MAIN_CHAR_JETPACK_FIRE,
 } SceneType;
 
 #endif // __SCENE_TAGS_H__

@@ -49,6 +49,7 @@ Texture2D Graphics_LoadTexture(const char* imagePath);
 void Graphics_UnloadTexture(Texture2D texture);
 void Graphics_DrawTexture(const Texture2D* texture, Rect dest);
 void Graphics_DrawTextureT(const Texture2D* texture);
+void Graphics_DrawTintedTextureT(const Texture2D* texture, Color tint);
 void Graphics_DrawTextureFullscreen(const Texture2D* texture);
 void Graphics_ClearBackground(Color color);
 void Graphics_Flush();

@@ -48,6 +48,7 @@ set(SCENE_FILES
 	main_scene.c main_scene.h
 	raycast_scene.c raycast_scene.h
 	main_char_gun_scene.c main_char_gun_scene.h
+	main_char_jetpack_fire_scene.c main_char_jetpack_fire_scene.h
 )
 
 set(PHYSICS_FILES
