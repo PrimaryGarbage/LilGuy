@@ -128,4 +128,14 @@ inline static u32 Color_SwapRAndB(u32 color)
     return color;
 }
 
+inline static Color Color_Lerp(const Color* a, const Color* b, float weight)
+{
+    return (Color){ 
+        .r = a->r + (b->r - a->r) * weight,
+        .g = a->g + (b->g - a->g) * weight,
+        .b = a->b + (b->b - a->b) * weight,
+        .a = a->a + (b->a - a->a) * weight,
+    };
+}
+
 #endif // __COLOR_H__

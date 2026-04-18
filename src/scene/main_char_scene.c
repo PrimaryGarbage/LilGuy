@@ -248,7 +248,8 @@ static void DrawUi(Scene* scene)
     constexpr float fuelMeterOffsetX = 30.0f;
     constexpr float fuelMeterWidth = 4.0f;
     constexpr float fuelMeterHeight = 30.0f;
-    constexpr Color fuelMeterColor = (Color){ 0, 255, 0, 255 };
+    constexpr Color fuelMeterFullColor = (Color){ 0, 255, 0, 255 };
+    constexpr Color fuelMeterEmptyColor = (Color){ 255, 0, 0, 255 };
     constexpr Color fuelMeterBackgroundColor = (Color){ 0, 0, 0, 150 };
 
     MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
@@ -270,7 +271,7 @@ static void DrawUi(Scene* scene)
     };
 
     Graphics_DrawRectW(fuelMeterBackgroundRect, fuelMeterBackgroundColor, DRAW_ORDER_UI);
-    Graphics_DrawRectW(fuelMeterRect, fuelMeterColor, DRAW_ORDER_UI);
+    Graphics_DrawRectW(fuelMeterRect, Color_Lerp(&fuelMeterEmptyColor, &fuelMeterFullColor, sceneData->fuel / c_maxFuel), DRAW_ORDER_UI);
 }
 
 static void Draw(Scene* scene)
