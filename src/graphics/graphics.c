@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "draw_order.h"
 #include "graphics/color.h"
 #include "graphics/image.h"
 #include "graphics_transform.h"
@@ -10,9 +11,11 @@
 #include <basetsd.h>
 #include <math.h>
 #include <stddef.h>
+#include <stdlib.h>
 #include "raylib_wrapper.h"
 #include "screen_capture.h"
 #include "vector2.h"
+#include "deferred_rendering.h"
 
 constexpr GraphicsTransform c_defaultTransform = {
     .position = (Vector2){ 0.0f, 0.0f },
@@ -22,6 +25,21 @@ constexpr GraphicsTransform c_defaultTransform = {
 };
 
 static GraphicsTransform s_transform = c_defaultTransform;
+
+static RenderCall s_renderCalls[512];
+static u32 s_renderCallsCount = 0u;
+
+static void QueueRenderCall(i32 drawOrder, RenderCallFunction function, const union RenderCallFunctionArguments* functionArguments)
+{
+    s_renderCalls[s_renderCallsCount] = (RenderCall){
+        .drawOrder = drawOrder,
+        .drawIndex = s_renderCallsCount,
+        .function = function,
+        .functionArguments = *functionArguments
+    };
+
+    s_renderCallsCount++;
+}
 
 // Transform lower-left corner origin to upper-left corner.
 // Has to be a sepate function because Transform doesn't contain any size info.
@@ -110,22 +128,58 @@ void Graphics_ClearTransform()
     s_transform = c_defaultTransform;
 }
 
-void Graphics_DrawRect(Rect rect, Color color)
+void _DrawRect_RenderCall(union RenderCallFunctionArguments arguments)
 {
-    Raylib_DrawRectanglePro(rect, Vector2_Zero(), 0.0f, color);
+    DrawRectArguments args = arguments.drawRectArguments;
+    Raylib_DrawRectanglePro(args.rect, Vector2_Zero(), 0.0f, args.color);
 }
 
-void Graphics_DrawRectT(Vector2 size, Color color)
+void Graphics_DrawRect(Rect rect, Color color)
 {
-    Vector2 origin = WorldToScreenOrigin(s_transform.origin, size);
+    DrawRectArguments args = {
+        .rect = rect,
+        .color = color
+    };
 
-    Raylib_DrawRectanglePro((Rect){ s_transform.position.x, s_transform.position.y, size.x * s_transform.scale.x, size.y * s_transform.scale.y}, 
-        Vector2_Mult(origin, s_transform.scale), -s_transform.rotation, color);
+    QueueRenderCall(DRAW_ORDER_DEFAULT, _DrawRect_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+static void _DrawRectT_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawRectTArguments args = arguments.drawRectTArguments;
+
+    Vector2 origin = WorldToScreenOrigin(args.transform.origin, args.size);
+
+    Raylib_DrawRectanglePro((Rect){ args.transform.position.x, args.transform.position.y, args.size.x * args.transform.scale.x, args.size.y * args.transform.scale.y}, 
+        Vector2_Mult(origin, args.transform.scale), -args.transform.rotation, args.color);
+}
+
+void Graphics_DrawRectT(Vector2 size, Color color, i32 drawOrder)
+{
+    DrawRectTArguments args = {
+        .transform = s_transform,
+        .size = size,
+        .color = color
+    };
+
+    QueueRenderCall(drawOrder, _DrawRectT_RenderCall, (union RenderCallFunctionArguments*)&args);
 } 
 
-void Graphics_DrawRectW(Rect rect, Color color)
+static void _DrawRectW_RenderCall(union RenderCallFunctionArguments arguments)
 {
-    Raylib_DrawRectanglePro(Graphics_WorldToScreenRect(rect), Vector2_Zero(), 0.0f, color);
+    DrawRectWArguments args = arguments.drawRectWArguments;
+
+    Raylib_DrawRectanglePro(Graphics_WorldToScreenRect(args.rect), Vector2_Zero(), 0.0f, args.color);
+}
+
+void Graphics_DrawRectW(Rect rect, Color color, i32 drawOrder)
+{
+    DrawRectWArguments args = {
+        .rect = rect,
+        .color = color
+    };
+
+    QueueRenderCall(drawOrder, _DrawRectW_RenderCall, (union RenderCallFunctionArguments*)&args);
 }
 
 void Graphics_DrawSquare(Vector2 position, float size, Color color)
@@ -139,96 +193,236 @@ void Graphics_DrawSquare(Vector2 position, float size, Color color)
     color);
 }
 
-void Graphics_DrawSquareW(Vector2 position, float size, Color color)
+void Graphics_DrawSquareW(Vector2 position, float size, Color color, i32 drawOrder)
 {
-    Graphics_DrawRect(Rect_FromVectors(Graphics_WorldToScreen(position), Vector2_Uniform(size)), color);
+    Graphics_DrawRectW(Rect_FromVectors(position, Vector2_Uniform(size)), color, drawOrder);
+}
+
+void _DrawCircle_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawCircleArguments args = arguments.drawCircleArguments;
+    Raylib_DrawCircleV(args.position, args.radius, args.color);
 }
 
 void Graphics_DrawCircle(Vector2 position, float radius, Color color)
 {
-    Raylib_DrawCircleV(position, radius, color);
+    DrawCircleArguments args = {
+        .position = position,
+        .radius = radius,
+        .color = color
+    };
+
+    QueueRenderCall(DRAW_ORDER_DEFAULT, _DrawCircle_RenderCall, (union RenderCallFunctionArguments*)&args);
 }
 
-void Graphics_DrawCircleT(float radius, Color color)
+void _DrawCircleT_RenderCall(union RenderCallFunctionArguments arguments)
 {
-    Raylib_DrawCircleV(s_transform.position, radius * (s_transform.scale.x + s_transform.scale.y) * 0.5f, color);
+    DrawCircleTArguments args = arguments.drawCircleTArguments;
+
+    Raylib_DrawCircleV(args.transform.position, args.radius * (args.transform.scale.x + args.transform.scale.y) * 0.5f, args.color);
 }
 
-void Graphics_DrawCircleW(Vector2 position, float radius, Color color)
+void Graphics_DrawCircleT(float radius, Color color, i32 drawOrder)
 {
-    Raylib_DrawCircleV(Graphics_WorldToScreen(position), radius, color);
+    DrawCircleTArguments args = {
+        .transform = s_transform,
+        .radius = radius,
+        .color = color
+    };
+
+    QueueRenderCall(drawOrder, _DrawCircleT_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+void _DrawCircleW_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawCircleWArguments args = arguments.drawCircleWArguments;
+
+    Raylib_DrawCircleV(Graphics_WorldToScreen(args.position), args.radius, args.color);
+}
+
+void Graphics_DrawCircleW(Vector2 position, float radius, Color color, i32 drawOrder)
+{
+    DrawCircleWArguments args = {
+        .position = position,
+        .radius = radius,
+        .color = color
+    };
+
+    QueueRenderCall(drawOrder, _DrawCircleW_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+void _DrawLineSimple_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawLineSimpleArguments args = arguments.drawLineSimpleArguments;
+    Raylib_DrawLineV(args.a, args.b, args.color);
 }
 
 void Graphics_DrawLineSimple(Vector2 a, Vector2 b, Color color)
 {
-    Raylib_DrawLineV(a, b, color);
+    DrawLineSimpleArguments args = {
+        .a = a,
+        .b = b,
+        .color = color
+    };
+
+    QueueRenderCall(DRAW_ORDER_TOP, _DrawLineSimple_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+void _DrawLineSimpleW_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawLineSimpleWArguments args = arguments.drawLineSimpleWArguments;
+    Raylib_DrawLineV(Graphics_WorldToScreen(args.a), Graphics_WorldToScreen(args.b), args.color);
 }
 
 void Graphics_DrawLineSimpleW(Vector2 a, Vector2 b, Color color)
 {
-    Raylib_DrawLineV(Graphics_WorldToScreen(a), Graphics_WorldToScreen(b), color);
+    DrawLineSimpleWArguments args = {
+        .a = a,
+        .b = b,
+        .color = color
+    };
+
+    QueueRenderCall(DRAW_ORDER_TOP, _DrawLineSimpleW_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+void _DrawLine_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawLineArguments args = arguments.drawLineArguments;
+    Raylib_DrawLineEx(args.a, args.b, args.width, args.color);
 }
 
 void Graphics_DrawLine(Vector2 a, Vector2 b, float width, Color color)
 {
-    Raylib_DrawLineEx(a, b, width, color);
+    DrawLineArguments args = {
+        .a = a,
+        .b = b,
+        .width = width,
+        .color = color
+    };
+
+    QueueRenderCall(DRAW_ORDER_TOP, _DrawLine_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+void _DrawLineW_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawLineWArguments args = arguments.drawLineWArguments;
+    Raylib_DrawLineEx(Graphics_WorldToScreen(args.a), Graphics_WorldToScreen(args.b), args.width, args.color);
 }
 
 void Graphics_DrawLineW(Vector2 a, Vector2 b, float width, Color color)
 {
-    Raylib_DrawLineEx(Graphics_WorldToScreen(a), Graphics_WorldToScreen(b), width, color);
+    DrawLineWArguments args = {
+        .a = a,
+        .b = b,
+        .width = width,
+        .color = color
+    };
+
+    QueueRenderCall(DRAW_ORDER_TOP, _DrawLineW_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+void _DrawVector_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawVectorArguments args = arguments.drawVectorArguments;
+
+    constexpr float arrowSize = 15.0f;
+    constexpr float arrowAngle = 20.0f;
+    Vector2 arrowVec = Vector2_Normalize(Vector2_Sub(args.a, args.b));
+
+    Raylib_DrawLineV(args.a, args.b, args.color);
+    Raylib_DrawLineV(args.b, Vector2_Add(args.b, Vector2_MultScalar(Vector2_Rotate(arrowVec, arrowAngle), arrowSize)), args.color);
+    Raylib_DrawLineV(args.b, Vector2_Add(args.b, Vector2_MultScalar(Vector2_Rotate(arrowVec, -arrowAngle), arrowSize)), args.color);
 }
 
 void Graphics_DrawVector(Vector2 a, Vector2 b, Color color)
 {
+    DrawVectorArguments args = {
+        .a = a,
+        .b = b,
+        .color = color
+    };
+
+    QueueRenderCall(DRAW_ORDER_TOP, _DrawVector_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+void _DrawVectorFromPoint_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawVectorFromPointArguments args = arguments.drawVectorFromPointArguments;
+
     constexpr float arrowSize = 15.0f;
     constexpr float arrowAngle = 20.0f;
-    Vector2 arrowVec = Vector2_Normalize(Vector2_Sub(a, b));
+    Vector2 sum = Vector2_Add(args.point, args.vec);
+    Vector2 arrowVec = Vector2_Normalize(Vector2_MultScalar(args.vec, -1.0f));
 
-    Raylib_DrawLineV(a, b, color);
-    Raylib_DrawLineV(b, Vector2_Add(b, Vector2_MultScalar(Vector2_Rotate(arrowVec, arrowAngle), arrowSize)), color);
-    Raylib_DrawLineV(b, Vector2_Add(b, Vector2_MultScalar(Vector2_Rotate(arrowVec, -arrowAngle), arrowSize)), color);
+    Raylib_DrawLineV(args.point, sum, args.color);
+    Raylib_DrawLineV(sum, Vector2_Add(sum, Vector2_MultScalar(Vector2_Rotate(arrowVec, arrowAngle), arrowSize)), args.color);
+    Raylib_DrawLineV(sum, Vector2_Add(sum, Vector2_MultScalar(Vector2_Rotate(arrowVec, -arrowAngle), arrowSize)), args.color);
 }
 
 void Graphics_DrawVectorFromPoint(Vector2 point, Vector2 vec, Color color)
 {
+    DrawVectorFromPointArguments args = {
+        .point = point,
+        .vec = vec,
+        .color = color
+    };
+
+    QueueRenderCall(DRAW_ORDER_TOP, _DrawVectorFromPoint_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+void _DrawVectorW_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawVectorWArguments args = arguments.drawVectorWArguments;
+
+    args.a = Graphics_WorldToScreen(args.a);
+    args.b = Graphics_WorldToScreen(args.b);
+
     constexpr float arrowSize = 15.0f;
     constexpr float arrowAngle = 20.0f;
-    Vector2 sum = Vector2_Add(point, vec);
-    Vector2 arrowVec = Vector2_Normalize(Vector2_MultScalar(vec, -1.0f));
+    Vector2 arrowVec = Vector2_Normalize(Vector2_Sub(args.a, args.b));
 
-    Raylib_DrawLineV(point, sum, color);
-    Raylib_DrawLineV(sum, Vector2_Add(sum, Vector2_MultScalar(Vector2_Rotate(arrowVec, arrowAngle), arrowSize)), color);
-    Raylib_DrawLineV(sum, Vector2_Add(sum, Vector2_MultScalar(Vector2_Rotate(arrowVec, -arrowAngle), arrowSize)), color);
+    Raylib_DrawLineV(args.a, args.b, args.color);
+    Raylib_DrawLineV(args.b, Vector2_Add(args.b, Vector2_MultScalar(Vector2_Rotate(arrowVec, arrowAngle), arrowSize)), args.color);
+    Raylib_DrawLineV(args.b, Vector2_Add(args.b, Vector2_MultScalar(Vector2_Rotate(arrowVec, -arrowAngle), arrowSize)), args.color);
 }
 
 void Graphics_DrawVectorW(Vector2 a, Vector2 b, Color color)
 {
-    a = Graphics_WorldToScreen(a);
-    b = Graphics_WorldToScreen(b);
+    DrawVectorWArguments args = {
+        .a = a,
+        .b = b,
+        .color = color
+    };
+
+    QueueRenderCall(DRAW_ORDER_TOP, _DrawVectorW_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+void _DrawVectorFromPointW_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawVectorFromPointWArguments args = arguments.drawVectorFromPointWArguments;
+
+    args.point = Graphics_WorldToScreen(args.point);
+    args.vec.y = -args.vec.y;
 
     constexpr float arrowSize = 15.0f;
     constexpr float arrowAngle = 20.0f;
-    Vector2 arrowVec = Vector2_Normalize(Vector2_Sub(a, b));
+    Vector2 sum = Vector2_Add(args.point, args.vec);
+    Vector2 arrowVec = Vector2_Normalize(Vector2_MultScalar(args.vec, -1.0f));
 
-    Raylib_DrawLineV(a, b, color);
-    Raylib_DrawLineV(b, Vector2_Add(b, Vector2_MultScalar(Vector2_Rotate(arrowVec, arrowAngle), arrowSize)), color);
-    Raylib_DrawLineV(b, Vector2_Add(b, Vector2_MultScalar(Vector2_Rotate(arrowVec, -arrowAngle), arrowSize)), color);
+    Raylib_DrawLineV(args.point, sum, args.color);
+    Raylib_DrawLineV(sum, Vector2_Add(sum, Vector2_MultScalar(Vector2_Rotate(arrowVec, arrowAngle), arrowSize)), args.color);
+    Raylib_DrawLineV(sum, Vector2_Add(sum, Vector2_MultScalar(Vector2_Rotate(arrowVec, -arrowAngle), arrowSize)), args.color);
 }
 
 void Graphics_DrawVectorFromPointW(Vector2 point, Vector2 vec, Color color)
 {
-    point = Graphics_WorldToScreen(point);
-    vec.y = -vec.y;
+    DrawVectorFromPointWArguments args = {
+        .point = point,
+        .vec = vec,
+        .color = color
+    };
 
-    constexpr float arrowSize = 15.0f;
-    constexpr float arrowAngle = 20.0f;
-    Vector2 sum = Vector2_Add(point, vec);
-    Vector2 arrowVec = Vector2_Normalize(Vector2_MultScalar(vec, -1.0f));
-
-    Raylib_DrawLineV(point, sum, color);
-    Raylib_DrawLineV(sum, Vector2_Add(sum, Vector2_MultScalar(Vector2_Rotate(arrowVec, arrowAngle), arrowSize)), color);
-    Raylib_DrawLineV(sum, Vector2_Add(sum, Vector2_MultScalar(Vector2_Rotate(arrowVec, -arrowAngle), arrowSize)), color);
+    QueueRenderCall(DRAW_ORDER_TOP, _DrawVectorFromPointW_RenderCall, (union RenderCallFunctionArguments*)&args);
 }
 
 Texture2D Graphics_LoadTextureFromImage(const Image* image)
@@ -246,32 +440,84 @@ void Graphics_UnloadTexture(Texture2D texture)
     Raylib_UnloadTexture(texture);
 }
 
-void Graphics_DrawTexture(const Texture2D* texture, Rect dest)
+void _DrawTexture_RenderCall(union RenderCallFunctionArguments arguments)
 {
-    Raylib_DrawTexturePro(*texture, (Rect){ 0.0f, 0.0f, texture->width, texture->height }, dest, (Vector2){ 0.0f, 0.0f }, 0.0f, COLOR_WHITE);
+    DrawTextureArguments args = arguments.drawTextureArguments;
+
+    Raylib_DrawTexturePro(*args.texture, (Rect){ 0.0f, 0.0f, args.texture->width, args.texture->height }, args.dest, (Vector2){ 0.0f, 0.0f }, 0.0f, COLOR_WHITE);
 }
 
-void Graphics_DrawTextureT(const Texture2D* texture)
+void Graphics_DrawTexture(const Texture2D* texture, Rect dest, i32 drawOrder)
 {
-    Rect src = (Rect){ .x = 0.0f, .y = 0.0f, .width = texture->width, .height = texture->height };
-    Rect dest = (Rect){ .x = s_transform.position.x, .y = s_transform.position.y, .width = texture->width * s_transform.scale.x, .height = texture->height * s_transform.scale.y };
-    Vector2 origin = Vector2_Mult(WorldToScreenOrigin(s_transform.origin, (Vector2){ .x = texture->width, .y = texture->height }), s_transform.scale);
+    DrawTextureArguments args = {
+        .texture = texture,
+        .dest = dest,
+    };
 
-    Raylib_DrawTexturePro(*texture, src, dest, origin, -s_transform.rotation, COLOR_WHITE);
+    QueueRenderCall(drawOrder, _DrawTexture_RenderCall, (union RenderCallFunctionArguments*)&args);
 }
 
-void Graphics_DrawTintedTextureT(const Texture2D* texture, Color tint)
+void _DrawTextureW_RenderCall(union RenderCallFunctionArguments arguments)
 {
-    Rect src = (Rect){ 0.0f, 0.0f, texture->width, texture->height };
-    Rect dest = (Rect){ .x = s_transform.position.x, .y = s_transform.position.y, .width = texture->width * s_transform.scale.x, .height = texture->height * s_transform.scale.y };
-    Vector2 origin = Vector2_Mult(WorldToScreenOrigin(s_transform.origin, (Vector2){ .x = texture->width, .y = texture->height }), s_transform.scale);
+    DrawTextureWArguments args = arguments.drawTextureWArguments;
 
-    Raylib_DrawTexturePro(*texture, src, dest, origin, -s_transform.rotation, tint);
+    Rect src = (Rect){ .x = 0.0f, .y = 0.0f, .width = args.texture->width, .height = args.texture->height };
+    Rect dest = Graphics_WorldToScreenRect(args.dest);
+
+    Raylib_DrawTexturePro(*args.texture, src, dest, Vector2_Zero(), 0.0f, COLOR_WHITE);
 }
 
-void Graphics_DrawTextureFullscreen(const Texture2D* texture)
+void Graphics_DrawTextureW(const Texture2D* texture, Rect dest, i32 drawOrder)
 {
-    Raylib_DrawTexturePro(*texture, (Rect){ 0.0f, 0.0f, texture->width, texture->height }, Graphics_GetScreenRect(), (Vector2){ 0.0f, 0.0f }, 0.0f, COLOR_WHITE);
+    DrawTextureWArguments args = {
+        .texture = texture,
+        .dest = dest,
+    };
+
+    QueueRenderCall(drawOrder, _DrawTextureW_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+void _DrawTextureT_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawTextureTArguments args = arguments.drawTextureTArguments;
+
+    Rect src = (Rect){ .x = 0.0f, .y = 0.0f, .width = args.texture->width, .height = args.texture->height };
+    Rect dest = (Rect){ .x = args.transform.position.x, .y = args.transform.position.y, .width = args.texture->width * args.transform.scale.x, .height = args.texture->height * args.transform.scale.y };
+    Vector2 origin = Vector2_Mult(WorldToScreenOrigin(args.transform.origin, (Vector2){ .x = args.texture->width, .y = args.texture->height }), args.transform.scale);
+
+    Raylib_DrawTexturePro(*args.texture, src, dest, origin, -args.transform.rotation, COLOR_WHITE);
+}
+
+void Graphics_DrawTextureT(const Texture2D* texture, i32 drawOrder)
+{
+    DrawTextureTArguments args = {
+        .transform = s_transform,
+        .texture = texture,
+    };
+
+    QueueRenderCall(drawOrder, _DrawTextureT_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+void _DrawTintedTextureT_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawTintedTextureTArguments args = arguments.drawTintedTextureTArguments;
+
+    Rect src = (Rect){ 0.0f, 0.0f, args.texture->width, args.texture->height };
+    Rect dest = (Rect){ .x = args.transform.position.x, .y = args.transform.position.y, .width = args.texture->width * args.transform.scale.x, .height = args.texture->height * args.transform.scale.y };
+    Vector2 origin = Vector2_Mult(WorldToScreenOrigin(args.transform.origin, (Vector2){ .x = args.texture->width, .y = args.texture->height }), args.transform.scale);
+
+    Raylib_DrawTexturePro(*args.texture, src, dest, origin, -args.transform.rotation, args.tint);
+}
+
+void Graphics_DrawTintedTextureT(const Texture2D* texture, Color tint, i32 drawOrder)
+{
+    DrawTintedTextureTArguments args = {
+        .transform = s_transform,
+        .texture = texture,
+        .tint = tint
+    };
+
+    QueueRenderCall(drawOrder, _DrawTintedTextureT_RenderCall, (union RenderCallFunctionArguments*)&args);
 }
 
 void Graphics_ClearBackground(Color color)
@@ -281,6 +527,13 @@ void Graphics_ClearBackground(Color color)
 
 void Graphics_Flush()
 {
+    qsort(s_renderCalls, s_renderCallsCount, sizeof(RenderCall), RenderCallComparer);
+
+    for(u32 i = 0; i < s_renderCallsCount; ++i)
+        s_renderCalls[i].function(s_renderCalls[i].functionArguments);
+
+    s_renderCallsCount = 0u;
+
     Raylib_rlDrawRenderBatchActive();
     Raylib_SwapBuffers();
 }

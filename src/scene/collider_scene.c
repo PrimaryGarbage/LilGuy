@@ -56,7 +56,7 @@ static void Draw(Scene* scene)
     if(!sceneData->visible) return;
 
     Graphics_SetTransformW(&scene->globalTransform);
-    Graphics_DrawRectT((Vector2){ sceneData->collider.rect.width, sceneData->collider.rect.height }, colliderColor);
+    Graphics_DrawRectT((Vector2){ sceneData->collider.rect.width, sceneData->collider.rect.height }, colliderColor, DRAW_ORDER_TOP);
     Graphics_ClearTransform();
 }
 

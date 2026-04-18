@@ -15,7 +15,7 @@ static void Draw(Scene* scene)
     BlockSceneData* sceneData = scene->sceneData;
 
     Graphics_SetTransformW(&scene->globalTransform);
-    Graphics_DrawRectT(sceneData->size, sceneData->color);
+    Graphics_DrawRectT(sceneData->size, sceneData->color, DRAW_ORDER_DEFAULT);
     Graphics_ClearTransform();
 }
 

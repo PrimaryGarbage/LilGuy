@@ -10,7 +10,7 @@ constexpr Vector2 c_handSize = { 5.0f, 10.0f };
 static void Draw(Scene* scene)
 {
     Graphics_SetTransformW(&scene->globalTransform);
-    Graphics_DrawRectT(c_handSize, COLOR_RED);
+    Graphics_DrawRectT(c_handSize, COLOR_RED, DRAW_ORDER_MAIN_CHAR);
     Graphics_ClearTransform();
 }
 

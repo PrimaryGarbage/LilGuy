@@ -31,9 +31,9 @@ static void Draw(Scene* scene)
     Vector2 rightHandPosition = Vector2_Add(scene->globalTransform.position, Vector2_Rotate(rightHandOffset, scene->globalTransform.rotation));
 
     Graphics_SetTransformW(&scene->globalTransform);
-    Graphics_DrawTextureT(flipped ? &sceneData->gunTextureFlippedY : &sceneData->gunTexture);
-    Graphics_DrawCircleW(leftHandPosition, c_handSize, handColor);
-    Graphics_DrawCircleW(rightHandPosition, c_handSize, handColor);
+    Graphics_DrawTextureT(flipped ? &sceneData->gunTextureFlippedY : &sceneData->gunTexture, DRAW_ORDER_MAIN_CHAR);
+    Graphics_DrawCircleW(leftHandPosition, c_handSize, handColor, DRAW_ORDER_MAIN_CHAR);
+    Graphics_DrawCircleW(rightHandPosition, c_handSize, handColor, DRAW_ORDER_MAIN_CHAR);
     Graphics_ClearTransform();
 }
 

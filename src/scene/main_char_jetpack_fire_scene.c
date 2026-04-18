@@ -19,10 +19,9 @@ static void Draw(Scene* scene)
     MainCharJetpackFireSceneData* sceneData = scene->sceneData;
 
     Graphics_SetTransformW(&scene->globalTransform);
-    Graphics_DrawTintedTextureT(&sceneData->fireTexture, (Color){ .r = 255, .g = 255, .b = 255, .a = (u8)(sceneData->opacity * 255.0f)});
+    Graphics_DrawTintedTextureT(&sceneData->fireTexture, (Color){ .r = 255, .g = 255, .b = 255, .a = (u8)(sceneData->opacity * 255.0f)}, DRAW_ORDER_MAIN_CHAR_JETPACK);
     Graphics_ClearTransform();
-
-    Graphics_DrawCircleW(scene->globalTransform.position, 2.0f, COLOR_WHITE);
+    Graphics_DrawCircleW(scene->globalTransform.position, 2.0f, COLOR_WHITE, DRAW_ORDER_TOP);
 }
 
 static void Cleanup(Scene* scene)

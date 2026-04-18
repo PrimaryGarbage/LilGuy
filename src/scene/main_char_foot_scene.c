@@ -51,10 +51,10 @@ static void Draw(Scene* scene)
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_FOOT);
 
     Graphics_SetTransformW(&scene->globalTransform);
-    Graphics_DrawCircleT(c_footSize, color);
+    Graphics_DrawCircleT(c_footSize, color, DRAW_ORDER_MAIN_CHAR);
     Graphics_ClearTransform();
 
-    Graphics_DrawSquareW(scene->globalTransform.position, 1.0f, COLOR_WHITE);
+    Graphics_DrawSquareW(scene->globalTransform.position, 1.0f, COLOR_WHITE, DRAW_ORDER_TOP);
 }
 
 Scene* MainCharFootScene_Create(Scene* parent)

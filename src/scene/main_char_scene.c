@@ -236,7 +236,7 @@ static void DrawCharacter(Scene* scene)
     MainCharSceneData* sceneData = scene->sceneData;
 
     Graphics_SetTransformW(&scene->transform);
-    Graphics_DrawTextureT(&sceneData->bodyTexture);
+    Graphics_DrawTextureT(&sceneData->bodyTexture, DRAW_ORDER_MAIN_CHAR);
     Graphics_ClearTransform();
 
     // Draw speed
@@ -269,8 +269,8 @@ static void DrawUi(Scene* scene)
         .height = fuelMeterHeight * Clampf(0.0f, c_maxFuel, sceneData->fuel)
     };
 
-    Graphics_DrawRectW(fuelMeterBackgroundRect, fuelMeterBackgroundColor);
-    Graphics_DrawRectW(fuelMeterRect, fuelMeterColor);
+    Graphics_DrawRectW(fuelMeterBackgroundRect, fuelMeterBackgroundColor, DRAW_ORDER_UI);
+    Graphics_DrawRectW(fuelMeterRect, fuelMeterColor, DRAW_ORDER_UI);
 }
 
 static void Draw(Scene* scene)
@@ -365,11 +365,6 @@ Scene* MainCharScene_Create(Scene* parent)
 
     Scene_UpdateGlobalTransform(scene, false);
 
-    Scene* jetpackFire = MainCharJetpackFireScene_Create(scene);
-    sceneData->jetpackFire = jetpackFire;
-    jetpackFire->transform.position.y += -(float)sceneData->bodyTexture.height * 0.5f;
-    Scene_AddChild(scene, jetpackFire);
-
     Scene* leftFoot = MainCharFootScene_Create(scene);
     Scene* rightFoot = MainCharFootScene_Create(scene);
     leftFoot->transform.topLevel = true;
@@ -396,6 +391,11 @@ Scene* MainCharScene_Create(Scene* parent)
     sceneData->gun = gun;
     sceneData->gun->transform.topLevel = true;
     Scene_AddChild(scene, gun);
+
+    Scene* jetpackFire = MainCharJetpackFireScene_Create(scene);
+    sceneData->jetpackFire = jetpackFire;
+    jetpackFire->transform.position.y += -(float)sceneData->bodyTexture.height * 0.5f + 2.0f;
+    Scene_AddChild(scene, jetpackFire);
 
     Vector2 colliderSize = {
         .x = scene->transform.origin.x * 2.0f,

@@ -1,4 +1,5 @@
 #include "debug.h"
+#include "graphics/draw_order.h"
 #include "graphics/image.h"
 #include "input/input.h"
 #include "input/input_button.h"
@@ -29,7 +30,7 @@ int main()
     Window_SetMonitor(1);
 
     Texture2D screenCaptureTexture = Graphics_LoadTextureFromImage(&screenCaptureImage);
-    Graphics_DrawTextureFullscreen(&screenCaptureTexture);
+    Graphics_DrawTexture(&screenCaptureTexture, (Rect){ .x = 0.0f, .y = 0.0f, .width = screenCaptureTexture.width, .height = screenCaptureTexture.height }, DRAW_ORDER_BACKGROUND);
     Graphics_Flush();
     Window_Show();
 
@@ -46,7 +47,7 @@ int main()
         if (Input_IsKeyPressed(INPUT_KEY_ESCAPE)) break;
 
         Graphics_ClearBackground(COLOR_BLUE);
-        Graphics_DrawTextureFullscreen(&screenCaptureTexture);
+        Graphics_DrawTexture(&screenCaptureTexture, (Rect){ .x = 0.0f, .y = 0.0f, .width = screenCaptureTexture.width, .height = screenCaptureTexture.height }, DRAW_ORDER_BACKGROUND);
 
         ///////////////////
         /// UPDATE HERE ///

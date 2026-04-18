@@ -28,6 +28,8 @@ set(GRAPHICS_FILES
 	image.c image.h
 	screen_capture.c screen_capture.h
 	color.h
+	deferred_rendering.h
+	draw_order.h
 )
 
 set(INPUT_FILES
