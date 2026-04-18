@@ -1,5 +1,7 @@
 #include "main_char_scene.h"
+#include "input/input_button.h"
 #include "logging.h"
+#include "main_char_bullet_scene.h"
 #include "main_char_gun_scene.h"
 #include "main_char_eye_scene.h"
 #include "main_char_jetpack_fire_scene.h"
@@ -221,6 +223,15 @@ static void MoveCharacter(Scene* scene, double deltatime)
     Scene_UpdateGlobalTransform(scene, false);
 }
 
+static void Shoot(Scene* scene)
+{
+    if (Input_IsMouseButtonPressed(INPUT_MOUSE_BUTTON_LEFT))
+    {
+        MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
+        MainCharGunScene_Shoot(sceneData->gun);
+    }
+}
+
 static void Update(Scene* scene, double deltatime)
 {
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR);
@@ -228,6 +239,7 @@ static void Update(Scene* scene, double deltatime)
     MoveCharacter(scene, deltatime);
     MoveFeet(scene);
     MoveGun(scene);
+    Shoot(scene);
     Blink(scene, deltatime);
 }
 
@@ -337,6 +349,7 @@ static void Cleanup(Scene* scene)
 Scene* MainCharScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
+    Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR, "Main Char");
 
     constexpr float legLength = 15.0f;
 
@@ -349,17 +362,9 @@ Scene* MainCharScene_Create(Scene* parent)
     sceneData->bodyToFootMaxDistance = sceneData->bodyTexture.height * 0.5f + legLength;
 
     scene->sceneData = sceneData;
-    scene->type = SCENE_TYPE_MAIN_CHAR;
-    scene->transform.position = Vector2_Zero();
-    scene->transform.scale = Vector2_New(1.0f, 1.0f);
     scene->transform.origin = Vector2_New(sceneData->bodyTexture.width * 0.5f, (float)sceneData->bodyTexture.height * 0.5f);
-    scene->transform.rotation = 0.0f;
-    scene->transform.topLevel = false;
-    scene->childrenCount = 0u;
-    scene->name = "Main Char Scene";
-    scene->parent = parent;
+    Scene_AddChild(parent, scene);
 
-    scene->startFunction = NULL;
     scene->updateFunction = Update;
     scene->drawFunction = Draw;
     scene->cleanupFunction = Cleanup;
@@ -372,8 +377,6 @@ Scene* MainCharScene_Create(Scene* parent)
     rightFoot->transform.topLevel = true;
     sceneData->leftFoot = leftFoot;
     sceneData->rightFoot = rightFoot;
-    Scene_AddChild(scene, leftFoot);
-    Scene_AddChild(scene, rightFoot);
 
     constexpr float c_eyeOffsetX = 5.0f;
     constexpr float c_eyeOffsetY = 10.0f;
@@ -385,18 +388,14 @@ Scene* MainCharScene_Create(Scene* parent)
     rightEye->transform.position.x += c_eyeOffsetX;
     sceneData->leftEye = leftEye;
     sceneData->rightEye = rightEye;
-    Scene_AddChild(scene, leftEye);
-    Scene_AddChild(scene, rightEye);
 
     Scene* gun = MainCharGunScene_Create(scene);
     sceneData->gun = gun;
     sceneData->gun->transform.topLevel = true;
-    Scene_AddChild(scene, gun);
 
     Scene* jetpackFire = MainCharJetpackFireScene_Create(scene);
     sceneData->jetpackFire = jetpackFire;
     jetpackFire->transform.position.y += -(float)sceneData->bodyTexture.height * 0.5f + 2.0f;
-    Scene_AddChild(scene, jetpackFire);
 
     Vector2 colliderSize = {
         .x = scene->transform.origin.x * 2.0f,
@@ -414,12 +413,10 @@ Scene* MainCharScene_Create(Scene* parent)
     ColliderScene_SetOnCollisionCallback(colliderScene, scene, OnBodyCollision);
     ColliderScene_SetCollisionLayers(colliderScene, COLLIDER_LAYER_MAIN_CHAR);
     ColliderScene_SetCollisionScan(colliderScene, COLLIDER_LAYER_WORLD);
-    Scene_AddChild(scene, colliderScene);
 
-    Scene* onGroundRaycastScene = RaycastScene_Create(scene, Vector2_Down(), legLength + sceneData->bodyTexture.height * 0.5f + 1.0f);
+    Scene* onGroundRaycastScene = RaycastScene_Create(scene, Vector2_Down(), legLength + sceneData->bodyTexture.height * 0.5f + 1.0f, "OnGround Raycast");
     RaycastScene_SetVisible(onGroundRaycastScene, false);
     sceneData->onGroundRaycast = onGroundRaycastScene;
-    Scene_AddChild(scene, onGroundRaycastScene);
 
     return scene;
 }

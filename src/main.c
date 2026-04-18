@@ -4,6 +4,7 @@
 #include "input/input.h"
 #include "input/input_button.h"
 #include "scene/main_scene.h"
+#include "scene/scene.h"
 #include "tween.h"
 #include "vector2.h"
 #include "window/window.h"
@@ -62,6 +63,8 @@ int main()
         /////////////////
         
         Graphics_Flush();
+
+        Scene_TrimQueuedScenes();
 
         deltatime = Timer_Reset(&globalTimer);
     }

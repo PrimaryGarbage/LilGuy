@@ -70,6 +70,8 @@ static void Cleanup(Scene* scene)
 Scene* ColliderScene_Create(Scene* parent, Vector2 size, const char* name)
 {
     Scene* scene = malloc(sizeof(Scene));
+    Scene_DefaultInit(scene, SCENE_TYPE_COLLIDER, name);
+    Scene_AddChild(parent, scene);
 
     ColliderSceneData* sceneData = malloc(sizeof(ColliderSceneData));
     sceneData->visible = false;
@@ -82,15 +84,6 @@ Scene* ColliderScene_Create(Scene* parent, Vector2 size, const char* name)
     });
 
     scene->sceneData = sceneData;
-    scene->type = SCENE_TYPE_COLLIDER;
-    scene->transform.position = Vector2_Zero();
-    scene->transform.scale = Vector2_One();
-    scene->transform.origin = Vector2_Zero();
-    scene->transform.rotation = 0.0f;
-    scene->transform.topLevel = false;
-    scene->childrenCount = 0u;
-    scene->name = name;
-    scene->parent = parent;
 
     Scene_UpdateGlobalTransform(scene, false);
 

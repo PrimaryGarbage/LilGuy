@@ -5,7 +5,7 @@
 
 typedef void (*RaycastScene_OnCollisionCallback)(Scene* scene, Vector2 collisionPoint);
 
-Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length);
+Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length, const char* name);
 void RaycastScene_SetOnCollisionCallback(Scene* scene, Scene* callbackOwner, RaycastScene_OnCollisionCallback callback);
 bool RaycastScene_CheckForCollision(Scene* scene, Vector2* collisionPoint_out);
 void RaycastScene_SetVisible(Scene* scene, bool on);

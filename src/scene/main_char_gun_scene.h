@@ -4,5 +4,6 @@
 #include "scene.h"
 
 Scene* MainCharGunScene_Create(Scene* parent);
+void MainCharGunScene_Shoot(Scene* scene);
 
 #endif // __MAIN_CHAR_GUN_SCENE_H__

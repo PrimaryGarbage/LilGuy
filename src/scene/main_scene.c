@@ -26,14 +26,9 @@ Scene* MainScene_Create()
     leftWorldColliderScene->transform.position.x = -screenSize.x;
     Scene* rightWorldColliderScene = ColliderScene_Create(scene, screenSize, "Right Screen Bound Collider");
     rightWorldColliderScene->transform.position.x = screenSize.x;
-    Scene_AddChild(scene, upperWorldColliderScene);
-    Scene_AddChild(scene, lowerWorldColliderScene);
-    Scene_AddChild(scene, leftWorldColliderScene);
-    Scene_AddChild(scene, rightWorldColliderScene);
 
     Scene* mainCharScene = MainCharScene_Create(scene);
     mainCharScene->transform.position = Vector2_MultScalar(Graphics_GetScreenSize(), 0.5f);
-    Scene_AddChild(scene, mainCharScene);
 
     Rect blockSceneRect = {
         .x = 300.0f,
@@ -41,8 +36,7 @@ Scene* MainScene_Create()
         .width = 100.0f,
         .height = 20.0f
     };
-    Scene* blockScene = BlockScene_Create(scene, blockSceneRect, COLOR_BLUE);
-    Scene_AddChild(scene, blockScene);
+    BlockScene_Create(scene, blockSceneRect, COLOR_BLUE);
 
     return scene;
 }

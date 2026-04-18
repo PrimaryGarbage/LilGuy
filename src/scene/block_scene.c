@@ -22,34 +22,23 @@ static void Draw(Scene* scene)
 Scene* BlockScene_Create(Scene* parent, Rect rect, Color color)
 {
     Scene* scene = malloc(sizeof(Scene));
+    Scene_DefaultInit(scene, SCENE_TYPE_BLOCK, "Block");
+    Scene_AddChild(parent, scene);
 
     BlockSceneData* sceneData = malloc(sizeof(BlockSceneData));
     sceneData->color = color;
     sceneData->size = Rect_GetSize(&rect);
 
     scene->sceneData = sceneData;
-    scene->type = SCENE_TYPE_BLOCK;
     scene->transform.position = Rect_GetPosition(&rect);
-    scene->transform.scale = Vector2_Uniform(1.0f);
-    scene->transform.origin = Vector2_Zero();
-    scene->transform.rotation = 0.0f;
-    scene->transform.topLevel = false;
-    scene->childrenCount = 0u;
-    scene->name = "Block Scene";
-    scene->parent = parent;
 
     Scene* colliderScene = ColliderScene_Create(scene, Rect_GetSize(&rect), "Block Scene Collider");
     ColliderScene_SetCollisionLayers(colliderScene, COLLIDER_LAYER_WORLD);
     ColliderScene_SetCollisionScan(colliderScene, COLLIDER_LAYER_WORLD);
 
-    Scene_AddChild(scene, colliderScene);
-
     Scene_UpdateGlobalTransform(scene, false);
 
-    scene->startFunction = NULL;
-    scene->updateFunction = NULL;
     scene->drawFunction = Draw;
-    scene->cleanupFunction = NULL;
 
     return scene;
 }

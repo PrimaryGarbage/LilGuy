@@ -3,9 +3,19 @@
 #include "result.h"
 #include <stdlib.h>
 
+static Scene* s_scenesToFree[512];
+static u32 s_scenesToFreeCount = 0u;
+
+static u32 s_idCounter = 0u;
+
 void Scene_Free(Scene* scene)
 {
+    LogInfo("Scene freed: %s", scene->name);
+
     Scene_Cleanup(scene);
+
+    if(scene->parent)
+        Scene_RemoveChild(scene->parent, scene);
 
     for(u32 i = 0u; i < scene->childrenCount; ++i)
         Scene_Free(scene->children[i]);
@@ -23,6 +33,24 @@ void Scene_AddChild(Scene* scene, Scene* child)
 
     scene->children[scene->childrenCount++] = child;
     child->parent = scene;
+}
+
+void Scene_RemoveChild(Scene* scene, Scene* child)
+{
+    for(u32 i = 0u; i < scene->childrenCount; ++i)
+    {
+        if (scene->children[i]->id == child->id)
+        {
+            for(u32 j = i; j < scene->childrenCount - 1; ++j)
+            {
+                scene->children[j] = scene->children[j + 1];
+            }
+
+            scene->childrenCount--;
+            child->parent = NULL;
+            return;
+        }
+    }
 }
 
 void Scene_UpdateGlobalTransform(Scene* scene, bool recurse)
@@ -88,6 +116,7 @@ void Scene_Draw(Scene* scene)
 void Scene_DefaultInit(Scene* scene, SceneType type, const char* name)
 {
     scene->sceneData = NULL;
+    scene->id = Scene_GenerateId();
     scene->type = type;
     scene->childrenCount = 0u;
     scene->transform = Transform_Zero();
@@ -103,6 +132,24 @@ void Scene_DefaultInit(Scene* scene, SceneType type, const char* name)
     Scene_UpdateGlobalTransform(scene, false);
 }
 
+void Scene_QueueFree(Scene* scene)
+{
+    s_scenesToFree[s_scenesToFreeCount++] = scene;
+}
+
+u32 Scene_GenerateId()
+{
+    return s_idCounter++;
+}
+
+Scene* Scene_GetRoot(Scene* scene)
+{
+    while(scene->parent)
+        scene = scene->parent;
+
+    return scene;
+}
+
 void Scene_Cleanup(Scene* scene)
 {
     if (scene->cleanupFunction) scene->cleanupFunction(scene);
@@ -113,4 +160,12 @@ void Scene_Start(Scene* scene)
 {
     if (scene->startFunction) scene->startFunction(scene);
     Scene_StartChildren(scene);
+}
+
+void Scene_TrimQueuedScenes()
+{
+    for(u32 i = 0u; i < s_scenesToFreeCount; ++i)
+        Scene_Free(s_scenesToFree[i]);
+
+    s_scenesToFreeCount = 0u;
 }

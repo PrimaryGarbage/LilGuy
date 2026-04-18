@@ -61,6 +61,7 @@ static void Draw(Scene* scene)
 Scene* MainCharFootScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
+    Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_FOOT, "Main Char Foot");
 
     MainCharFootSceneData* sceneData = malloc(sizeof(MainCharFootSceneData));
     sceneData->inAnimation = false;
@@ -69,20 +70,11 @@ Scene* MainCharFootScene_Create(Scene* parent)
     sceneData->animationTargetPoint = Vector2_Zero();
 
     scene->sceneData = sceneData;
-    scene->type = SCENE_TYPE_MAIN_CHAR_FOOT;
-    scene->transform.position = Vector2_Zero();
-    scene->transform.scale = Vector2_New(1.0f, 1.0f);
     scene->transform.origin = Vector2_New(c_footSize * 0.5f, 0.0f);
-    scene->transform.rotation = 0.0f;
-    scene->transform.topLevel = false;
-    scene->childrenCount = 0u;
-    scene->name = "Main Char Foot Scene";
-    scene->parent = parent;
+    Scene_AddChild(parent, scene);
     
-    scene->startFunction = NULL;
     scene->updateFunction = Update;
     scene->drawFunction = Draw;
-    scene->cleanupFunction = NULL;
 
     return scene;
 }

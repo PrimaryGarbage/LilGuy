@@ -42,7 +42,6 @@ set(SCENE_FILES
 	scene.c scene.h
 	main_char_scene.c main_char_scene.h
 	main_char_foot_scene.c main_char_foot_scene.h
-	main_char_hand_scene.c main_char_hand_scene.h
 	main_char_eye_scene.c main_char_eye_scene.h
 	empty_scene.c empty_scene.h
 	block_scene.c block_scene.h
@@ -51,6 +50,7 @@ set(SCENE_FILES
 	raycast_scene.c raycast_scene.h
 	main_char_gun_scene.c main_char_gun_scene.h
 	main_char_jetpack_fire_scene.c main_char_jetpack_fire_scene.h
+	main_char_bullet_scene.c main_char_bullet_scene.h
 )
 
 set(PHYSICS_FILES

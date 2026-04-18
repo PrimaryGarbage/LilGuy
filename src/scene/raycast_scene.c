@@ -35,17 +35,17 @@ void Draw(Scene* scene)
     Graphics_DrawVectorFromPointW(scene->globalTransform.position, Vector2_MultScalar(sceneData->raycast.direction, sceneData->raycast.length), COLOR_GREEN);
 }
 
-Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length)
+Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length, const char* name)
 {
     Scene* scene = malloc(sizeof(Scene));
-    Scene_DefaultInit(scene, SCENE_TYPE_RAYCAST, "Raycast Scene");
+    Scene_DefaultInit(scene, SCENE_TYPE_RAYCAST, name);
     RaycastSceneData* sceneData = malloc(sizeof(RaycastSceneData));
     sceneData->raycast = Raycast_New(direction, length);
     sceneData->onCollisionCallback = NULL;
     sceneData->visible = false;
     scene->sceneData = sceneData;
 
-    scene->parent = parent;
+    Scene_AddChild(parent, scene);
 
     scene->updateFunction = Update;
     scene->drawFunction = Draw;

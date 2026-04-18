@@ -35,7 +35,7 @@ Scene* MainCharJetpackFireScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_JETPACK_FIRE, "Main Char Jetpack Fire");
-    scene->parent = parent;
+    Scene_AddChild(parent, scene);
 
     MainCharJetpackFireSceneData* sceneData = malloc(sizeof(MainCharJetpackFireSceneData));
 

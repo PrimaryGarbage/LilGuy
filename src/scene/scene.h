@@ -8,7 +8,7 @@
 
 #define ASSERT_SCENE_TYPE(scene, sceenType) do { assert(scene->type == sceenType && "Invalid scene type"); } while(0)
 
-#define SCENE_CHILDREN_MAX 128
+#define SCENE_CHILDREN_MAX 512
 
 typedef struct Scene Scene;
 
@@ -18,6 +18,7 @@ typedef void(*SceneDrawFunction)(Scene* scene);
 typedef void(*SceneCleanupFunction)(Scene* scene);
 
 typedef struct Scene {
+    u32 id;
     SceneType type;
     struct Scene* parent;
     struct Scene* children[SCENE_CHILDREN_MAX];
@@ -33,10 +34,16 @@ typedef struct Scene {
     void* sceneData;
 } Scene;
 
+void Scene_TrimQueuedScenes();
+
 void Scene_Free(Scene* scene);
 void Scene_AddChild(Scene* scene, Scene* child);
+void Scene_RemoveChild(Scene* scene, Scene* child);
 void Scene_UpdateGlobalTransform(Scene* scene, bool recurse);
 void Scene_DefaultInit(Scene* scene, SceneType type, const char* name);
+void Scene_QueueFree(Scene* scene);
+u32 Scene_GenerateId();
+Scene* Scene_GetRoot(Scene* scene);
 
 void Scene_Start(Scene* scene);
 void Scene_Update(Scene* scene, double deltatime);
