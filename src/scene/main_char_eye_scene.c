@@ -6,10 +6,10 @@
 #include "main_char_eye_scene.h"
 #include <stdlib.h>
 
-constexpr Vector2 c_eyeSize = { 3.0f, 6.0f };
-constexpr double c_blinkAnimationLength = 0.1f;
+constexpr double c_blinkAnimationLength = 0.2f;
 
 typedef struct MainCharEyeSceneData {
+    Texture2D eyeTexture;
     float eyelidHeight;
 } MainCharEyeSceneData;
 
@@ -20,7 +20,7 @@ static void BlinkAnimationTweenFunction(Scene* scene, double elapsed)
     float weight = elapsed / c_blinkAnimationLength;
     float offsetWeight = weight < 0.5f ? weight * 2.0f : 2.0f - weight * 2.0f;
 
-    sceneData->eyelidHeight = c_eyeSize.y * offsetWeight;
+    sceneData->eyelidHeight = sceneData->eyeTexture.height  * offsetWeight;
 }
 
 static void OnBlinkAnimationFinished(Scene* scene)
@@ -34,9 +34,22 @@ static void Draw(Scene* scene)
     MainCharEyeSceneData* sceneData = scene->sceneData;
 
     Graphics_SetTransformW(&scene->globalTransform);
-    Graphics_DrawRectT(c_eyeSize, COLOR_WHITE, DRAW_ORDER_MAIN_CHAR);
-    Graphics_DrawRectT((Vector2) { c_eyeSize.x, sceneData->eyelidHeight }, COLOR_BLACK, DRAW_ORDER_MAIN_CHAR);
+    Graphics_DrawTextureT(&sceneData->eyeTexture, DRAW_ORDER_MAIN_CHAR);
     Graphics_ClearTransform();
+
+    // eyelids
+    Graphics_DrawRectW((Rect){ 
+        .x = scene->globalTransform.position.x - scene->globalTransform.origin.x, 
+        .y = scene->globalTransform.position.y - sceneData->eyelidHeight + scene->globalTransform.origin.y,
+        .width = sceneData->eyeTexture.width,
+        .height = sceneData->eyelidHeight
+    }, COLOR_BLACK, DRAW_ORDER_MAIN_CHAR);
+}
+
+static void Cleanup(Scene* scene)
+{
+    MainCharEyeSceneData* sceneData = scene->sceneData;
+    Graphics_UnloadTexture(sceneData->eyeTexture);
 }
 
 Scene* MainCharEyeScene_Create(Scene* parent)
@@ -46,12 +59,14 @@ Scene* MainCharEyeScene_Create(Scene* parent)
 
     MainCharEyeSceneData* sceneData = malloc(sizeof(MainCharEyeSceneData));
     sceneData->eyelidHeight = 0.0f;
+    sceneData->eyeTexture = Graphics_LoadTexture("res/images/main_char/MainCharEye.png");
 
     scene->sceneData = sceneData;
     scene->parent = parent;
-    scene->transform.origin = Vector2_MultScalar(c_eyeSize, 0.5f);
+    scene->transform.origin = (Vector2){ .x = sceneData->eyeTexture.width * 0.5f, .y = sceneData->eyeTexture.height * 0.5f };
 
     scene->drawFunction = Draw;
+    scene->cleanupFunction = Cleanup;
 
     return scene;
 }
