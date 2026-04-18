@@ -23,9 +23,11 @@ constexpr GraphicsTransform c_defaultTransform = {
 
 static GraphicsTransform s_transform = c_defaultTransform;
 
-static Vector2 WorldToScreenOrigin(Vector2 worldOrigin, Vector2 size)
+// Transform lower-left corner origin to upper-left corner.
+// Has to be a sepate function because Transform doesn't contain any size info.
+static Vector2 WorldToScreenOrigin(Vector2 worldOrigin, Vector2 rectSize)
 {
-    return (Vector2){ .x = worldOrigin.x, .y = size.y - worldOrigin.y };
+    return (Vector2){ .x = worldOrigin.x, .y = rectSize.y - worldOrigin.y };
 }
 
 Result Graphics_CaptureScreen(Image* image_out)
@@ -251,9 +253,9 @@ void Graphics_DrawTexture(const Texture2D* texture, Rect dest)
 
 void Graphics_DrawTextureT(const Texture2D* texture)
 {
-    Rect src = (Rect){ 0.0f, 0.0f, texture->width, texture->height };
-    Rect dest = (Rect){ s_transform.position.x, s_transform.position.y, texture->width * s_transform.scale.x, texture->height * s_transform.scale.y };
-    Vector2 origin = WorldToScreenOrigin(s_transform.origin, (Vector2){ .x = texture->width, .y = texture->height });
+    Rect src = (Rect){ .x = 0.0f, .y = 0.0f, .width = texture->width, .height = texture->height };
+    Rect dest = (Rect){ .x = s_transform.position.x, .y = s_transform.position.y, .width = texture->width * s_transform.scale.x, .height = texture->height * s_transform.scale.y };
+    Vector2 origin = Vector2_Mult(WorldToScreenOrigin(s_transform.origin, (Vector2){ .x = texture->width, .y = texture->height }), s_transform.scale);
 
     Raylib_DrawTexturePro(*texture, src, dest, origin, -s_transform.rotation, COLOR_WHITE);
 }
@@ -261,8 +263,8 @@ void Graphics_DrawTextureT(const Texture2D* texture)
 void Graphics_DrawTintedTextureT(const Texture2D* texture, Color tint)
 {
     Rect src = (Rect){ 0.0f, 0.0f, texture->width, texture->height };
-    Rect dest = (Rect){ s_transform.position.x, s_transform.position.y, texture->width * s_transform.scale.x, texture->height * s_transform.scale.y };
-    Vector2 origin = WorldToScreenOrigin(s_transform.origin, (Vector2){ .x = texture->width, .y = texture->height });
+    Rect dest = (Rect){ .x = s_transform.position.x, .y = s_transform.position.y, .width = texture->width * s_transform.scale.x, .height = texture->height * s_transform.scale.y };
+    Vector2 origin = Vector2_Mult(WorldToScreenOrigin(s_transform.origin, (Vector2){ .x = texture->width, .y = texture->height }), s_transform.scale);
 
     Raylib_DrawTexturePro(*texture, src, dest, origin, -s_transform.rotation, tint);
 }

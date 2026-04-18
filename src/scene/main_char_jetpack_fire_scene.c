@@ -12,7 +12,7 @@ typedef struct MainCharJetpackFireSceneData {
     bool inAnimation;
 } MainCharJetpackFireSceneData;
 
-constexpr float c_animationLength = 0.1f;
+constexpr float c_animationLength = 0.2f;
 
 static void Draw(Scene* scene)
 {
@@ -21,6 +21,8 @@ static void Draw(Scene* scene)
     Graphics_SetTransformW(&scene->globalTransform);
     Graphics_DrawTintedTextureT(&sceneData->fireTexture, (Color){ .r = 255, .g = 255, .b = 255, .a = (u8)(sceneData->opacity * 255.0f)});
     Graphics_ClearTransform();
+
+    Graphics_DrawCircleW(scene->globalTransform.position, 2.0f, COLOR_WHITE);
 }
 
 static void Cleanup(Scene* scene)
