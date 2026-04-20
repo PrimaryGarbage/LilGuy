@@ -1,5 +1,6 @@
 #include "block_scene.h"
 #include "collider_scene.h"
+#include "graphics/draw_order.h"
 #include "graphics/graphics.h"
 #include "rect.h"
 #include "scene.h"
@@ -14,16 +15,16 @@ static void Draw(Scene* scene)
 {
     BlockSceneData* sceneData = scene->sceneData;
 
-    Graphics_SetTransformW(&scene->globalTransform);
+    Graphics_SetModelMatrix(&scene->globalTransform);
     Graphics_DrawRectT(sceneData->size, sceneData->color, DRAW_ORDER_DEFAULT);
-    Graphics_ClearTransform();
+    Graphics_ClearModelMatrix();
 }
 
 Scene* BlockScene_Create(Scene* parent, Rect rect, Color color)
 {
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_BLOCK, "Block");
-    Scene_AddChild(parent, scene);
+    if (parent) Scene_AddChild(parent, scene);
 
     BlockSceneData* sceneData = malloc(sizeof(BlockSceneData));
     sceneData->color = color;
@@ -36,7 +37,7 @@ Scene* BlockScene_Create(Scene* parent, Rect rect, Color color)
     ColliderScene_SetCollisionLayers(colliderScene, COLLIDER_LAYER_WORLD);
     ColliderScene_SetCollisionScan(colliderScene, COLLIDER_LAYER_WORLD);
 
-    Scene_UpdateGlobalTransform(scene, false);
+    Scene_UpdateGlobalTransform(scene);
 
     scene->drawFunction = Draw;
 

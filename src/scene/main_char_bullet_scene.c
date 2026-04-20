@@ -1,4 +1,5 @@
 #include "main_char_bullet_scene.h"
+#include "graphics/draw_order.h"
 #include "graphics/graphics.h"
 #include "scene.h"
 #include "scene_type.h"
@@ -34,16 +35,16 @@ static void Update(Scene* scene, double deltatime)
 
 static void Draw(Scene* scene)
 {
-    Graphics_SetTransformW(&scene->globalTransform);
+    Graphics_SetModelMatrix(&scene->globalTransform);
     Graphics_DrawCircleT(c_size, COLOR_YELLOW, DRAW_ORDER_DEFAULT);
-    Graphics_ClearTransform();
+    Graphics_ClearModelMatrix();
 }
 
 Scene* MainCharBulletScene_Create(Scene* parent, Vector2 initialPosition, Vector2 speed)
 {
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_BULLET, "Main Char Bullet");
-    Scene_AddChild(parent, scene);
+    if (parent)Scene_AddChild(parent, scene);
     scene->transform.rotation = Vector2_Angle(speed);
     scene->transform.position = initialPosition;
     MainCharBulletSceneData* sceneData = malloc(sizeof(MainCharBulletSceneData));

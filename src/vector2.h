@@ -18,13 +18,14 @@ typedef struct Vector2u {
     u32 y;
 } Vector2u;
 
+#define Vector2_Zero() (Vector2) { 0.0f , 0.0f }
+#define Vector2_Up() (Vector2) { 0.0f , -1.0f }
+#define Vector2_Down() (Vector2) { 0.0f , 1.0f }
+#define Vector2_Right() (Vector2) { 1.0f , 0.0f }
+#define Vector2_Left() (Vector2) { -1.0f , 0.0f }
+#define Vector2_One() (Vector2) { 1.0f , 1.0f }
+
 Vector2 Vector2_New(float x, float y);
-Vector2 Vector2_Zero();
-Vector2 Vector2_Up();
-Vector2 Vector2_Down();
-Vector2 Vector2_Right();
-Vector2 Vector2_Left();
-Vector2 Vector2_One();
 Vector2 Vector2_Uniform(float value);
 
 Vector2 Vector2_AddScalar(Vector2 vec, float value);

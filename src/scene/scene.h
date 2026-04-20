@@ -39,7 +39,7 @@ void Scene_TrimQueuedScenes();
 void Scene_Free(Scene* scene);
 void Scene_AddChild(Scene* scene, Scene* child);
 void Scene_RemoveChild(Scene* scene, Scene* child);
-void Scene_UpdateGlobalTransform(Scene* scene, bool recurse);
+void Scene_UpdateGlobalTransform(Scene* scene);
 void Scene_DefaultInit(Scene* scene, SceneType type, const char* name);
 void Scene_QueueFree(Scene* scene);
 u32 Scene_GenerateId();

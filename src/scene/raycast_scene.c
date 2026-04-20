@@ -32,20 +32,19 @@ void Draw(Scene* scene)
 
     if (!sceneData->visible) return;
 
-    Graphics_DrawVectorFromPointW(scene->globalTransform.position, Vector2_MultScalar(sceneData->raycast.direction, sceneData->raycast.length), COLOR_GREEN);
+    Graphics_DrawVectorFromPoint(scene->globalTransform.position, Vector2_MultScalar(sceneData->raycast.direction, sceneData->raycast.length), COLOR_GREEN);
 }
 
 Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length, const char* name)
 {
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_RAYCAST, name);
+    if (parent) Scene_AddChild(parent, scene);
     RaycastSceneData* sceneData = malloc(sizeof(RaycastSceneData));
     sceneData->raycast = Raycast_New(direction, length);
     sceneData->onCollisionCallback = NULL;
     sceneData->visible = false;
     scene->sceneData = sceneData;
-
-    Scene_AddChild(parent, scene);
 
     scene->updateFunction = Update;
     scene->drawFunction = Draw;
@@ -68,7 +67,7 @@ bool RaycastScene_CheckForCollision(Scene* scene, Vector2* collisionPoint_out)
 
     RaycastSceneData* sceneData = scene->sceneData;
 
-    Scene_UpdateGlobalTransform(scene, false);
+    Scene_UpdateGlobalTransform(scene);
 
     Vector2 point;
     if (Raycast_CheckForCollision(&sceneData->raycast, scene->globalTransform.position, &point))

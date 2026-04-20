@@ -14,6 +14,7 @@ set(SRC_FILES
 	vector2.c vector2.h
 	timer.c timer.h
 	raylib_wrapper.c raylib_wrapper.h
+	raymath_wrapper.c raymath_wrapper.h
 	tween.c tween.h
 	list.c list.h
 	debug.c debug.h
@@ -51,12 +52,14 @@ set(SCENE_FILES
 	main_char_gun_scene.c main_char_gun_scene.h
 	main_char_jetpack_fire_scene.c main_char_jetpack_fire_scene.h
 	main_char_bullet_scene.c main_char_bullet_scene.h
+	sprite_scene.c sprite_scene.h
 )
 
 set(PHYSICS_FILES
 	collider.c collider.h
 	transform.h
 	raycast.c raycast.h
+	matrix.c matrix.h
 )
 
 list(TRANSFORM SRC_FILES PREPEND "src/")

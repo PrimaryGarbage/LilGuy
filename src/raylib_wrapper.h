@@ -1,6 +1,7 @@
 #ifndef __RAYLIB_WRAPPER_H__
 #define __RAYLIB_WRAPPER_H__
 
+#include "physics/matrix.h"
 #include "short_types.h"
 #include "vector2.h"
 #include "graphics/color.h"
@@ -39,11 +40,15 @@ void Raylib_HideWindow();
 void Raylib_ShowWindow();
 
 // Draw functions
+void Raylib_DrawTexture(Texture2D texture, float posX, float posY, Color tint);
 void Raylib_DrawTexturePro(Texture2D texture, Rect source, Rect dest, Vector2 origin, float rotation, Color tint);
+void Raylib_DrawRectangleV(Vector2 position, Vector2 size, Color color);
 void Raylib_DrawRectanglePro(Rect rect, Vector2 origin, float rotation, Color color);
 void Raylib_DrawLineV(Vector2 startPos, Vector2 endPos, Color color);
 void Raylib_DrawLineEx(Vector2 startPos, Vector2 endPos, float thick, Color color);
 void Raylib_DrawCircleV(Vector2 position, float radius, Color color);
+void Raylib_PushMatrix(const Matrix* matrix);
+void Raylib_PopMatrix();
 
 // Collision
 bool Raylib_CheckCollisionRects(Rect a, Rect b);

@@ -1,3 +1,4 @@
+#include "raymath.h"
 #include <string.h>
 
 #define TYPE_PUN(typeFrom, typeTo, valueFrom, valueTo) \
@@ -261,9 +262,20 @@ void Raylib_ShowWindow()
     ClearWindowState(FLAG_WINDOW_HIDDEN);
 }
 
+void Raylib_DrawTexture(Texture2D texture, float posX, float posY, Color tint)
+{
+    DrawTexture(TextureToRlTexture(texture), posX, posY, ColorToRlColor(tint));
+    
+}
+
 void Raylib_DrawTexturePro(Texture2D texture, Rect source, Rect dest, Vector2 origin, float rotation, Color tint)
 {
     DrawTexturePro(TextureToRlTexture(texture), RectToRlRect(source), RectToRlRect(dest), Vector2ToRlVector2(origin), rotation, ColorToRlColor(tint));
+}
+
+void Raylib_DrawRectangleV(Vector2 position, Vector2 size, Color color)
+{
+    DrawRectangleV(Vector2ToRlVector2(position), Vector2ToRlVector2(size), ColorToRlColor(color));
 }
 
 void Raylib_DrawRectanglePro(Rect rect, Vector2 origin, float rotation, Color color)
@@ -284,6 +296,17 @@ void Raylib_DrawLineEx(Vector2 startPos, Vector2 endPos, float thick, Color colo
 void Raylib_DrawCircleV(Vector2 position, float radius, Color color)
 {
     DrawCircleV(Vector2ToRlVector2(position), radius, ColorToRlColor(color));
+}
+
+void Raylib_PushMatrix(const Matrix* matrix)
+{
+    rlPushMatrix();
+    rlMultMatrixf(MatrixToFloat(*matrix));
+}
+
+void Raylib_PopMatrix()
+{
+    rlPopMatrix();
 }
 
 bool Raylib_CheckCollisionRects(Rect a, Rect b)

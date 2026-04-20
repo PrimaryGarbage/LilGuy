@@ -1,4 +1,5 @@
 #include "collider_scene.h"
+#include "graphics/draw_order.h"
 #include "graphics/graphics.h"
 #include "scene.h"
 #include "scene_type.h"
@@ -55,9 +56,9 @@ static void Draw(Scene* scene)
 
     if(!sceneData->visible) return;
 
-    Graphics_SetTransformW(&scene->globalTransform);
+    Graphics_SetModelMatrix(&scene->globalTransform);
     Graphics_DrawRectT((Vector2){ sceneData->collider.rect.width, sceneData->collider.rect.height }, colliderColor, DRAW_ORDER_TOP);
-    Graphics_ClearTransform();
+    Graphics_ClearModelMatrix();
 }
 
 static void Cleanup(Scene* scene)
@@ -71,7 +72,7 @@ Scene* ColliderScene_Create(Scene* parent, Vector2 size, const char* name)
 {
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_COLLIDER, name);
-    Scene_AddChild(parent, scene);
+    if (parent) Scene_AddChild(parent, scene);
 
     ColliderSceneData* sceneData = malloc(sizeof(ColliderSceneData));
     sceneData->visible = false;
@@ -85,7 +86,7 @@ Scene* ColliderScene_Create(Scene* parent, Vector2 size, const char* name)
 
     scene->sceneData = sceneData;
 
-    Scene_UpdateGlobalTransform(scene, false);
+    Scene_UpdateGlobalTransform(scene);
 
     scene->startFunction = Start;
     scene->updateFunction = Update;
@@ -154,6 +155,6 @@ const Collider* ColliderScene_CheckForCollision(Scene* scene)
 
 void ColliderScene_ForceUpdate(Scene* scene)
 {
-    Scene_UpdateGlobalTransform(scene, false);
+    Scene_UpdateGlobalTransform(scene);
     SearchCollisions(scene);
 }

@@ -15,6 +15,7 @@ typedef enum SceneType {
     SCENE_TYPE_MAIN_CHAR_GUN,
     SCENE_TYPE_MAIN_CHAR_JETPACK_FIRE,
     SCENE_TYPE_MAIN_CHAR_BULLET,
+    SCENE_TYPE_SPRITE,
 } SceneType;
 
 #endif // __SCENE_TAGS_H__

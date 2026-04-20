@@ -35,7 +35,8 @@ void Tween_Update(double deltatime)
         }
         else
         {
-            tween->function(tween->functionOwner, tween->elapsed);
+            if (tween->function)
+                tween->function(tween->functionOwner, tween->elapsed);
         }
     }
 }
@@ -44,20 +45,19 @@ TweenHandle Tween_CreateFunction(double timeLimit, Scene* functionOwner, TweenFu
 {
     for(u32 i = 0u; i < TWEEN_MAX_INSTANCES; ++i)
     {
-        if (!s_tweens[i].active)
-        {
-            s_tweens[i] = (Tween){
-                .elapsed = 0.0,
-                .limit = timeLimit,
-                .function = function,
-                .functionOwner = functionOwner,
-                .onFinish = NULL,
-                .onFinishCallbackOwner = NULL,
-                .active = true
-            };
-            
-            return &s_tweens[i];
-        }
+        if (s_tweens[i].active) continue;
+        
+        s_tweens[i] = (Tween){
+            .elapsed = 0.0,
+            .limit = timeLimit,
+            .function = function,
+            .functionOwner = functionOwner,
+            .onFinish = NULL,
+            .onFinishCallbackOwner = NULL,
+            .active = true
+        };
+        
+        return &s_tweens[i];
     }
     
     PANIC_EX(LogErrorM("Failed to create tween function: Unable to find inactive tween."););
@@ -67,4 +67,26 @@ void Tween_SetOnFinishCallback(TweenHandle tween, Scene* callbackOwner, TweenOnF
 {
     tween->onFinish = callback;
     tween->onFinishCallbackOwner = callbackOwner;
+}
+
+void Tween_CreateTimer(double timeLimit, Scene* callbackOwner, TweenOnFinishCallback callback)
+{
+    for(u32 i = 0u; i < TWEEN_MAX_INSTANCES; ++i)
+    {
+        if (s_tweens[i].active) continue;
+
+        s_tweens[i] = (Tween){
+            .elapsed = 0.0,
+            .limit = timeLimit,
+            .function = NULL,
+            .functionOwner = NULL,
+            .onFinish = callback,
+            .onFinishCallbackOwner = callbackOwner,
+            .active = true
+        };
+
+        return;
+    }
+    
+    PANIC_EX(LogErrorM("Failed to create tween function: Unable to find inactive tween."););
 }

@@ -1,5 +1,6 @@
 #include "main_char_foot_scene.h"
 #include "graphics/color.h"
+#include "graphics/draw_order.h"
 #include "graphics/graphics.h"
 #include "scene.h"
 #include "scene_type.h"
@@ -50,9 +51,9 @@ static void Draw(Scene* scene)
 
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_FOOT);
 
-    Graphics_SetTransformW(&scene->globalTransform);
+    Graphics_SetModelMatrix(&scene->globalTransform);
     Graphics_DrawCircleT(c_footSize, color, DRAW_ORDER_MAIN_CHAR);
-    Graphics_ClearTransform();
+    Graphics_ClearModelMatrix();
 
     // origin
     //Graphics_DrawSquareW(scene->globalTransform.position, 1.0f, COLOR_WHITE, DRAW_ORDER_TOP);
@@ -62,6 +63,7 @@ Scene* MainCharFootScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_FOOT, "Main Char Foot");
+    if (parent) Scene_AddChild(parent, scene);
 
     MainCharFootSceneData* sceneData = malloc(sizeof(MainCharFootSceneData));
     sceneData->inAnimation = false;
@@ -71,7 +73,6 @@ Scene* MainCharFootScene_Create(Scene* parent)
 
     scene->sceneData = sceneData;
     scene->transform.origin = Vector2_New(c_footSize * 0.5f, 0.0f);
-    Scene_AddChild(parent, scene);
     
     scene->updateFunction = Update;
     scene->drawFunction = Draw;

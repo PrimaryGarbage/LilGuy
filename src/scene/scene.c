@@ -1,5 +1,6 @@
 #include "scene.h"
 #include "logging.h"
+#include "physics/transform.h"
 #include "result.h"
 #include <stdlib.h>
 
@@ -10,7 +11,7 @@ static u32 s_idCounter = 0u;
 
 void Scene_Free(Scene* scene)
 {
-    LogInfo("Scene freed: %s", scene->name);
+    LogInfo("Scene freed: %s. ID: %d", scene->name, scene->id);
 
     Scene_Cleanup(scene);
 
@@ -53,18 +54,19 @@ void Scene_RemoveChild(Scene* scene, Scene* child)
     }
 }
 
-void Scene_UpdateGlobalTransform(Scene* scene, bool recurse)
+void Scene_UpdateGlobalTransform(Scene* scene)
 {
+    Transform_UpdateMatrix(&scene->transform);
+
     if (!scene->parent || scene->transform.topLevel)
     {
         scene->globalTransform = scene->transform;
         return;
     }
 
-    if (recurse)
-        Scene_UpdateGlobalTransform(scene->parent, recurse);
-
-    scene->globalTransform = Transform_Combine(&scene->parent->globalTransform, &scene->transform);
+    Matrix globalMatrix = Matrix_Mult(&scene->transform.matrix, &scene->parent->globalTransform.matrix);
+    scene->globalTransform = Transform_FromMatrix(&globalMatrix);
+    scene->globalTransform.origin = scene->transform.origin;
 }
 
 static void Scene_StartChildren(Scene* scene)
@@ -95,12 +97,11 @@ void Scene_Update(Scene* scene, double deltatime)
 {
     if (scene->updateFunction)
     {
-        Scene_UpdateGlobalTransform(scene, false);
+        Scene_UpdateGlobalTransform(scene);
         scene->updateFunction(scene, deltatime);
     }
 
-    Scene_UpdateGlobalTransform(scene, false);
-
+    Scene_UpdateGlobalTransform(scene);
 
     Scene_UpdateChildren(scene, deltatime);
 }
@@ -110,6 +111,7 @@ void Scene_Draw(Scene* scene)
     if (!scene->visible) return;
 
     if (scene->drawFunction) scene->drawFunction(scene);
+
     Scene_DrawChildren(scene);
 }
 
@@ -129,7 +131,7 @@ void Scene_DefaultInit(Scene* scene, SceneType type, const char* name)
     scene->cleanupFunction = NULL;
     scene->parent = NULL;
 
-    Scene_UpdateGlobalTransform(scene, false);
+    Scene_UpdateGlobalTransform(scene);
 }
 
 void Scene_QueueFree(Scene* scene)

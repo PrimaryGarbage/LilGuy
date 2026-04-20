@@ -11,5 +11,6 @@ typedef void(*TweenOnFinishCallback)(Scene* callbackOwner);
 void Tween_Update(double deltatime);
 TweenHandle Tween_CreateFunction(double timeLimit, Scene* functionOwner, TweenFunction function);
 void Tween_SetOnFinishCallback(TweenHandle tween, Scene* callbackOwner, TweenOnFinishCallback callback);
+void Tween_CreateTimer(double timeLimit, Scene* callbackOwner, TweenOnFinishCallback callback);
 
 #endif // __TWINE_H__

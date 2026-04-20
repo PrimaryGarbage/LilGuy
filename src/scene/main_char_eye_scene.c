@@ -1,3 +1,4 @@
+#include "graphics/draw_order.h"
 #include "graphics/graphics.h"
 #include "scene.h"
 #include "scene_type.h"
@@ -33,12 +34,12 @@ static void Draw(Scene* scene)
 {
     MainCharEyeSceneData* sceneData = scene->sceneData;
 
-    Graphics_SetTransformW(&scene->globalTransform);
-    Graphics_DrawTextureT(&sceneData->eyeTexture, DRAW_ORDER_MAIN_CHAR);
-    Graphics_ClearTransform();
+    Graphics_SetModelMatrix(&scene->globalTransform);
+    Graphics_DrawTextureT(&sceneData->eyeTexture, DRAW_ORDER_MAIN_CHAR, COLOR_WHITE);
+    Graphics_ClearModelMatrix();
 
     // eyelids
-    Graphics_DrawRectW((Rect){ 
+    Graphics_DrawRect((Rect){ 
         .x = scene->globalTransform.position.x - scene->globalTransform.origin.x, 
         .y = scene->globalTransform.position.y - sceneData->eyelidHeight + scene->globalTransform.origin.y,
         .width = sceneData->eyeTexture.width,
@@ -56,13 +57,13 @@ Scene* MainCharEyeScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_EYE, "Main Char Eye");
+    if (parent) Scene_AddChild(parent, scene);
 
     MainCharEyeSceneData* sceneData = malloc(sizeof(MainCharEyeSceneData));
     sceneData->eyelidHeight = 0.0f;
     sceneData->eyeTexture = Graphics_LoadTexture("res/images/main_char/MainCharEye.png");
 
     scene->sceneData = sceneData;
-    Scene_AddChild(parent, scene);
     scene->transform.origin = (Vector2){ .x = sceneData->eyeTexture.width * 0.5f, .y = sceneData->eyeTexture.height * 0.5f };
 
     scene->drawFunction = Draw;

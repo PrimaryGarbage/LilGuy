@@ -2,36 +2,6 @@
 #include "math_helpers.h"
 #include <math.h>
 
-Vector2 Vector2_Zero()
-{
-    return (Vector2) { 0.0f , 0.0f };
-}
-
-Vector2 Vector2_Up()
-{
-    return (Vector2) { 0.0f , 1.0f };
-}
-
-Vector2 Vector2_Down()
-{
-    return (Vector2) { 0.0f , -1.0f };
-}
-
-Vector2 Vector2_Right()
-{
-    return (Vector2) { 1.0f , 0.0f };
-}
-
-Vector2 Vector2_Left()
-{
-    return (Vector2) { -1.0f , 0.0f };
-}
-
-Vector2 Vector2_One()
-{
-    return (Vector2) { 1.0f , 1.0f };
-}
-
 Vector2 Vector2_Uniform(float value)
 {
     return (Vector2) { value , value };
