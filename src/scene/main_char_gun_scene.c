@@ -36,7 +36,7 @@ static void Update(Scene* scene, double deltatime)
 
     sceneData->gunFlipped = fabsf(scene->globalTransform.rotation) > 90.0f;
 
-    sceneData->gunFlash->transform.position.y = sceneData->gunFlipped ? 0.0f : -(float)sceneData->gunTexture.height * 0.5f - 2.0f;
+    sceneData->gunFlash->transform.position.y = sceneData->gunFlipped ? -2.0f : -(float)sceneData->gunTexture.height * 0.5f - 2.0f;
 
     sceneData->elapsedSinceShot += deltatime;
 }

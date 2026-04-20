@@ -14,7 +14,7 @@ typedef struct MainCharBulletSceneData {
 } MainCharBulletSceneData;
 
 constexpr float c_defaultDamage = 1.0f;
-constexpr float c_size = 2.0f;
+constexpr Vector2 c_size = (Vector2){ .x = 8.0f, 2.0f };
 
 static void Update(Scene* scene, double deltatime)
 {
@@ -36,7 +36,7 @@ static void Update(Scene* scene, double deltatime)
 static void Draw(Scene* scene)
 {
     Graphics_SetModelMatrix(&scene->globalTransform);
-    Graphics_DrawCircleT(c_size, COLOR_YELLOW, DRAW_ORDER_DEFAULT);
+    Graphics_DrawRectT(c_size, COLOR_YELLOW, DRAW_ORDER_DEFAULT);
     Graphics_ClearModelMatrix();
 }
 

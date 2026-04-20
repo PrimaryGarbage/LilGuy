@@ -41,7 +41,7 @@ static void Draw(Scene* scene)
     // eyelids
     Graphics_DrawRect((Rect){ 
         .x = scene->globalTransform.position.x - scene->globalTransform.origin.x, 
-        .y = scene->globalTransform.position.y - sceneData->eyelidHeight + scene->globalTransform.origin.y,
+        .y = scene->globalTransform.position.y - scene->globalTransform.origin.y,
         .width = sceneData->eyeTexture.width,
         .height = sceneData->eyelidHeight
     }, COLOR_BLACK, DRAW_ORDER_MAIN_CHAR);
