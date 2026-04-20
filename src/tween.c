@@ -12,10 +12,34 @@ typedef struct Tween {
     Scene* functionOwner;
     TweenOnFinishCallback onFinish;
     Scene* onFinishCallbackOwner;
+    Tween_Interpolation interpolation;
     bool active;
 } Tween;
 
 static Tween s_tweens[TWEEN_MAX_INSTANCES];
+
+static double ApplyInterpolation(double weight, Tween_Interpolation interpolation)
+{
+    switch(interpolation)
+    {
+        case TWEEN_INTERPOLATION_LINEAR: 
+            return weight;
+        case TWEEN_INTERPOLATION_QUADRATIC:
+            return weight * weight;
+        case TWEEN_INTERPOLATION_CUBIC:
+            return weight * weight * weight;
+        case TWEEN_INTERPOLATION_QUADRATIC_EASE_OUT:
+        {
+            double num = 1.0 - weight;
+            return 1.0 - num * num;
+        }
+        case TWEEN_INTERPOLATION_CUBIC_EASE_OUT:
+        {
+            double num = 1.0 - weight;
+            return 1.0 - num * num * num;
+        }
+    }
+}
 
 void Tween_Update(double deltatime)
 {
@@ -36,12 +60,14 @@ void Tween_Update(double deltatime)
         else
         {
             if (tween->function)
-                tween->function(tween->functionOwner, tween->elapsed);
+            {
+                tween->function(tween->functionOwner, ApplyInterpolation(tween->elapsed / tween->limit, tween->interpolation), tween->elapsed);
+            }
         }
     }
 }
 
-TweenHandle Tween_CreateFunction(double timeLimit, Scene* functionOwner, TweenFunction function)
+TweenHandle Tween_CreateFunction(double timeLimit, Scene* functionOwner, TweenFunction function, Tween_Interpolation interpolation)
 {
     for(u32 i = 0u; i < TWEEN_MAX_INSTANCES; ++i)
     {
@@ -54,7 +80,8 @@ TweenHandle Tween_CreateFunction(double timeLimit, Scene* functionOwner, TweenFu
             .functionOwner = functionOwner,
             .onFinish = NULL,
             .onFinishCallbackOwner = NULL,
-            .active = true
+            .active = true,
+            .interpolation = interpolation,
         };
         
         return &s_tweens[i];
@@ -89,4 +116,9 @@ void Tween_CreateTimer(double timeLimit, Scene* callbackOwner, TweenOnFinishCall
     }
     
     PANIC_EX(LogErrorM("Failed to create tween function: Unable to find inactive tween."););
+}
+
+void Tween_Stop(TweenHandle tween)
+{
+    tween->active = false;
 }

@@ -73,4 +73,14 @@ static inline Transform Transform_FromMatrix(const Matrix* matrix)
     };
 }
 
+static inline Vector2 Transform_Forward(const Transform* transform)
+{
+    return Vector2_Normalize((Vector2){ transform->matrix.m0, transform->matrix.m1 });
+}
+
+static inline Vector2 Transform_Up(const Transform* transform)
+{
+    return Vector2_Normalize((Vector2){ transform->matrix.m4, transform->matrix.m5 });
+}
+
 #endif // __TRANSFORM_H__

@@ -13,7 +13,7 @@ typedef struct MainCharJetpackFireSceneData {
     bool inAnimation;
 } MainCharJetpackFireSceneData;
 
-constexpr double c_animationLength = 0.5f;
+constexpr double c_animationLength = 0.2f;
 
 static void Draw(Scene* scene)
 {
@@ -74,21 +74,19 @@ static void OnShowAnimationFinish(Scene* scene)
     sceneData->inAnimation = false;
 }
 
-static void ShowTweenAnimationFunction(Scene* scene, double elapsed)
+static void ShowTweenAnimationFunction(Scene* scene, double weight, double _)
 {
     MainCharJetpackFireSceneData* sceneData = scene->sceneData;
 
-    float weight = elapsed / c_animationLength;
     sceneData->opacity = weight;
     //scene->transform.scale.x = weight;
     scene->transform.scale.y = weight;
 }
 
-static void HideTweenAnimationFunction(Scene* scene, double elapsed)
+static void HideTweenAnimationFunction(Scene* scene, double weight, double _)
 {
     MainCharJetpackFireSceneData* sceneData = scene->sceneData;
 
-    float weight = elapsed / c_animationLength;
     sceneData->opacity = 1.0f - weight;
     //scene->transform.scale.x = 1.0 - weight;
     scene->transform.scale.y = 1.0f - weight;
@@ -102,7 +100,7 @@ void MainCharJetpackFireScene_Show(Scene* scene)
     if (sceneData->inAnimation || sceneData->opacity == 1.0f) return;
     sceneData->inAnimation = true;
 
-    TweenHandle tween = Tween_CreateFunction(c_animationLength, scene, ShowTweenAnimationFunction);
+    TweenHandle tween = Tween_CreateFunction(c_animationLength, scene, ShowTweenAnimationFunction, TWEEN_INTERPOLATION_LINEAR);
     Tween_SetOnFinishCallback(tween, scene, OnShowAnimationFinish);
 }
 
@@ -114,6 +112,6 @@ void MainCharJetpackFireScene_Hide(Scene* scene)
     if (sceneData->inAnimation || sceneData->opacity == 0.0f) return;
     sceneData->inAnimation = true;
 
-    TweenHandle tween = Tween_CreateFunction(c_animationLength, scene, HideTweenAnimationFunction);
+    TweenHandle tween = Tween_CreateFunction(c_animationLength, scene, HideTweenAnimationFunction, TWEEN_INTERPOLATION_LINEAR);
     Tween_SetOnFinishCallback(tween, scene, OnHideAnimationFinish);
 }

@@ -139,11 +139,10 @@ static void MoveFeet(Scene* scene)
     }
 }
 
-static void LandingTweenAnimationCallback(Scene* scene, double elapsed)
+static void LandingTweenAnimationCallback(Scene* scene, double weight, double _)
 {
     constexpr float animationMaxOffsetY = 10.0f;
 
-    float weight = elapsed / c_landingAnimationLength;
     float offsetWeight = weight < 0.5f ? weight * 2.0f : 2.0f - weight * 2.0f;
     scene->transform.position.y += animationMaxOffsetY * offsetWeight;
 }
@@ -157,7 +156,7 @@ static void OnLanding(Scene* scene)
     sceneData->rightFoot->transform.position.x = scene->globalTransform.position.x + c_idleDistanceBetweenFeet;
     sceneData->rightFoot->transform.position.y = scene->globalTransform.position.y + sceneData->bodyToFootMaxDistance;
 
-    Tween_CreateFunction(c_landingAnimationLength, scene, LandingTweenAnimationCallback);
+    Tween_CreateFunction(c_landingAnimationLength, scene, LandingTweenAnimationCallback, TWEEN_INTERPOLATION_QUADRATIC);
 }
 
 static void MoveCharacter(Scene* scene, double deltatime)
@@ -199,9 +198,15 @@ static void MoveCharacter(Scene* scene, double deltatime)
     sceneData->usingJetpack = tryingToMove && !onGround && sceneData->fuel > 0.0f;
 
     if (sceneData->usingJetpack)
+    {
         MainCharJetpackFireScene_Show(sceneData->jetpackFire);
+        float angle = (sceneData->speed.x / maxJetpackSpeedX) * 45.0f;
+        sceneData->jetpackFire->transform.rotation = LerpAnglef(sceneData->jetpackFire->transform.rotation, angle, 0.3f);
+    }
     else
+    {
         MainCharJetpackFireScene_Hide(sceneData->jetpackFire);
+    }
 
 
     if (sceneData->usingJetpack) 
@@ -398,7 +403,7 @@ Scene* MainCharScene_Create(Scene* parent)
 
     Scene* jetpackFire = MainCharJetpackFireScene_Create(scene);
     sceneData->jetpackFire = jetpackFire;
-    jetpackFire->transform.position.y += (float)sceneData->bodyTexture.height * 0.5f - 2.0f;
+    jetpackFire->transform.position.y += (float)sceneData->bodyTexture.height * 0.5f - 10.0f;
 
     Vector2 colliderSize = {
         .x = scene->transform.origin.x * 2.0f,

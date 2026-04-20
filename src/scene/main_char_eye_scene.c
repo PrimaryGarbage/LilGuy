@@ -14,11 +14,10 @@ typedef struct MainCharEyeSceneData {
     float eyelidHeight;
 } MainCharEyeSceneData;
 
-static void BlinkAnimationTweenFunction(Scene* scene, double elapsed)
+static void BlinkAnimationTweenFunction(Scene* scene, double weight, double _)
 {
     MainCharEyeSceneData* sceneData = scene->sceneData;
 
-    float weight = elapsed / c_blinkAnimationLength;
     float offsetWeight = weight < 0.5f ? weight * 2.0f : 2.0f - weight * 2.0f;
 
     sceneData->eyelidHeight = sceneData->eyeTexture.height  * offsetWeight;
@@ -76,6 +75,6 @@ void MainCharEyeScene_Blink(Scene* scene)
 {
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_EYE);
 
-    TweenHandle tween = Tween_CreateFunction(c_blinkAnimationLength, scene, BlinkAnimationTweenFunction);
+    TweenHandle tween = Tween_CreateFunction(c_blinkAnimationLength, scene, BlinkAnimationTweenFunction, TWEEN_INTERPOLATION_QUADRATIC);
     Tween_SetOnFinishCallback(tween, scene, OnBlinkAnimationFinished);
 }

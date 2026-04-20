@@ -36,7 +36,7 @@ static void Update(Scene* scene, double deltatime)
             float weightX = sceneData->animationElapsed / c_animationLength;
             float weightY = weightX < 0.5f ? weightX * 2.0f : 2.0f - weightX * 2.0f;
             scene->transform.position = Vector2_Lerp(sceneData->animationInitialPoint, sceneData->animationTargetPoint, weightX);
-            scene->transform.position.y += weightY * c_animationFootYMaxOffset;
+            scene->transform.position.y -= weightY * c_animationFootYMaxOffset;
         }
         else
         {

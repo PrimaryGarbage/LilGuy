@@ -3,6 +3,7 @@
 #include "graphics/graphics.h"
 #include "graphics/image.h"
 #include "main_char_bullet_scene.h"
+#include "physics/transform.h"
 #include "scene/scene.h"
 #include "scene_type.h"
 #include "sprite_scene.h"
@@ -17,18 +18,14 @@ typedef struct MainCharGunSceneData {
     Scene* gunFlash;
     bool gunFlipped;
     double elapsedSinceShot;
+    TweenHandle recoilTween;
 } MainCharGunSceneData;
 
 constexpr float c_handSize = 4.0f;
 constexpr float c_bulletSpeed = 1000.0f;
 constexpr double c_shootDelay = 0.1f;
-constexpr double c_flashLifetime = 0.1f;
-
-static void OnGunFlip(Scene* scene)
-{
-    MainCharGunSceneData* sceneData = scene->sceneData;
-
-}
+constexpr double c_flashLifetime = 0.05f;
+constexpr double c_recoilAnimationLength = 0.1f;
 
 static void Update(Scene* scene, double deltatime)
 {
@@ -82,7 +79,9 @@ Scene* MainCharGunScene_Create(Scene* parent)
     Image_FlipVertical(&gunImage);
     sceneData->gunTextureFlippedY = Graphics_LoadTextureFromImage(&gunImage);
     Image_Free(&gunImage);
+
     sceneData->elapsedSinceShot = 0.0;
+    sceneData->recoilTween = NULL;
 
     scene->sceneData = sceneData;
 
@@ -101,9 +100,17 @@ Scene* MainCharGunScene_Create(Scene* parent)
     return scene;
 }
 
+void TweenAnimationRecoilFunction(Scene* scene, double weight, double _)
+{
+    constexpr float animationMaxOffsetX = 10.0f;
+
+    float offsetWeight = weight < 0.5f ? weight * 2.0f : 2.0f - weight * 2.0f;
+    scene->transform.position = Vector2_Add(scene->transform.position, Vector2_MultScalar(Transform_Forward(&scene->globalTransform), -animationMaxOffsetX * offsetWeight));
+}
+
 void TweenAnimationFlashCallback(Scene* scene)
 {
-    MainCharGunSceneData* sceneData = (MainCharGunSceneData*)scene->sceneData;
+    MainCharGunSceneData* sceneData = scene->sceneData;
     sceneData->gunFlash->visible = false;
 }
 
@@ -111,7 +118,7 @@ void MainCharGunScene_Shoot(Scene* scene)
 {
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_GUN);
 
-    MainCharGunSceneData* sceneData = (MainCharGunSceneData*)scene->sceneData;
+    MainCharGunSceneData* sceneData = scene->sceneData;
 
     if (sceneData->elapsedSinceShot < c_shootDelay) return;
 
@@ -128,4 +135,8 @@ void MainCharGunScene_Shoot(Scene* scene)
 
     sceneData->gunFlash->visible = true;
     Tween_CreateTimer(c_flashLifetime, scene, TweenAnimationFlashCallback);
+
+    if (sceneData->recoilTween)
+        Tween_Stop(sceneData->recoilTween);
+    sceneData->recoilTween = Tween_CreateFunction(c_recoilAnimationLength, scene, TweenAnimationRecoilFunction, TWEEN_INTERPOLATION_CUBIC_EASE_OUT);
 }
