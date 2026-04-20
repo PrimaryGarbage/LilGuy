@@ -85,3 +85,10 @@ void RaycastScene_SetVisible(Scene* scene, bool on)
 
     ((RaycastSceneData*)scene->sceneData)->visible = on;
 }
+
+void RaycastScene_SetLength(Scene* scene, float length)
+{
+    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_RAYCAST);
+
+    ((RaycastSceneData*)scene->sceneData)->raycast.length = length;
+}
