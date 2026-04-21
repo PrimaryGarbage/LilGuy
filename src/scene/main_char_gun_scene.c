@@ -4,6 +4,7 @@
 #include "graphics/image.h"
 #include "main_char_bullet_scene.h"
 #include "physics/transform.h"
+#include "raycast_scene.h"
 #include "scene/scene.h"
 #include "scene_type.h"
 #include "sprite_scene.h"
@@ -19,6 +20,7 @@ typedef struct MainCharGunSceneData {
     bool gunFlipped;
     double elapsedSinceShot;
     TweenHandle recoilTween;
+    Scene* raycast;
 } MainCharGunSceneData;
 
 constexpr float c_handSize = 4.0f;
@@ -36,6 +38,13 @@ static void Update(Scene* scene, double deltatime)
     sceneData->gunFlash->transform.position.y = sceneData->gunFlipped ? -2.0f : -(float)sceneData->gunTexture.height * 0.5f - 2.0f;
 
     sceneData->elapsedSinceShot += deltatime;
+
+    Vector2 collisionPoint;
+    if (RaycastScene_CheckForCollision(sceneData->raycast, &collisionPoint))
+    {
+        Vector2 gunOffset = Vector2_Sub(collisionPoint, RaycastScene_GetGlobalRaycastPointToVector(sceneData->raycast));
+        scene->transform.position = Vector2_Add(scene->transform.position, gunOffset);
+    }
 }
 
 static void Draw(Scene* scene)
@@ -95,6 +104,10 @@ Scene* MainCharGunScene_Create(Scene* parent)
     gunFlash->transform.position = (Vector2){ .x = sceneData->gunTexture.width, .y = -(float)sceneData->gunTexture.height * 0.5f - 2.0f};
     gunFlash->visible = false;
     sceneData->gunFlash = gunFlash;
+
+    Scene* raycastScene = RaycastScene_Create(scene, Vector2_Right(), sceneData->gunTexture.width, "Main Char Gun Raycast");
+    RaycastScene_SetVisible(raycastScene, false);
+    sceneData->raycast = raycastScene;
 
     return scene;
 }

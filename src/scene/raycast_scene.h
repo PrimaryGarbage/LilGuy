@@ -10,5 +10,9 @@ void RaycastScene_SetOnCollisionCallback(Scene* scene, Scene* callbackOwner, Ray
 bool RaycastScene_CheckForCollision(Scene* scene, Vector2* collisionPoint_out);
 void RaycastScene_SetVisible(Scene* scene, bool on);
 void RaycastScene_SetLength(Scene* scene, float length);
+float RaycastScene_GetLength(Scene* scene);
+Vector2 RaycastScene_GetRaycastVector(Scene* scene);
+// Return point in global coordinates to which the raycast points
+Vector2 RaycastScene_GetGlobalRaycastPointToVector(Scene* scene);
 
 #endif // __RAYCAST_SCENE_H__

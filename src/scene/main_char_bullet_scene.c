@@ -13,7 +13,6 @@ typedef struct MainCharBulletSceneData {
     float damage;
     float trimDistanceX;
     float trimDistanceY;
-    Raycast raycast;
 } MainCharBulletSceneData;
 
 constexpr float c_defaultDamage = 1.0f;
@@ -23,9 +22,11 @@ static void Update(Scene* scene, double deltatime)
 {
     MainCharBulletSceneData* sceneData = scene->sceneData;
 
-    sceneData->raycast.length = c_size.x + Vector2_Length(sceneData->speed) * deltatime;
+    float raycastLenght = c_size.x + Vector2_Length(sceneData->speed) * deltatime;
+    Raycast raycast = Raycast_New(scene->globalTransform.position, Transform_Forward(&scene->globalTransform), raycastLenght);
+
     Vector2 collisionPoint;
-    if (Raycast_CheckForCollision(&sceneData->raycast, scene->globalTransform.position, &collisionPoint))
+    if (Raycast_CheckForCollision(&raycast, &collisionPoint))
     {
         Scene_QueueFree(scene);
         return;
@@ -44,7 +45,7 @@ static void Update(Scene* scene, double deltatime)
     
 
     // Draw raycast
-    // Graphics_DrawVectorFromPoint(scene->globalTransform.position, Vector2_MultScalar(sceneData->raycast.direction, sceneData->raycast.length * deltatime), COLOR_GREEN);
+    // Graphics_DrawVectorFromPoint(scene->globalTransform.position, Vector2_MultScalar(raycast.direction, raycast.length), COLOR_GREEN);
 }
 
 static void Draw(Scene* scene)
@@ -66,7 +67,6 @@ Scene* MainCharBulletScene_Create(Scene* parent, Vector2 initialPosition, Vector
     sceneData->speed = speed;
     sceneData->trimDistanceX = Graphics_GetScreenWidth();
     sceneData->trimDistanceY = Graphics_GetScreenHeight();
-    sceneData->raycast = Raycast_New(speed, 1.0f);
     scene->sceneData = sceneData;
 
     scene->updateFunction = Update;

@@ -2,15 +2,17 @@
 #include "graphics/color.h"
 #include "graphics/graphics.h"
 #include "physics/raycast.h"
+#include "physics/transform.h"
 #include "scene.h"
 #include "scene/scene.h"
 #include "scene_type.h"
+#include "vector2.h"
 #include <stdlib.h>
 
 typedef struct RaycastSceneData {
-    Raycast raycast;
     RaycastScene_OnCollisionCallback onCollisionCallback;
     Scene* onCollisioonCallbackOwner;
+    float length;
     bool visible;
 } RaycastSceneData;
 
@@ -20,9 +22,10 @@ void Update(Scene* scene, double _)
 
     if (sceneData->onCollisionCallback)
     {
-        Vector2 point;
-        if (Raycast_CheckForCollision(&sceneData->raycast, scene->globalTransform.position, &point))
-            sceneData->onCollisionCallback(sceneData->onCollisioonCallbackOwner, point);
+        Raycast raycast = Raycast_New(scene->globalTransform.position, Transform_Forward(&scene->globalTransform), sceneData->length);
+        Vector2 collisionPoint;
+        if (Raycast_CheckForCollision(&raycast, &collisionPoint))
+            sceneData->onCollisionCallback(sceneData->onCollisioonCallbackOwner, collisionPoint);
     }
 }
 
@@ -32,7 +35,7 @@ void Draw(Scene* scene)
 
     if (!sceneData->visible) return;
 
-    Graphics_DrawVectorFromPoint(scene->globalTransform.position, Vector2_MultScalar(sceneData->raycast.direction, sceneData->raycast.length), COLOR_GREEN);
+    Graphics_DrawVectorFromPoint(scene->globalTransform.position, Vector2_MultScalar(Transform_Forward(&scene->globalTransform), sceneData->length), COLOR_GREEN);
 }
 
 Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length, const char* name)
@@ -40,13 +43,15 @@ Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length, const
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_RAYCAST, parent, name);
     RaycastSceneData* sceneData = malloc(sizeof(RaycastSceneData));
-    sceneData->raycast = Raycast_New(direction, length);
+    sceneData->length = length;
     sceneData->onCollisionCallback = NULL;
     sceneData->visible = false;
     scene->sceneData = sceneData;
 
     scene->updateFunction = Update;
     scene->drawFunction = Draw;
+
+    scene->transform.rotation = Vector2_Angle(direction);
 
     return scene;
 }
@@ -68,8 +73,10 @@ bool RaycastScene_CheckForCollision(Scene* scene, Vector2* collisionPoint_out)
 
     Scene_UpdateGlobalTransform(scene);
 
+    Raycast raycast = Raycast_New(scene->globalTransform.position, Transform_Forward(&scene->globalTransform), sceneData->length);
+
     Vector2 point;
-    if (Raycast_CheckForCollision(&sceneData->raycast, scene->globalTransform.position, &point))
+    if (Raycast_CheckForCollision(&raycast, &point))
     {
         if (collisionPoint_out) *collisionPoint_out = point;
         return true;
@@ -89,5 +96,28 @@ void RaycastScene_SetLength(Scene* scene, float length)
 {
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_RAYCAST);
 
-    ((RaycastSceneData*)scene->sceneData)->raycast.length = length;
+    ((RaycastSceneData*)scene->sceneData)->length = length;
+}
+
+float RaycastScene_GetLength(Scene* scene)
+{
+    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_RAYCAST);
+
+    return ((RaycastSceneData*)scene->sceneData)->length;
+}
+
+Vector2 RaycastScene_GetRaycastVector(Scene* scene)
+{
+    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_RAYCAST);
+    RaycastSceneData* sceneData = scene->sceneData;
+
+    return Vector2_MultScalar(Transform_Forward(&scene->globalTransform), sceneData->length);
+}
+
+Vector2 RaycastScene_GetGlobalRaycastPointToVector(Scene* scene)
+{
+    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_RAYCAST);
+    RaycastSceneData* sceneData = scene->sceneData;
+
+    return Vector2_Add(scene->globalTransform.position, Vector2_MultScalar(Transform_Forward(&scene->globalTransform), sceneData->length));
 }
