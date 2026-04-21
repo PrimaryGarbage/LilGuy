@@ -200,7 +200,7 @@ static void MoveCharacter(Scene* scene, double deltatime)
     if (sceneData->usingJetpack)
     {
         MainCharJetpackFireScene_Show(sceneData->jetpackFire);
-        float angle = (sceneData->speed.x / maxJetpackSpeedX) * 25.0f;
+        float angle = (sceneData->speed.x / maxJetpackSpeedX) * 15.0f;
         sceneData->jetpackFire->transform.rotation = LerpAnglef(sceneData->jetpackFire->transform.rotation, angle, 0.3f);
     }
     else
@@ -234,7 +234,7 @@ static void Shoot(Scene* scene)
     if (Input_IsMouseButtonPressed(INPUT_MOUSE_BUTTON_LEFT))
     {
         MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
-        MainCharGunScene_Shoot(sceneData->gun, sceneData->speed);
+        MainCharGunScene_Shoot(sceneData->gun);
     }
 }
 

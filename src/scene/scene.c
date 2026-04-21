@@ -3,6 +3,7 @@
 #include "physics/transform.h"
 #include "result.h"
 #include <stdlib.h>
+#include <string.h>
 
 static Scene* s_scenesToFree[512];
 static u32 s_scenesToFreeCount = 0u;

@@ -1,9 +1,11 @@
 #include "main_char_bullet_scene.h"
 #include "graphics/draw_order.h"
 #include "graphics/graphics.h"
+#include "logging.h"
 #include "physics/raycast.h"
 #include "physics/transform.h"
 #include "random.h"
+#include "result.h"
 #include "scene.h"
 #include "scene/scene.h"
 #include "scene/sprite_scene.h"
@@ -18,6 +20,13 @@ typedef struct MainCharBulletSceneData {
     float trimDistanceX;
     float trimDistanceY;
 } MainCharBulletSceneData;
+
+typedef struct MainCharBulletSceneStaticData {
+    bool initialized;
+    Texture2D sparkTexture;
+} MainCharBulletSceneStaticData;
+
+static MainCharBulletSceneStaticData s_staticData;
 
 constexpr float c_defaultDamage = 1.0f;
 constexpr double c_sparkLifetime = 0.05f;
@@ -39,9 +48,11 @@ static void Update(Scene* scene, double deltatime)
     if (Raycast_CheckForCollision(&raycast, &collisionPoint))
     {
         Scene_QueueFree(scene);
-        Scene* sparkScene = SpriteScene_Create(Scene_GetRoot(scene), "res/images/ProjectileSpark.png", "Projectile Spark Srpite");
+        Scene* sparkScene = SpriteScene_CreateWithTexture(Scene_GetRoot(scene), &s_staticData.sparkTexture, "Projectile Spark Srpite");
         sparkScene->transform.position = collisionPoint;
         sparkScene->transform.rotation = RandomFloat() * 360.0f;
+        sparkScene->transform.origin = (Vector2){ .x = s_staticData.sparkTexture.width * 0.5f, .y = s_staticData.sparkTexture.height * 0.5f };
+        sparkScene->transform.scale = Vector2_Uniform(RandomFloat() + 0.5f);
         Tween_CreateTimer(c_sparkLifetime, sparkScene, TweenOnProjectileSparkFinishCallback);
         return;
     }
@@ -72,6 +83,16 @@ static void Draw(Scene* scene)
 
 Scene* MainCharBulletScene_Create(Scene* parent, Vector2 initialPosition, Vector2 speed)
 {
+    if (!s_staticData.initialized)
+    {
+        const char* sparkImagePath = "res/images/ProjectileSpark.png";
+        s_staticData.sparkTexture = Graphics_LoadTexture(sparkImagePath);
+        if (s_staticData.sparkTexture.id == 0)
+            PANIC_EX(LogErrorM("Failed to load texture. Path: %s", sparkImagePath););
+
+        s_staticData.initialized = true;
+    }
+
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_BULLET, parent, "Main Char Bullet");
     scene->transform.rotation = Vector2_Angle(speed);

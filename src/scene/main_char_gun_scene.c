@@ -132,7 +132,7 @@ void TweenAnimationFlashCallback(Scene* scene)
     sceneData->gunFlash->visible = false;
 }
 
-void MainCharGunScene_Shoot(Scene* scene, Vector2 gunSpeed)
+void MainCharGunScene_Shoot(Scene* scene)
 {
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_GUN);
 
@@ -145,7 +145,7 @@ void MainCharGunScene_Shoot(Scene* scene, Vector2 gunSpeed)
     gunVector = Vector2_Rotate(gunVector, scene->globalTransform.rotation);
     Vector2 bulletPosition = Vector2_Add(scene->globalTransform.position, gunVector);
     
-    Vector2 bulletSpeed = Vector2_Add(gunSpeed, Vector2_MultScalar(Vector2_Rotate(Vector2_Right(), scene->globalTransform.rotation), c_bulletSpeed));
+    Vector2 bulletSpeed = Vector2_MultScalar(Vector2_Rotate(Vector2_Right(), scene->globalTransform.rotation), c_bulletSpeed);
 
     MainCharBulletScene_Create(Scene_GetRoot(scene), bulletPosition, bulletSpeed);
 
