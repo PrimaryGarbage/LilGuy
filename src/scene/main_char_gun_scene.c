@@ -24,7 +24,7 @@ typedef struct MainCharGunSceneData {
 } MainCharGunSceneData;
 
 constexpr float c_handSize = 4.0f;
-constexpr float c_bulletSpeed = 1000.0f;
+constexpr float c_bulletSpeed = 2000.0f;
 constexpr double c_shootDelay = 0.1f;
 constexpr double c_flashLifetime = 0.05f;
 constexpr double c_recoilAnimationLength = 0.1f;
@@ -120,13 +120,19 @@ void TweenAnimationRecoilFunction(Scene* scene, double weight, double _)
     scene->transform.position = Vector2_Add(scene->transform.position, Vector2_MultScalar(Transform_Forward(&scene->globalTransform), -animationMaxOffsetX * offsetWeight));
 }
 
+void TweenAnimationRecoilOnFinishedCallback(Scene* scene)
+{
+    MainCharGunSceneData* sceneData = scene->sceneData;
+    sceneData->recoilTween = NULL;
+}
+
 void TweenAnimationFlashCallback(Scene* scene)
 {
     MainCharGunSceneData* sceneData = scene->sceneData;
     sceneData->gunFlash->visible = false;
 }
 
-void MainCharGunScene_Shoot(Scene* scene)
+void MainCharGunScene_Shoot(Scene* scene, Vector2 gunSpeed)
 {
     ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_GUN);
 
@@ -139,7 +145,7 @@ void MainCharGunScene_Shoot(Scene* scene)
     gunVector = Vector2_Rotate(gunVector, scene->globalTransform.rotation);
     Vector2 bulletPosition = Vector2_Add(scene->globalTransform.position, gunVector);
     
-    Vector2 bulletSpeed = Vector2_MultScalar(Vector2_Rotate(Vector2_Right(), scene->globalTransform.rotation), c_bulletSpeed);
+    Vector2 bulletSpeed = Vector2_Add(gunSpeed, Vector2_MultScalar(Vector2_Rotate(Vector2_Right(), scene->globalTransform.rotation), c_bulletSpeed));
 
     MainCharBulletScene_Create(Scene_GetRoot(scene), bulletPosition, bulletSpeed);
 
@@ -148,7 +154,7 @@ void MainCharGunScene_Shoot(Scene* scene)
     sceneData->gunFlash->visible = true;
     Tween_CreateTimer(c_flashLifetime, scene, TweenAnimationFlashCallback);
 
-    if (sceneData->recoilTween)
-        Tween_Stop(sceneData->recoilTween);
+    if (sceneData->recoilTween) Tween_Abort(sceneData->recoilTween);
     sceneData->recoilTween = Tween_CreateFunction(c_recoilAnimationLength, scene, TweenAnimationRecoilFunction, TWEEN_INTERPOLATION_CUBIC_EASE_OUT);
+    Tween_SetOnFinishCallback(sceneData->recoilTween, scene, TweenAnimationRecoilOnFinishedCallback);
 }

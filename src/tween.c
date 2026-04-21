@@ -3,7 +3,7 @@
 #include "result.h"
 #include "short_types.h"
 
-#define TWEEN_MAX_INSTANCES 100
+#define TWEEN_MAX_INSTANCES 256
 
 typedef struct Tween {
     double elapsed;
@@ -118,7 +118,7 @@ void Tween_CreateTimer(double timeLimit, Scene* callbackOwner, TweenOnFinishCall
     PANIC_EX(LogErrorM("Failed to create tween function: Unable to find inactive tween."););
 }
 
-void Tween_Stop(TweenHandle tween)
+void Tween_Abort(TweenHandle tween)
 {
     tween->active = false;
 }

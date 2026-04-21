@@ -20,6 +20,6 @@ void Tween_Update(double deltatime);
 TweenHandle Tween_CreateFunction(double timeLimit, Scene* functionOwner, TweenFunction function, Tween_Interpolation interpolation);
 void Tween_SetOnFinishCallback(TweenHandle tween, Scene* callbackOwner, TweenOnFinishCallback callback);
 void Tween_CreateTimer(double timeLimit, Scene* callbackOwner, TweenOnFinishCallback callback);
-void Tween_Stop(TweenHandle tween);
+void Tween_Abort(TweenHandle tween);
 
 #endif // __TWINE_H__

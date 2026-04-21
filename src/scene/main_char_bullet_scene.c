@@ -45,7 +45,7 @@ static void Update(Scene* scene, double deltatime)
     
 
     // Draw raycast
-    // Graphics_DrawVectorFromPoint(scene->globalTransform.position, Vector2_MultScalar(raycast.direction, raycast.length), COLOR_GREEN);
+    //Graphics_DrawVectorFromPoint(scene->globalTransform.position, Vector2_MultScalar(raycast.direction, raycast.length), COLOR_GREEN);
 }
 
 static void Draw(Scene* scene)

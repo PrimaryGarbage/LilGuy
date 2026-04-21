@@ -3,7 +3,7 @@
 
 #include "scene.h"
 
-Scene* MainCharEyeScene_Create(Scene* parent);
+Scene* MainCharEyeScene_Create(Scene* parent, const char* name);
 void MainCharEyeScene_Blink(Scene* scene);
 
 #endif // __MAIN_CHAR_EYE_SCENE_H__

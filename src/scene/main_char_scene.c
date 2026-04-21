@@ -234,7 +234,7 @@ static void Shoot(Scene* scene)
     if (Input_IsMouseButtonPressed(INPUT_MOUSE_BUTTON_LEFT))
     {
         MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
-        MainCharGunScene_Shoot(sceneData->gun);
+        MainCharGunScene_Shoot(sceneData->gun, sceneData->speed);
     }
 }
 
@@ -387,8 +387,8 @@ Scene* MainCharScene_Create(Scene* parent)
 
     constexpr float c_eyeOffsetX = 5.0f;
     constexpr float c_eyeOffsetY = 10.0f;
-    Scene* leftEye = MainCharEyeScene_Create(scene);
-    Scene* rightEye = MainCharEyeScene_Create(scene);
+    Scene* leftEye = MainCharEyeScene_Create(scene, "Main Char Left Eye");
+    Scene* rightEye = MainCharEyeScene_Create(scene, "Main Char Right Eye");
     leftEye->transform.position.y -= sceneData->bodyTexture.height * 0.5f + c_eyeOffsetY;
     leftEye->transform.position.x -= c_eyeOffsetX;
     rightEye->transform.position.y -= sceneData->bodyTexture.height * 0.5f + c_eyeOffsetY;
