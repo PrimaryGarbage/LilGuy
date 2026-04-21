@@ -3,8 +3,12 @@
 #include "graphics/graphics.h"
 #include "physics/raycast.h"
 #include "physics/transform.h"
+#include "random.h"
 #include "scene.h"
+#include "scene/scene.h"
+#include "scene/sprite_scene.h"
 #include "scene_type.h"
+#include "tween.h"
 #include "vector2.h"
 #include <stdlib.h>
 
@@ -16,7 +20,13 @@ typedef struct MainCharBulletSceneData {
 } MainCharBulletSceneData;
 
 constexpr float c_defaultDamage = 1.0f;
+constexpr double c_sparkLifetime = 0.05f;
 constexpr Vector2 c_size = (Vector2){ .x = 8.0f, 2.0f };
+
+static void TweenOnProjectileSparkFinishCallback(Scene* scene)
+{
+    Scene_QueueFree(scene);
+}
 
 static void Update(Scene* scene, double deltatime)
 {
@@ -29,6 +39,10 @@ static void Update(Scene* scene, double deltatime)
     if (Raycast_CheckForCollision(&raycast, &collisionPoint))
     {
         Scene_QueueFree(scene);
+        Scene* sparkScene = SpriteScene_Create(Scene_GetRoot(scene), "res/images/ProjectileSpark.png", "Projectile Spark Srpite");
+        sparkScene->transform.position = collisionPoint;
+        sparkScene->transform.rotation = RandomFloat() * 360.0f;
+        Tween_CreateTimer(c_sparkLifetime, sparkScene, TweenOnProjectileSparkFinishCallback);
         return;
     }
 
