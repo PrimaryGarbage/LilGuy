@@ -2,6 +2,7 @@
 #include "graphics/draw_order.h"
 #include "graphics/graphics.h"
 #include "graphics/texture2d.h"
+#include "logging.h"
 #include "scene/scene.h"
 #include "scene_type.h"
 #include <stdlib.h>
@@ -30,13 +31,14 @@ static void Cleanup(Scene* scene)
 Scene* SpriteScene_Create(Scene* parent, const char* imagePath, const char* name)
 {
     Scene* scene = malloc(sizeof(Scene));
-    Scene_DefaultInit(scene, SCENE_TYPE_SPRITE, name);
-    if (parent) Scene_AddChild(parent, scene);
+    Scene_DefaultInit(scene, SCENE_TYPE_SPRITE, parent, name);
 
     SpriteSceneData* sceneData = malloc(sizeof(SpriteSceneData));
     scene->sceneData = sceneData;
     sceneData->drawOrder = DRAW_ORDER_DEFAULT;
     sceneData->texture = Graphics_LoadTexture(imagePath);
+    if (sceneData->texture.id == 0)
+        PANIC_EX(LogErrorM("Failed to load texture. Filepath: %s", imagePath););
 
     scene->drawFunction = Draw;
     scene->cleanupFunction = Cleanup;

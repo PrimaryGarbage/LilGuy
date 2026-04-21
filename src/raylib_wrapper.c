@@ -213,6 +213,12 @@ Image Raylib_LoadImage(const char* path)
     return RlImageToImage(LoadImage(path));
 }
 
+Image Raylib_ImageFromImage(const Image* image, Rect rect)
+{
+    Rl_Image rlImage = ImageToRlImage(*image);
+    return RlImageToImage(ImageFromImage(rlImage, RectToRlRect(rect)));
+}
+
 void Raylib_ImageFlipHorizontal(Image* image)
 {
     Rl_Image rlImage = ImageToRlImage(*image); 

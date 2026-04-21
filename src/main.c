@@ -13,6 +13,7 @@
 #include "result.h"
 #include "timer.h"
 #include "logging.h"
+#include <stdlib.h>
 
 int main()
 {

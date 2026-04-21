@@ -108,3 +108,8 @@ bool Vector2_EqualsWithin(Vector2 left, Vector2 right, float delta)
 {
     return fabsf(left.x - right.x) < delta && fabsf(left.y - right.y) < delta;
 }
+
+Vector2 Vector2u_ToVector2(Vector2u vec)
+{
+    return (Vector2){ .x = (float)vec.x, .y = (float)vec.y };
+}

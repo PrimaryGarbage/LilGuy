@@ -55,8 +55,7 @@ static void Cleanup(Scene* scene)
 Scene* MainCharEyeScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
-    Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_EYE, "Main Char Eye");
-    if (parent) Scene_AddChild(parent, scene);
+    Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_EYE, parent, "Main Char Eye");
 
     MainCharEyeSceneData* sceneData = malloc(sizeof(MainCharEyeSceneData));
     sceneData->eyelidHeight = 0.0f;

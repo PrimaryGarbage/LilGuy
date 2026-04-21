@@ -70,8 +70,7 @@ static void Cleanup(Scene* scene)
 Scene* MainCharGunScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
-    Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_GUN, "Main Char Gun");
-    if (parent) Scene_AddChild(parent, scene);
+    Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_GUN, parent, "Main Char Gun");
     MainCharGunSceneData* sceneData = malloc(sizeof(MainCharGunSceneData));
 
     Image gunImage = Image_Load("res/images/main_char/MainCharGun.png");

@@ -31,6 +31,7 @@ set(GRAPHICS_FILES
 	color.h
 	deferred_rendering.h
 	draw_order.h
+	texture_atlas.c texture_atlas.h
 )
 
 set(INPUT_FILES
@@ -53,6 +54,7 @@ set(SCENE_FILES
 	main_char_jetpack_fire_scene.c main_char_jetpack_fire_scene.h
 	main_char_bullet_scene.c main_char_bullet_scene.h
 	sprite_scene.c sprite_scene.h
+	animated_sprite_scene.c animated_sprite_scene.h
 )
 
 set(PHYSICS_FILES

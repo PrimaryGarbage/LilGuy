@@ -35,7 +35,7 @@ Scene* MainScene_Create()
 {
     Scene* scene = malloc(sizeof(Scene));
     
-    Scene_DefaultInit(scene, SCENE_TYPE_MAIN, "Main Scene");
+    Scene_DefaultInit(scene, SCENE_TYPE_MAIN, NULL, "Main Scene");
 
     Vector2 screenSize = Graphics_GetScreenSize();
 

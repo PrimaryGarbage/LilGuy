@@ -200,7 +200,7 @@ static void MoveCharacter(Scene* scene, double deltatime)
     if (sceneData->usingJetpack)
     {
         MainCharJetpackFireScene_Show(sceneData->jetpackFire);
-        float angle = (sceneData->speed.x / maxJetpackSpeedX) * 45.0f;
+        float angle = (sceneData->speed.x / maxJetpackSpeedX) * 25.0f;
         sceneData->jetpackFire->transform.rotation = LerpAnglef(sceneData->jetpackFire->transform.rotation, angle, 0.3f);
     }
     else
@@ -357,8 +357,7 @@ static void Cleanup(Scene* scene)
 Scene* MainCharScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
-    Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR, "Main Char");
-    if (parent) Scene_AddChild(parent, scene);
+    Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR, parent, "Main Char");
 
     constexpr float legLength = 15.0f;
 

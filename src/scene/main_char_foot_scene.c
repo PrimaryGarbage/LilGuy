@@ -62,8 +62,7 @@ static void Draw(Scene* scene)
 Scene* MainCharFootScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
-    Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_FOOT, "Main Char Foot");
-    if (parent) Scene_AddChild(parent, scene);
+    Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_FOOT, parent, "Main Char Foot");
 
     MainCharFootSceneData* sceneData = malloc(sizeof(MainCharFootSceneData));
     sceneData->inAnimation = false;

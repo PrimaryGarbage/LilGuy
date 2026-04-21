@@ -1,7 +1,6 @@
 #include "main_char_bullet_scene.h"
 #include "graphics/draw_order.h"
 #include "graphics/graphics.h"
-#include "logging.h"
 #include "physics/raycast.h"
 #include "physics/transform.h"
 #include "scene.h"
@@ -59,8 +58,7 @@ static void Draw(Scene* scene)
 Scene* MainCharBulletScene_Create(Scene* parent, Vector2 initialPosition, Vector2 speed)
 {
     Scene* scene = malloc(sizeof(Scene));
-    Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_BULLET, "Main Char Bullet");
-    if (parent)Scene_AddChild(parent, scene);
+    Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_BULLET, parent, "Main Char Bullet");
     scene->transform.rotation = Vector2_Angle(speed);
     scene->transform.position = initialPosition;
     MainCharBulletSceneData* sceneData = malloc(sizeof(MainCharBulletSceneData));

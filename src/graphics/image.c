@@ -52,6 +52,11 @@ Image Image_Load(const char* path)
     return Raylib_LoadImage(path);
 }
 
+Image Image_FromImage(const Image* image, Rect rect)
+{
+    return Raylib_ImageFromImage(image, rect);
+}
+
 void Image_FlipVertical(Image* image)
 {
     Raylib_ImageFlipVertical(image);

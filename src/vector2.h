@@ -25,6 +25,8 @@ typedef struct Vector2u {
 #define Vector2_Left() (Vector2) { -1.0f , 0.0f }
 #define Vector2_One() (Vector2) { 1.0f , 1.0f }
 
+Vector2 Vector2u_ToVector2(Vector2u vec);
+
 Vector2 Vector2_New(float x, float y);
 Vector2 Vector2_Uniform(float value);
 

@@ -71,8 +71,7 @@ static void Cleanup(Scene* scene)
 Scene* ColliderScene_Create(Scene* parent, Vector2 size, const char* name)
 {
     Scene* scene = malloc(sizeof(Scene));
-    Scene_DefaultInit(scene, SCENE_TYPE_COLLIDER, name);
-    if (parent) Scene_AddChild(parent, scene);
+    Scene_DefaultInit(scene, SCENE_TYPE_COLLIDER, parent, name);
 
     ColliderSceneData* sceneData = malloc(sizeof(ColliderSceneData));
     sceneData->visible = false;

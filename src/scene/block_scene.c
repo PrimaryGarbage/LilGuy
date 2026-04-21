@@ -23,8 +23,7 @@ static void Draw(Scene* scene)
 Scene* BlockScene_Create(Scene* parent, Rect rect, Color color)
 {
     Scene* scene = malloc(sizeof(Scene));
-    Scene_DefaultInit(scene, SCENE_TYPE_BLOCK, "Block");
-    if (parent) Scene_AddChild(parent, scene);
+    Scene_DefaultInit(scene, SCENE_TYPE_BLOCK, parent, "Block");
 
     BlockSceneData* sceneData = malloc(sizeof(BlockSceneData));
     sceneData->color = color;

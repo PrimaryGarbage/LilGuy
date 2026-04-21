@@ -38,8 +38,7 @@ void Draw(Scene* scene)
 Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length, const char* name)
 {
     Scene* scene = malloc(sizeof(Scene));
-    Scene_DefaultInit(scene, SCENE_TYPE_RAYCAST, name);
-    if (parent) Scene_AddChild(parent, scene);
+    Scene_DefaultInit(scene, SCENE_TYPE_RAYCAST, parent, name);
     RaycastSceneData* sceneData = malloc(sizeof(RaycastSceneData));
     sceneData->raycast = Raycast_New(direction, length);
     sceneData->onCollisionCallback = NULL;

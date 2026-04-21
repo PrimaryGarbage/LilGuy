@@ -1,6 +1,7 @@
 #ifndef __IMAGE_H__
 #define __IMAGE_H__
 
+#include "rect.h"
 #include "short_types.h"
 #include "vector2.h"
 
@@ -45,6 +46,7 @@ u32 Image_SampleNormalizedV(const Image* image, Vector2 point);
 Image Image_CreateResized(const Image* image, u32 newWidth, u32 newHeight);
 void Image_SwapRAndBChannels(Image* image);
 Image Image_Load(const char* path);
+Image Image_FromImage(const Image* image, Rect rect);
 void Image_FlipVertical(Image* image);
 void Image_FlipHorizontal(Image* image);
 

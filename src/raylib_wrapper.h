@@ -29,6 +29,7 @@ bool Raylib_IsMouseButtonDown(int button);
 Vector2 Raylib_GetMousePosition();
 Image Raylib_LoadImageFromScreen();
 Image Raylib_LoadImage(const char* path);
+Image Raylib_ImageFromImage(const Image* image, Rect rect);
 void Raylib_ImageFlipHorizontal(Image* image);
 void Raylib_ImageFlipVertical(Image* image);
 Texture2D Raylib_LoadTextureFromImage(const Image* image);
