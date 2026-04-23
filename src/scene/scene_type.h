@@ -17,6 +17,7 @@ typedef enum SceneType {
     SCENE_TYPE_MAIN_CHAR_BULLET,
     SCENE_TYPE_SPRITE,
     SCENE_TYPE_ANIMATED_SPRITE,
+    SCENE_TYPE_SPRING_ARM,
 } SceneType;
 
 #endif // __SCENE_TAGS_H__

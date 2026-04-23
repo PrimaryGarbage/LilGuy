@@ -23,6 +23,8 @@
 #include "tween.h"
 #include <math.h>
 
+#define SCENE_TYPE SCENE_TYPE_MAIN_CHAR
+
 typedef struct MainCharSceneData {
     Vector2 speed;
     bool onGround;
@@ -50,8 +52,6 @@ constexpr double c_landingAnimationLength = 0.2f;
 static Vector2 GetNewFootPosition(Scene* scene)
 {
     constexpr float c_footStrideX = 20.0f;
-
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR);
 
     MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
 
@@ -240,8 +240,6 @@ static void Shoot(Scene* scene)
 
 static void Update(Scene* scene, double deltatime)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR);
-
     MoveCharacter(scene, deltatime);
     MoveFeet(scene);
     MoveGun(scene);
@@ -296,8 +294,6 @@ static void DrawUi(Scene* scene)
 
 static void Draw(Scene* scene)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR);
-
     DrawCharacter(scene);
     DrawUi(scene);
 

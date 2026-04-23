@@ -13,6 +13,8 @@
 #include <math.h>
 #include <stdlib.h>
 
+#define SCENE_TYPE SCENE_TYPE_MAIN_CHAR_GUN
+
 typedef struct MainCharGunSceneData {
     Texture2D gunTexture;
     Texture2D gunTextureFlippedY;
@@ -134,7 +136,7 @@ void TweenAnimationFlashCallback(Scene* scene)
 
 void MainCharGunScene_Shoot(Scene* scene)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_GUN);
+    ASSERT_SCENE_TYPE(scene);
 
     MainCharGunSceneData* sceneData = scene->sceneData;
 

@@ -6,6 +6,8 @@
 #include "scene.h"
 #include <stdlib.h>
 
+#define SCENE_TYPE SCENE_TYPE_BLOCK
+
 typedef struct BlockSceneData {
     Color color;
     Vector2 size;

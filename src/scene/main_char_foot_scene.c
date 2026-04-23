@@ -10,6 +10,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define SCENE_TYPE SCENE_TYPE_MAIN_CHAR_FOOT
+
 typedef struct MainCharFootSceneData {
     bool inAnimation;
     Vector2 animationTargetPoint;
@@ -23,8 +25,6 @@ const float c_animationFootYMaxOffset = 10.0f;
 
 static void Update(Scene* scene, double deltatime)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_FOOT);
-
     MainCharFootSceneData* sceneData = scene->sceneData;
 
     if (sceneData->inAnimation)
@@ -48,8 +48,6 @@ static void Update(Scene* scene, double deltatime)
 static void Draw(Scene* scene)
 {
     constexpr Color color = (Color) { .r = 150, .g = 150, .b = 120, .a = 255 };
-
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_FOOT);
 
     Graphics_SetModelMatrix(&scene->globalTransform);
     Graphics_DrawCircleT(c_footSize, color, DRAW_ORDER_MAIN_CHAR);
@@ -81,7 +79,7 @@ Scene* MainCharFootScene_Create(Scene* parent)
 
 void MainCharFootScene_MoveFoot(Scene* scene, Vector2 point)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_FOOT);
+    ASSERT_SCENE_TYPE(scene);
 
     MainCharFootSceneData* sceneData = scene->sceneData;
 
@@ -95,7 +93,7 @@ void MainCharFootScene_MoveFoot(Scene* scene, Vector2 point)
 
 bool MainCharFootScene_InAnimation(Scene* scene)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_FOOT);
+    ASSERT_SCENE_TYPE(scene);
     MainCharFootSceneData* sceneData = scene->sceneData;
     return sceneData->inAnimation;
 }

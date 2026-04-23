@@ -5,6 +5,8 @@
 #include "scene_type.h"
 #include <stdlib.h>
 
+#define SCENE_TYPE SCENE_TYPE_COLLIDER
+
 typedef struct ColliderSceneData {
     Collider collider;
     ColliderScene_OnCollisionCallback onCollisionCallback;
@@ -97,14 +99,14 @@ Scene* ColliderScene_Create(Scene* parent, Vector2 size, const char* name)
 
 void ColliderScene_SetRect(Scene* scene, Rect rect)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_COLLIDER);
+    ASSERT_SCENE_TYPE(scene);
 
     ((ColliderSceneData*)scene->sceneData)->collider.rect = rect;
 }
 
 void ColliderScene_SetOnCollisionCallback(Scene* scene, Scene* callbackOwner, ColliderScene_OnCollisionCallback callback)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_COLLIDER);
+    ASSERT_SCENE_TYPE(scene);
 
     ColliderSceneData* sceneData = scene->sceneData;
 
@@ -114,28 +116,28 @@ void ColliderScene_SetOnCollisionCallback(Scene* scene, Scene* callbackOwner, Co
 
 void ColliderScene_SetVisible(Scene* scene, bool on)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_COLLIDER);
+    ASSERT_SCENE_TYPE(scene);
 
     ((ColliderSceneData*)scene->sceneData)->visible = on;
 }
 
 void ColliderScene_SetCollisionLayers(Scene* scene, u32 layers)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_COLLIDER);
+    ASSERT_SCENE_TYPE(scene);
 
     ((ColliderSceneData*)scene->sceneData)->collider.layers = layers;
 }
 
 void ColliderScene_SetCollisionScan(Scene* scene, u32 scan)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_COLLIDER);
+    ASSERT_SCENE_TYPE(scene);
 
     ((ColliderSceneData*)scene->sceneData)->collider.scan = scan;
 }
 
 const Collider* ColliderScene_CheckForCollision(Scene* scene)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_COLLIDER);
+    ASSERT_SCENE_TYPE(scene);
 
     ColliderSceneData* sceneData = scene->sceneData;
 

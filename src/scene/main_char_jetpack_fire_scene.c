@@ -6,6 +6,8 @@
 #include "tween.h"
 #include <stdlib.h>
 
+#define SCENE_TYPE SCENE_TYPE_MAIN_CHAR_JETPACK_FIRE
+
 typedef struct MainCharJetpackFireSceneData {
     float opacity;
     bool inAnimation;
@@ -86,7 +88,7 @@ static void HideTweenAnimationFunction(Scene* scene, double weight, double _)
 
 void MainCharJetpackFireScene_Show(Scene* scene)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_JETPACK_FIRE);
+    ASSERT_SCENE_TYPE(scene);
 
     MainCharJetpackFireSceneData* sceneData = scene->sceneData;
     if (sceneData->inAnimation || sceneData->opacity == 1.0f) return;
@@ -98,7 +100,7 @@ void MainCharJetpackFireScene_Show(Scene* scene)
 
 void MainCharJetpackFireScene_Hide(Scene* scene)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_JETPACK_FIRE);
+    ASSERT_SCENE_TYPE(scene);
 
     MainCharJetpackFireSceneData* sceneData = scene->sceneData;
     if (sceneData->inAnimation || sceneData->opacity == 0.0f) return;

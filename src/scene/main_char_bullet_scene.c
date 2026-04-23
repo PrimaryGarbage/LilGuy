@@ -14,6 +14,8 @@
 #include "vector2.h"
 #include <stdlib.h>
 
+#define SCENE_TYPE SCENE_TYPE_MAIN_CHAR_BULLET
+
 typedef struct MainCharBulletSceneData {
     Vector2 speed;
     float damage;

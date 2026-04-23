@@ -7,6 +7,8 @@
 #include "main_char_eye_scene.h"
 #include <stdlib.h>
 
+#define SCENE_TYPE SCENE_TYPE_MAIN_CHAR_EYE
+
 constexpr double c_blinkAnimationLength = 0.2f;
 
 typedef struct MainCharEyeSceneData {
@@ -15,7 +17,7 @@ typedef struct MainCharEyeSceneData {
     TweenHandle blinkTween;
 } MainCharEyeSceneData;
 
-static void BlinkAnimationTweenFunction(Scene* scene, double weight, double elapsed)
+static void BlinkAnimationTweenFunction(Scene* scene, double weight, double _)
 {
     MainCharEyeSceneData* sceneData = scene->sceneData;
 
@@ -75,7 +77,7 @@ Scene* MainCharEyeScene_Create(Scene* parent, const char* name)
 
 void MainCharEyeScene_Blink(Scene* scene)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_MAIN_CHAR_EYE);
+    ASSERT_SCENE_TYPE(scene);
     MainCharEyeSceneData* sceneData = scene->sceneData;
 
     if (sceneData->blinkTween) return;

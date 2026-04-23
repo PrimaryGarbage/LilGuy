@@ -7,6 +7,8 @@
 #include "scene_type.h"
 #include <stdlib.h>
 
+#define SCENE_TYPE SCENE_TYPE_SPRITE
+
 typedef struct SpriteSceneData {
     Texture2D texture;
     i32 drawOrder;
@@ -68,7 +70,7 @@ Scene* SpriteScene_CreateWithTexture(Scene* parent, const Texture2D* texture, co
 
 void SpriteScene_SetDrawOrder(Scene* scene, i32 drawOrder)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_SPRITE);
+    ASSERT_SCENE_TYPE(scene);
 
     ((SpriteSceneData*)scene->sceneData)->drawOrder = drawOrder;
 }

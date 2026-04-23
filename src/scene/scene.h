@@ -6,7 +6,7 @@
 #include "scene_type.h"
 #include <assert.h>
 
-#define ASSERT_SCENE_TYPE(scene, sceenType) do { assert(scene->type == sceenType && "Invalid scene type"); } while(0)
+#define ASSERT_SCENE_TYPE(scene) do { assert(scene->type == SCENE_TYPE && "Invalid scene type"); } while(0)
 
 #define SCENE_CHILDREN_MAX 512
 

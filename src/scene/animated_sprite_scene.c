@@ -5,6 +5,8 @@
 #include "scene_type.h"
 #include <stdlib.h>
 
+#define SCENE_TYPE SCENE_TYPE_ANIMATED_SPRITE
+
 typedef struct AnimatedSpriteSceneData{
     TextureAtlas textureAtlas;
     u32 currentTextureIdx;
@@ -68,7 +70,7 @@ Scene* AnimatedSpriteScene_Create(Scene* parent, const char* imagePath, u32 atla
 
 Vector2 AnimatedSpriteScene_GetSpriteSize(const Scene* scene)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_ANIMATED_SPRITE);
+    ASSERT_SCENE_TYPE(scene);
 
     AnimatedSpriteSceneData* sceneData = scene->sceneData;
     return Vector2u_ToVector2(sceneData->textureAtlas.textureSize);
@@ -76,7 +78,7 @@ Vector2 AnimatedSpriteScene_GetSpriteSize(const Scene* scene)
 
 void AnimatedSpriteScene_SetTint(Scene* scene, Color tint)
 {
-    ASSERT_SCENE_TYPE(scene, SCENE_TYPE_ANIMATED_SPRITE);
+    ASSERT_SCENE_TYPE(scene);
 
     ((AnimatedSpriteSceneData*)scene->sceneData)->tint = tint;
 }
