@@ -55,6 +55,7 @@ set(SCENE_FILES
 	main_char_bullet_scene.c main_char_bullet_scene.h
 	sprite_scene.c sprite_scene.h
 	animated_sprite_scene.c animated_sprite_scene.h
+	spring_arm_scene.c spring_arm_scene.h
 )
 
 set(PHYSICS_FILES

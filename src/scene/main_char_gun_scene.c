@@ -22,6 +22,7 @@ typedef struct MainCharGunSceneData {
     bool gunFlipped;
     double elapsedSinceShot;
     TweenHandle recoilTween;
+    Scene* followTarget;
     Scene* raycast;
 } MainCharGunSceneData;
 
@@ -30,6 +31,22 @@ constexpr float c_bulletSpeed = 2000.0f;
 constexpr double c_shootDelay = 0.1f;
 constexpr double c_flashLifetime = 0.05f;
 constexpr double c_recoilAnimationLength = 0.1f;
+constexpr Vector2 c_initialOffset = { .x = 0.0f, .y = 10.0f };
+
+static void Move(Scene* scene)
+{
+    constexpr float followWeight = 0.4f;
+    constexpr float rotationWeight = 0.4f;
+
+    MainCharGunSceneData* sceneData = scene->sceneData;
+
+    Vector2 mousePos = Graphics_GetMousePosition();
+    Vector2 dir = Vector2_Sub(mousePos, scene->transform.position);
+    float angle = Vector2_Angle(dir);
+
+    scene->transform.position = Vector2_Lerp(scene->transform.position, Vector2_Add(sceneData->followTarget->globalTransform.position, c_initialOffset), followWeight);
+    scene->transform.rotation = LerpAnglef(scene->transform.rotation, angle, rotationWeight);
+}
 
 static void Update(Scene* scene, double deltatime)
 {
@@ -40,6 +57,8 @@ static void Update(Scene* scene, double deltatime)
     sceneData->gunFlash->transform.position.y = sceneData->gunFlipped ? -2.0f : -(float)sceneData->gunTexture.height * 0.5f - 2.0f;
 
     sceneData->elapsedSinceShot += deltatime;
+    
+    Move(scene);
 
     Vector2 collisionPoint;
     if (RaycastScene_CheckForCollision(sceneData->raycast, &collisionPoint))
@@ -78,7 +97,7 @@ static void Cleanup(Scene* scene)
     Graphics_UnloadTexture(sceneData->gunTexture);
 }
 
-Scene* MainCharGunScene_Create(Scene* parent)
+Scene* MainCharGunScene_Create(Scene* parent, Scene* followTarget)
 {
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_MAIN_CHAR_GUN, parent, "Main Char Gun");
@@ -92,10 +111,12 @@ Scene* MainCharGunScene_Create(Scene* parent)
 
     sceneData->elapsedSinceShot = 0.0;
     sceneData->recoilTween = NULL;
+    sceneData->followTarget = followTarget;
 
     scene->sceneData = sceneData;
 
     scene->transform.origin = (Vector2){ .x = 0.0f, .y = sceneData->gunTexture.height * 0.5f };
+    scene->transform.topLevel = true;
 
     scene->updateFunction = Update;
     scene->drawFunction = Draw;
@@ -119,7 +140,8 @@ void TweenAnimationRecoilFunction(Scene* scene, double weight, double _)
     constexpr float animationMaxOffsetX = 10.0f;
 
     float offsetWeight = weight < 0.5f ? weight * 2.0f : 2.0f - weight * 2.0f;
-    scene->transform.position = Vector2_Add(scene->transform.position, Vector2_MultScalar(Transform_Forward(&scene->globalTransform), -animationMaxOffsetX * offsetWeight));
+    Vector2 forward = Transform_Forward(&scene->globalTransform);
+    scene->transform.position = Vector2_Add(scene->transform.position, Vector2_MultScalar(forward, -animationMaxOffsetX * offsetWeight));
 }
 
 void TweenAnimationRecoilOnFinishedCallback(Scene* scene)

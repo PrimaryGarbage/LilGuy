@@ -87,21 +87,6 @@ static void Blink(Scene* scene, double deltatime)
     }
 }
 
-static void MoveGun(Scene* scene)
-{
-    constexpr Vector2 positionOffset = (Vector2) { .x = 0.0f, .y = 10.0f };
-
-    MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
-
-    Vector2 mousePos = Graphics_GetMousePosition();
-    Vector2 dir = Vector2_Sub(mousePos, sceneData->gun->transform.position);
-    float angle = Vector2_Angle(dir);
-
-    constexpr float lerpWeight = 0.4f;
-    sceneData->gun->transform.position = Vector2_Lerp(sceneData->gun->transform.position, Vector2_Add(scene->globalTransform.position, positionOffset), lerpWeight);
-    sceneData->gun->transform.rotation = LerpAnglef(sceneData->gun->transform.rotation, angle, lerpWeight);
-}
-
 static void MoveFeet(Scene* scene)
 {
     constexpr float footMaxDistanceFromOriginX = 30.0f;
@@ -208,7 +193,6 @@ static void MoveCharacter(Scene* scene, double deltatime)
         MainCharJetpackFireScene_Hide(sceneData->jetpackFire);
     }
 
-
     if (sceneData->usingJetpack) 
         sceneData->fuel -= fuelBurnRate * deltatime;
     else if (sceneData->fuel < c_maxFuel) 
@@ -242,7 +226,6 @@ static void Update(Scene* scene, double deltatime)
 {
     MoveCharacter(scene, deltatime);
     MoveFeet(scene);
-    MoveGun(scene);
     Shoot(scene);
     Blink(scene, deltatime);
 }
@@ -392,8 +375,7 @@ Scene* MainCharScene_Create(Scene* parent)
     sceneData->leftEye = leftEye;
     sceneData->rightEye = rightEye;
 
-    Scene* gun = MainCharGunScene_Create(scene);
-    gun->transform.topLevel = true;
+    Scene* gun = MainCharGunScene_Create(scene, scene);
     sceneData->gun = gun;
 
     Scene* jetpackFire = MainCharJetpackFireScene_Create(scene);
