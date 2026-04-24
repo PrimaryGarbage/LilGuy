@@ -3,7 +3,7 @@
 #include "input/input_button.h"
 #include "logging.h"
 #include "main_char_gun_scene.h"
-#include "main_char_eye_scene.h"
+#include "main_char_eyes_scene.h"
 #include "main_char_jetpack_fire_scene.h"
 #include "physics/collider.h"
 #include "collider_scene.h"
@@ -11,7 +11,6 @@
 #include "input/input.h"
 #include "main_char_foot_scene.h"
 #include "math_helpers.h"
-#include "random.h"
 #include "raycast_scene.h"
 #include "scene.h"
 #include "scene/scene.h"
@@ -32,8 +31,6 @@ typedef struct MainCharSceneData {
     Texture2D bodyTexture;
     Scene* leftFoot;
     Scene* rightFoot;
-    Scene* leftEye;
-    Scene* rightEye;
     Scene* bodyCollider;
     Scene* onGroundRaycast;
     Scene* gun;
@@ -69,22 +66,6 @@ static Vector2 GetNewFootPosition(Scene* scene)
     }
 
     return newPos;
-}
-
-static void Blink(Scene* scene, double deltatime)
-{
-    constexpr float blinkProbability = 0.05f;
-
-    MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
-
-    sceneData->elapsedSinceLastBlink += deltatime;
-
-    if (blinkProbability * deltatime * sceneData->elapsedSinceLastBlink > RandomFloat())
-    {
-        MainCharEyeScene_Blink(sceneData->leftEye);
-        MainCharEyeScene_Blink(sceneData->rightEye);
-        sceneData->elapsedSinceLastBlink = 0.0f;
-    }
 }
 
 static void MoveFeet(Scene* scene)
@@ -227,7 +208,6 @@ static void Update(Scene* scene, double deltatime)
     MoveCharacter(scene, deltatime);
     MoveFeet(scene);
     Shoot(scene);
-    Blink(scene, deltatime);
 }
 
 static void DrawCharacter(Scene* scene)
@@ -364,16 +344,7 @@ Scene* MainCharScene_Create(Scene* parent)
     sceneData->leftFoot = leftFoot;
     sceneData->rightFoot = rightFoot;
 
-    constexpr float c_eyeOffsetX = 5.0f;
-    constexpr float c_eyeOffsetY = 10.0f;
-    Scene* leftEye = MainCharEyeScene_Create(scene, "Main Char Left Eye");
-    Scene* rightEye = MainCharEyeScene_Create(scene, "Main Char Right Eye");
-    leftEye->transform.position.y -= sceneData->bodyTexture.height * 0.5f + c_eyeOffsetY;
-    leftEye->transform.position.x -= c_eyeOffsetX;
-    rightEye->transform.position.y -= sceneData->bodyTexture.height * 0.5f + c_eyeOffsetY;
-    rightEye->transform.position.x += c_eyeOffsetX;
-    sceneData->leftEye = leftEye;
-    sceneData->rightEye = rightEye;
+    MainCharEyesScene_Create(scene, "Main Char Left Eye");
 
     Scene* gun = MainCharGunScene_Create(scene, scene);
     sceneData->gun = gun;

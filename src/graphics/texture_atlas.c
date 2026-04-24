@@ -41,14 +41,14 @@ TextureAtlas TextureAtlas_New(const char* imagePath, u32 atlasWidth, u32 atlasHe
     return atlas;
 }
 
-Texture2D* TextureAtlas_GetTextureByCoords(const TextureAtlas* atlas, u32 x, u32 y)
+Texture2D* TextureAtlas_TextureByCoords(const TextureAtlas* atlas, u32 x, u32 y)
 {
     x = Clampu(0u, atlas->atlasWidth - 1, x);
     y = Clampu(0u, atlas->atlasHeight - 1, y);
     return &atlas->textures[x + y * atlas->atlasWidth];
 }
 
-Texture2D* TextureAtlas_GetTextureByIdx(const TextureAtlas* atlas, u32 idx)
+Texture2D* TextureAtlas_TextureByIdx(const TextureAtlas* atlas, u32 idx)
 {
     idx = Clampu(0u, atlas->texturesCount - 1, idx);
     return &atlas->textures[idx];

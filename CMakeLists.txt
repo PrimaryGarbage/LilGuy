@@ -44,7 +44,7 @@ set(SCENE_FILES
 	scene.c scene.h
 	main_char_scene.c main_char_scene.h
 	main_char_foot_scene.c main_char_foot_scene.h
-	main_char_eye_scene.c main_char_eye_scene.h
+	main_char_eyes_scene.c main_char_eyes_scene.h
 	empty_scene.c empty_scene.h
 	block_scene.c block_scene.h
 	collider_scene.c collider_scene.h

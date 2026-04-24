@@ -12,8 +12,8 @@ typedef struct TextureAtlas {
 } TextureAtlas;
 
 TextureAtlas TextureAtlas_New(const char* imagePath, u32 atlasWidth, u32 atlasHeight);
-Texture2D* TextureAtlas_GetTextureByCoords(const TextureAtlas* atlas, u32 x, u32 y);
-Texture2D* TextureAtlas_GetTextureByIdx(const TextureAtlas* atlas, u32 idx);
+Texture2D* TextureAtlas_TextureByCoords(const TextureAtlas* atlas, u32 x, u32 y);
+Texture2D* TextureAtlas_TextureByIdx(const TextureAtlas* atlas, u32 idx);
 void TextureAtlas_Free(TextureAtlas* atlas);
 
 #endif // __TEXTURE_ATLAS_H__

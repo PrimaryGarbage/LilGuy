@@ -37,7 +37,7 @@ static void Draw(Scene* scene)
     AnimatedSpriteSceneData* sceneData = scene->sceneData;
 
     Graphics_SetModelMatrix(&scene->globalTransform);
-    Graphics_DrawTextureT(TextureAtlas_GetTextureByIdx(&sceneData->textureAtlas, sceneData->currentTextureIdx), sceneData->drawOrder, sceneData->tint);
+    Graphics_DrawTextureT(TextureAtlas_TextureByIdx(&sceneData->textureAtlas, sceneData->currentTextureIdx), sceneData->drawOrder, sceneData->tint);
     Graphics_ClearModelMatrix();
 }
 
