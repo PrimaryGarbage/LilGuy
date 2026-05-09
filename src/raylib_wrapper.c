@@ -1,4 +1,3 @@
-#include "raymath.h"
 #include <string.h>
 
 #define TYPE_PUN(typeFrom, typeTo, valueFrom, valueTo) \
@@ -9,22 +8,42 @@ do { \
 } while(0)
 
 #define Vector2 Rl_Vector2
+#define Vector4 Rl_Vector4
+#define Quaternion Rl_Quaternion
 #define Color Rl_Color
 #define Image Rl_Image
 #define PixelFormat Rl_PixelFormat
 #define Texture2D Rl_Texture2D
+#define Shader Rl_Shader
 
 #include "raylib.h"
 #include "rlgl.h"
 
 #undef Vector2
+#undef Vector4
+#undef Quaternion
 #undef Color
 #undef Image
 #undef PixelFormat
 #undef Texture2D
-
+#undef Shader
 
 #include "raylib_wrapper.h"
+#include "raymath_wrapper.h"
+
+static inline Shader RlShaderToShader(Rl_Shader shader)
+{
+    Shader out;
+    TYPE_PUN(Rl_Shader, Shader, shader, out);
+    return out;
+}
+
+static inline Rl_Shader ShaderToRlShader(Shader shader)
+{
+    Rl_Shader out;
+    TYPE_PUN(Shader, Rl_Shader, shader, out);
+    return out;
+}
 
 static inline Rl_Color ColorToRlColor(Color color)
 {
@@ -153,6 +172,16 @@ void Raylib_SwapBuffers()
     SwapScreenBuffer();
 }
 
+void Raylib_BeginBlendMode(i32 mode)
+{
+    BeginBlendMode(mode);
+}
+
+void Raylib_EndBlendMode()
+{
+    EndBlendMode();
+}
+
 u32 Raylib_GetScreenWidth()
 {
     return GetScreenWidth();
@@ -217,6 +246,17 @@ Image Raylib_ImageFromImage(const Image* image, Rect rect)
 {
     Rl_Image rlImage = ImageToRlImage(*image);
     return RlImageToImage(ImageFromImage(rlImage, RectToRlRect(rect)));
+}
+
+Image Raylib_GenImageColor(u32 width, u32 height, Color color)
+{
+    return RlImageToImage(GenImageColor(width, height, ColorToRlColor(color)));
+}
+
+void Raylib_ImageDrawPixel(Image* image, u32 x, u32 y, Color color)
+{
+    Rl_Image rlImage = ImageToRlImage(*image);
+    ImageDrawPixel(&rlImage, x, y, ColorToRlColor(color));
 }
 
 void Raylib_ImageFlipHorizontal(Image* image)
@@ -307,12 +347,66 @@ void Raylib_DrawCircleV(Vector2 position, float radius, Color color)
 void Raylib_PushMatrix(const Matrix* matrix)
 {
     rlPushMatrix();
-    rlMultMatrixf(MatrixToFloat(*matrix));
+    rlMultMatrixf(Raymath_MatrixToFloat(matrix));
 }
 
 void Raylib_PopMatrix()
 {
     rlPopMatrix();
+}
+
+Shader Raylib_LoadShader(const char* vsFilePath, const char* fsFilePath)
+{
+    return RlShaderToShader(LoadShader(vsFilePath, fsFilePath));
+}
+
+void Raylib_UnloadShader(Shader* shader)
+{
+    UnloadShader(ShaderToRlShader(*shader));   
+}
+
+void Raylib_BeginShaderMode(const Shader* shader)
+{
+    BeginShaderMode(ShaderToRlShader(*shader));
+}
+
+void Raylib_EndShaderMode()
+{
+    EndShaderMode();
+}
+
+bool Raylib_IsShaderValid(const Shader* shader)
+{
+    return IsShaderValid(ShaderToRlShader(*shader));
+}
+
+int Raylib_GetShaderLocation(const Shader* shader, const char* uniformName)
+{
+    return GetShaderLocation(ShaderToRlShader(*shader), uniformName);
+}
+
+int Raylib_GetShaderLocationAttrib(const Shader* shader, const char* attribName)
+{
+    return GetShaderLocationAttrib(ShaderToRlShader(*shader), attribName);
+}
+void Raylib_SetShaderValue(const Shader* shader, int locIndex, const void* value, UniformDataType uniformType)
+{
+    SetShaderValue(ShaderToRlShader(*shader), locIndex, value, uniformType);
+}
+
+void Raylib_SetShaderValueV(const Shader* shader, int locIndex, const void* value, UniformDataType uniformType, int count)
+{
+    SetShaderValueV(ShaderToRlShader(*shader), locIndex, value, uniformType, count);
+}
+
+void Raylib_SetShaderValueMatrix(const Shader* shader, int locIndex, const Matrix* mat)
+{
+    SetShaderValueMatrix(ShaderToRlShader(*shader), locIndex, *mat);
+}
+
+void Raylib_SetShaderValueTexture(const Shader* shader, int locIndex, const Texture2D* texture)
+{
+    SetShaderValueTexture(ShaderToRlShader(*shader), locIndex, TextureToRlTexture(*texture));
 }
 
 bool Raylib_CheckCollisionRects(Rect a, Rect b)

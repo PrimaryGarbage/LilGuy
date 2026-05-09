@@ -1,10 +1,13 @@
 #include "graphics.h"
+#include "blend_mode.h"
+#include "cleanup.h"
 #include "draw_order.h"
 #include "graphics/color.h"
 #include "graphics/image.h"
 #include "physics/matrix.h"
 #include "rect.h"
 #include "result.h"
+#include "shader.h"
 #include "stb_image_write.h"
 #include <assert.h>
 #include <basetsd.h>
@@ -17,20 +20,61 @@
 #include "deferred_rendering.h"
 
 static Matrix s_modelMatrix;
+static const Shader* s_shader;
 
 static RenderCall s_renderCalls[512];
 static u32 s_renderCallsCount = 0u;
+
+static Texture2D s_lightTexture;
+
+static bool s_initialized;
 
 static void QueueRenderCall(i32 drawOrder, RenderCallFunction function, const union RenderCallFunctionArguments* functionArguments)
 {
     s_renderCalls[s_renderCallsCount] = (RenderCall){
         .drawOrder = drawOrder,
         .drawIndex = s_renderCallsCount,
+        .shader = s_shader,
         .function = function,
         .functionArguments = *functionArguments
     };
 
     s_renderCallsCount++;
+}
+
+static void Cleanup()
+{
+    Graphics_UnloadTexture(s_lightTexture);
+}
+
+static void EnsureInitialized()
+{
+    if (s_initialized) return;
+
+    {
+        // Generate a 128x128 radial gradient light cookie
+        Image image = Image_FromColor(128, 128, COLOR_NOCOLOR);
+        float halfWidth = image.width / 2.0f;
+        float halfHeight = image.height / 2.0f;
+        for (u32 y = 0; y < image.height; y++) {
+            for (u32 x = 0; x < image.width; x++) {
+                float dx = (x - halfWidth) / halfWidth;
+                float dy = (y - halfHeight) / halfHeight;
+                float dist = sqrtf(dx*dx + dy*dy);
+                float alpha = 1.0f - Smoothstepf(0.0f, 1.0f, dist); // soft falloff
+                alpha = alpha * alpha; // optional: squarer falloff
+                Color c = { 255, 255, 255, (u8)(alpha * 255.0f) };
+                Image_DrawPixel(&image, x, y, c);
+            }
+        }
+
+        s_lightTexture = Graphics_LoadTextureFromImage(&image);
+        Image_Free(&image);
+
+        Cleanup_AddCallback(Cleanup);
+    }
+
+    s_initialized = true;
 }
 
 Result Graphics_CaptureScreen(Image* image_out)
@@ -244,6 +288,44 @@ void Graphics_DrawVectorFromPoint(Vector2 point, Vector2 vec, Color color)
     QueueRenderCall(DRAW_ORDER_TOP, _DrawVectorFromPoint_RenderCall, (union RenderCallFunctionArguments*)&args);
 }
 
+void _DrawLight_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    EnsureInitialized();
+
+    DrawLightArguments args = arguments.drawLightArguments;
+
+    Rect srcRect = {
+        .x = 0.0f,
+        .y = 0.0f,
+        .width = s_lightTexture.width,
+        .height = s_lightTexture.height
+    };
+
+    Rect destRect = {
+        .x = args.position.x - args.radius,
+        .y = args.position.y - args.radius,
+        .width = args.radius * 2.0f,
+        .height = args.radius * 2.0f
+    };
+
+    Raylib_BeginBlendMode(BLEND_MODE_ADDITIVE);
+
+    Raylib_DrawTexturePro(s_lightTexture, srcRect, destRect, Vector2_Zero(), 0.0f, args.color);
+
+    Raylib_EndBlendMode();
+}
+
+void Graphics_DrawLight(Vector2 position, float radius, Color color)
+{
+    DrawLightArguments args = {
+        .position = position,
+        .radius = radius,
+        .color = color
+    };
+
+    QueueRenderCall(DRAW_ORDER_LIGHT, _DrawLight_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
 Texture2D Graphics_LoadTextureFromImage(const Image* image)
 {
     return Raylib_LoadTextureFromImage(image);
@@ -284,12 +366,6 @@ void _DrawTextureT_RenderCall(union RenderCallFunctionArguments arguments)
 
     Raylib_DrawTexture(*args.texture, 0.0f, 0.0f, args.tint);
 
-    //Rect src = (Rect){ .x = 0.0f, .y = 0.0f, .width = args.texture->width, .height = args.texture->height };
-    //Rect dest = (Rect){ .x = args.transform.position.x, .y = args.transform.position.y, .width = args.texture->width * args.transform.scale.x, .height = args.texture->height * args.transform.scale.y };
-    //Vector2 origin = Vector2_Mult(WorldToScreenOrigin(args.transform.origin, (Vector2){ .x = args.texture->width, .y = args.texture->height }), args.transform.scale);
-
-    //Raylib_DrawTexturePro(*args.texture, src, dest, origin, -args.transform.rotation, COLOR_WHITE);
-
     Raylib_PopMatrix();
 }
 
@@ -314,7 +390,15 @@ void Graphics_Flush()
     qsort(s_renderCalls, s_renderCallsCount, sizeof(RenderCall), RenderCallComparer);
 
     for(u32 i = 0; i < s_renderCallsCount; ++i)
+    {
+        bool useShader = s_renderCalls[i].shader != NULL;
+
+        if (useShader) Raylib_BeginShaderMode(s_renderCalls[i].shader);
+
         s_renderCalls[i].function(s_renderCalls[i].functionArguments);
+
+        if (useShader) Raylib_EndShaderMode();
+    }
 
     s_renderCallsCount = 0u;
 
@@ -325,4 +409,14 @@ void Graphics_Flush()
 Vector2 Graphics_GetMousePosition()
 {
     return Raylib_GetMousePosition();
+}
+
+void Graphics_SetShader(const Shader* shader)
+{
+    s_shader = shader;
+}
+
+void Graphics_ClearShader()
+{
+    s_shader = NULL;
 }

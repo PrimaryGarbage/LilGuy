@@ -4,6 +4,7 @@
 #include "graphics/image.h"
 #include "main_char_bullet_scene.h"
 #include "physics/transform.h"
+#include "point_light_scene.h"
 #include "raycast_scene.h"
 #include "scene/scene.h"
 #include "scene_type.h"
@@ -127,6 +128,11 @@ Scene* MainCharGunScene_Create(Scene* parent, Scene* followTarget)
     gunFlash->transform.position = (Vector2){ .x = sceneData->gunTexture.width, .y = -(float)sceneData->gunTexture.height * 0.5f - 2.0f};
     gunFlash->visible = false;
     sceneData->gunFlash = gunFlash;
+
+    constexpr Color gunFlashLightColor = { .r = 235u, .g = 140u, .b = 170u, .a = 20u };
+    constexpr float gunFlashLightRadius = 100.0f;
+    Scene* gunFlashLightScene = PointLightScene_Create(gunFlash, "MainCharGunFlash Point Light", gunFlashLightColor, gunFlashLightRadius);
+    gunFlashLightScene->transform.position.x += 10.0f;
 
     Scene* raycastScene = RaycastScene_Create(scene, Vector2_Right(), sceneData->gunTexture.width, "Main Char Gun Raycast");
     RaycastScene_SetVisible(raycastScene, false);

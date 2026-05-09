@@ -12,12 +12,15 @@ set(SRC_FILES
 	random.h
 	math_helpers.c math_helpers.h
 	vector2.c vector2.h
+	vector3.c vector3.h
+	vector4.h
 	timer.c timer.h
 	raylib_wrapper.c raylib_wrapper.h
 	raymath_wrapper.c raymath_wrapper.h
 	tween.c tween.h
 	list.c list.h
 	debug.c debug.h
+	cleanup.c cleanup.h
 )
 
 set(WINDOW_FILES
@@ -32,6 +35,7 @@ set(GRAPHICS_FILES
 	deferred_rendering.h
 	draw_order.h
 	texture_atlas.c texture_atlas.h
+	shader.c shader.h
 )
 
 set(INPUT_FILES
@@ -56,6 +60,7 @@ set(SCENE_FILES
 	sprite_scene.c sprite_scene.h
 	animated_sprite_scene.c animated_sprite_scene.h
 	spring_arm_scene.c spring_arm_scene.h
+	point_light_scene.c point_light_scene.h
 )
 
 set(PHYSICS_FILES

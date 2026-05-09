@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "logging.h"
+
 #define IF_ERROR(result, code) \
 if (IsError(&result)) \
 { \
@@ -28,6 +30,12 @@ do { \
 #define PANIC() \
 do { \
     fprintf(stderr, "Program panicked\n"); \
+    exit(1); \
+} while(0)
+
+#define PANIC_M(message) \
+do { \
+    LogErrorM(message "; File: %s, Line: %d", __FILE__, __LINE__); \
     exit(1); \
 } while(0)
 

@@ -1,6 +1,7 @@
 #ifndef __RAYLIB_WRAPPER_H__
 #define __RAYLIB_WRAPPER_H__
 
+#include "graphics/shader.h"
 #include "physics/matrix.h"
 #include "short_types.h"
 #include "vector2.h"
@@ -17,6 +18,8 @@ void Raylib_PollInputEvents();
 void Raylib_BeginDrawing();
 void Raylib_EndDrawing();
 void Raylib_SwapBuffers();
+void Raylib_BeginBlendMode(i32 mode);
+void Raylib_EndBlendMode();
 u32 Raylib_GetScreenWidth();
 u32 Raylib_GetScreenHeight();
 void Raylib_ClearBackground(Color color);
@@ -30,6 +33,8 @@ Vector2 Raylib_GetMousePosition();
 Image Raylib_LoadImageFromScreen();
 Image Raylib_LoadImage(const char* path);
 Image Raylib_ImageFromImage(const Image* image, Rect rect);
+Image Raylib_GenImageColor(u32 width, u32 height, Color color);
+void Raylib_ImageDrawPixel(Image* image, u32 x, u32 y, Color color);
 void Raylib_ImageFlipHorizontal(Image* image);
 void Raylib_ImageFlipVertical(Image* image);
 Texture2D Raylib_LoadTextureFromImage(const Image* image);
@@ -50,6 +55,19 @@ void Raylib_DrawLineEx(Vector2 startPos, Vector2 endPos, float thick, Color colo
 void Raylib_DrawCircleV(Vector2 position, float radius, Color color);
 void Raylib_PushMatrix(const Matrix* matrix);
 void Raylib_PopMatrix();
+
+// Shaders
+Shader Raylib_LoadShader(const char* vsFilePath, const char* fsFilePath);
+void Raylib_UnloadShader(Shader* shader);
+void Raylib_BeginShaderMode(const Shader* shader);
+void Raylib_EndShaderMode();
+bool Raylib_IsShaderValid(const Shader* shader);
+int Raylib_GetShaderLocation(const Shader* shader, const char* uniformName);
+int Raylib_GetShaderLocationAttrib(const Shader* shader, const char* attribName);
+void Raylib_SetShaderValue(const Shader* shader, int locIndex, const void* value, UniformDataType uniformType);
+void Raylib_SetShaderValueV(const Shader* shader, int locIndex, const void* value, UniformDataType uniformType, int count);
+void Raylib_SetShaderValueMatrix(const Shader* shader, int locIndex, const Matrix* mat);
+void Raylib_SetShaderValueTexture(const Shader* shader, int locIndex, const Texture2D* texture);
 
 // Collision
 bool Raylib_CheckCollisionRects(Rect a, Rect b);

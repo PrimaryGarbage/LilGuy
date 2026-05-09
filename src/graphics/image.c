@@ -57,6 +57,11 @@ Image Image_FromImage(const Image* image, Rect rect)
     return Raylib_ImageFromImage(image, rect);
 }
 
+Image Image_FromColor(u32 width, u32 height, Color color)
+{
+    return Raylib_GenImageColor(width, height, color); 
+}
+
 void Image_FlipVertical(Image* image)
 {
     Raylib_ImageFlipVertical(image);
@@ -65,4 +70,9 @@ void Image_FlipVertical(Image* image)
 void Image_FlipHorizontal(Image* image)
 {
     Raylib_ImageFlipHorizontal(image);
+}
+
+void Image_DrawPixel(Image* image, u32 x, u32 y, Color color)
+{
+    Raylib_ImageDrawPixel(image, x, y, color);
 }

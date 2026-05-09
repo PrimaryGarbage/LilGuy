@@ -40,3 +40,9 @@ float Signf(float val)
 {
     return val < 0.0f? -1.0f : 1.0f;
 }
+
+float Smoothstepf(float edge0, float edge1, float val)
+{
+    float t = Clampf(0.0f, 1.0f, (val - edge0) / (edge1 - edge0));
+    return t * t * (3.0f - 2.0f * t);
+}

@@ -1,6 +1,7 @@
 #include "main_char_jetpack_fire_scene.h"
 #include "animated_sprite_scene.h"
 #include "graphics/draw_order.h"
+#include "graphics/graphics.h"
 #include "scene/scene.h"
 #include "scene_type.h"
 #include "tween.h"
@@ -22,6 +23,11 @@ static void Draw(Scene* scene)
 
     u8 opacity = sceneData->opacity * 255.0f;
     AnimatedSpriteScene_SetTint(sceneData->animatedFireScene, (Color){ .r = 255, .g = 255, .b = 255, .a = opacity});
+
+    constexpr float lightMaxRadius = 150.0f;
+    constexpr float lightMaxOpacity = 30.0f;
+    Vector2 lightPosition = Vector2_Add(scene->globalTransform.position, Vector2_New(0.0f, 20.0f));
+    Graphics_DrawLight(lightPosition, lightMaxRadius * sceneData->opacity, (Color) { .r = 70, .g = 30, .b = 230, .a = lightMaxOpacity * sceneData->opacity });
 
     // Origin
     //Graphics_DrawCircleW(scene->globalTransform.position, 2.0f, COLOR_WHITE, DRAW_ORDER_TOP);

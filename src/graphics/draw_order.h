@@ -6,7 +6,8 @@ typedef enum DrawOrder {
     DRAW_ORDER_DEFAULT = 0,
     DRAW_ORDER_MAIN_CHAR_JETPACK = 99,
     DRAW_ORDER_MAIN_CHAR = 100,
-    DRAW_ORDER_UI = 500,
+    DRAW_ORDER_LIGHT = 250,
+    DRAW_ORDER_UI = 1000,
     DRAW_ORDER_TOP = 10000,
 } DrawOrder;
 

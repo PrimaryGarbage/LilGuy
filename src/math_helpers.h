@@ -14,6 +14,7 @@ float Lerpf(float a, float b, float w);
 // angles from -180 to 180
 float LerpAnglef(float a, float b, float w);
 float Signf(float val);
+float Smoothstepf(float edge0, float edge1, float val);
 
 static inline float DegToRad(float deg)
 {

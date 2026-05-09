@@ -1,6 +1,7 @@
 #ifndef __IMAGE_H__
 #define __IMAGE_H__
 
+#include "color.h"
 #include "rect.h"
 #include "short_types.h"
 #include "vector2.h"
@@ -47,7 +48,9 @@ Image Image_CreateResized(const Image* image, u32 newWidth, u32 newHeight);
 void Image_SwapRAndBChannels(Image* image);
 Image Image_Load(const char* path);
 Image Image_FromImage(const Image* image, Rect rect);
+Image Image_FromColor(u32 width, u32 height, Color color);
 void Image_FlipVertical(Image* image);
 void Image_FlipHorizontal(Image* image);
+void Image_DrawPixel(Image* image, u32 x, u32 y, Color color);
 
 #endif // __IMAGE_H__

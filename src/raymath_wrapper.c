@@ -1,8 +1,14 @@
-#define Matrix RlMatrix
-#define Vector2 RlVector2
+#define Matrix Rl_Matrix
+#define Vector2 Rl_Vector2
+#define Vector4 Rl_Vector4
+#define Quaternion Rl_Quaternion
+#define float16 Rl_float16
 #include "raymath.h"
 #undef Matrix
 #undef Vector2
+#undef Vector4
+#undef Quaternion
+#undef float16
 
 #include "raymath_wrapper.h"
 #include <string.h>
@@ -14,17 +20,24 @@ do { \
     memcpy(&valueTo, &valueFrom, sizeof(typeTo)); \
 } while(0)
 
-static inline RlMatrix MatrixToRlMatrix(Matrix in)
+static inline Rl_Matrix MatrixToRlMatrix(Matrix in)
 {
-    RlMatrix out;
-    TYPE_PUN(Matrix, RlMatrix, in, out);
+    Rl_Matrix out;
+    TYPE_PUN(Matrix, Rl_Matrix, in, out);
     return out;
 }
 
-static inline Matrix RlMatrixToMatrix(RlMatrix in)
+static inline Matrix RlMatrixToMatrix(Rl_Matrix in)
 {
     Matrix out;
-    TYPE_PUN(RlMatrix, Matrix, in, out);
+    TYPE_PUN(Rl_Matrix, Matrix, in, out);
+    return out;
+}
+
+static inline float16 RlFloat16ToFloat16(Rl_float16 in)
+{
+    float16 out;
+    TYPE_PUN(Rl_float16, float16, in, out);
     return out;
 }
 
@@ -46,6 +59,11 @@ Matrix Raymath_MatrixScale(Vector2 scale)
 Matrix Raymath_MatrixMult(const Matrix* left, const Matrix* right)
 {
     return RlMatrixToMatrix(MatrixMultiply(MatrixToRlMatrix(*left), MatrixToRlMatrix(*right)));
+}
+
+float16 Raymath_MatrixToFloatV(const Matrix* matrix)
+{
+    return RlFloat16ToFloat16(MatrixToFloatV(MatrixToRlMatrix(*matrix)));
 }
 
 Matrix Raymath_MatrixIdentity()

@@ -3,6 +3,7 @@
 
 #include "short_types.h"
 #include <assert.h>
+#include "vector4.h"
 
 //#define COLOR_SCHEME_BGRA
 #define COLOR_SCHEME_RGBA
@@ -29,7 +30,6 @@ inline static Color Color_New(u8 r, u8 g, u8 b, u8 a)
 {
     return (Color){ .r = r, .g = g, .b = b, .a = a };
 }
-
 
 inline static u8 Color_ExtractA(u32 color)
 {
@@ -136,6 +136,11 @@ inline static Color Color_Lerp(const Color* a, const Color* b, float weight)
         .b = a->b + (b->b - a->b) * weight,
         .a = a->a + (b->a - a->a) * weight,
     };
+}
+
+inline static Vector4 Color_Normalize(const Color* color)
+{
+    return (Vector4){ (float)color->r / 255.0f, (float)color->g / 255.0f, (float)color->b / 255.0f, (float)color->a / 255.0f };
 }
 
 #endif // __COLOR_H__

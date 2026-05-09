@@ -4,6 +4,7 @@
 #include "logging.h"
 #include "physics/raycast.h"
 #include "physics/transform.h"
+#include "point_light_scene.h"
 #include "random.h"
 #include "result.h"
 #include "scene.h"
@@ -55,6 +56,11 @@ static void Update(Scene* scene, double deltatime)
         sparkScene->transform.rotation = RandomFloat() * 360.0f;
         sparkScene->transform.origin = (Vector2){ .x = s_staticData.sparkTexture.width * 0.5f, .y = s_staticData.sparkTexture.height * 0.5f };
         sparkScene->transform.scale = Vector2_Uniform(RandomFloat() + 0.5f);
+
+        constexpr Color sparkLightColor = { .r = 252u, .g = 229u, .b = 150u, .a = 30u };
+        float sparkLightRadius = RandomFloat() * 50.0f + 20.0f;
+        PointLightScene_Create(sparkScene, "MainChar Bullet Spark Light", sparkLightColor, sparkLightRadius);
+
         Tween_CreateTimer(c_sparkLifetime, sparkScene, TweenOnProjectileSparkFinishCallback);
         return;
     }
@@ -70,7 +76,6 @@ static void Update(Scene* scene, double deltatime)
     scene->transform.position.x += sceneData->speed.x * deltatime;
     scene->transform.position.y += sceneData->speed.y * deltatime;
     
-
     // Draw raycast
     //Graphics_DrawVectorFromPoint(scene->globalTransform.position, Vector2_MultScalar(raycast.direction, raycast.length), COLOR_GREEN);
 }
@@ -81,6 +86,9 @@ static void Draw(Scene* scene)
     Graphics_DrawRectT(c_size, COLOR_YELLOW, DRAW_ORDER_DEFAULT);
     Graphics_ClearModelMatrix();
 
+    constexpr Color lightColor = (Color) { .r = 235u, .g = 190u, .b = 235u, .a = 10u };
+    constexpr float lightRadius = 30.0f;
+    Graphics_DrawLight(scene->globalTransform.position, lightRadius, lightColor);
 }
 
 Scene* MainCharBulletScene_Create(Scene* parent, Vector2 initialPosition, Vector2 speed)

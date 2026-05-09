@@ -1,3 +1,4 @@
+#include "cleanup.h"
 #include "debug.h"
 #include "graphics/draw_order.h"
 #include "graphics/image.h"
@@ -13,7 +14,6 @@
 #include "result.h"
 #include "timer.h"
 #include "logging.h"
-#include <stdlib.h>
 
 int main()
 {
@@ -29,7 +29,7 @@ int main()
 
     Window_Hide();
     Window_Init("LilGuy", windowSize, true);
-    Window_SetMonitor(1);
+    Window_SetMonitor(0);
 
     Texture2D screenCaptureTexture = Graphics_LoadTextureFromImage(&screenCaptureImage);
     Graphics_DrawTexture(&screenCaptureTexture, (Rect){ .x = 0.0f, .y = 0.0f, .width = screenCaptureTexture.width, .height = screenCaptureTexture.height }, DRAW_ORDER_BACKGROUND);
@@ -75,6 +75,8 @@ int main()
     Image_Free(&screenCaptureImage);
     Graphics_UnloadTexture(screenCaptureTexture);
     Window_Destroy();
+
+    Cleanup_Execute();
 
     return 0;
 }

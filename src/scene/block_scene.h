@@ -3,8 +3,7 @@
 
 #include "graphics/color.h"
 #include "scene.h"
-#include "rect.h"
 
-Scene* BlockScene_Create(Scene* parent, Rect rect, Color color);
+Scene* BlockScene_Create(Scene* parent);
 
 #endif // __BLOCK_SCENE_H__

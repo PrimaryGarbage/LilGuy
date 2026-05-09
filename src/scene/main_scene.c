@@ -26,6 +26,10 @@ static void DrawTestRect()
     Graphics_ClearModelMatrix();
 }
 
+static void Update(Scene* scene, double deltatime)
+{
+}
+
 static void Draw(Scene* scene)
 {
     //DrawTestRect();
@@ -51,15 +55,11 @@ Scene* MainScene_Create()
     Scene* mainCharScene = MainCharScene_Create(scene);
     mainCharScene->transform.position = Vector2_MultScalar(Graphics_GetScreenSize(), 0.5f);
 
-    Rect blockSceneRect = {
-        .x = 300.0f,
-        .y = 800.0f,
-        .width = 100.0f,
-        .height = 20.0f
-    };
-    BlockScene_Create(scene, blockSceneRect, COLOR_BLUE);
+    Scene* blockScene = BlockScene_Create(scene);
+    blockScene->transform.position = (Vector2) { .x = 300.0f, .y = 800.0f };
 
     scene->drawFunction = Draw;
+    scene->updateFunction = Update;
 
     return scene;
 }

@@ -5,6 +5,7 @@
 #include "graphics/texture2d.h"
 #include "physics/matrix.h"
 #include "rect.h"
+#include "shader.h"
 #include "short_types.h"
 #include "vector2.h"
 
@@ -81,6 +82,12 @@ typedef struct DrawVectorFromPointArguments {
     Color color;
 } DrawVectorFromPointArguments;
 
+typedef struct DrawLightArguments {
+    Vector2 position;
+    float radius;
+    Color color;
+} DrawLightArguments;
+
 union RenderCallFunctionArguments {
     DrawRectArguments drawRectArguments;
     DrawRectTArguments drawRectTArguments;
@@ -92,6 +99,7 @@ union RenderCallFunctionArguments {
     DrawLineArguments drawLineArguments;
     DrawVectorArguments drawVectorArguments;
     DrawVectorFromPointArguments drawVectorFromPointArguments;
+    DrawLightArguments drawLightArguments;
 };
 
 typedef void(*RenderCallFunction)(union RenderCallFunctionArguments arguments);
@@ -99,6 +107,7 @@ typedef void(*RenderCallFunction)(union RenderCallFunctionArguments arguments);
 typedef struct RenderCall {
     i32 drawOrder;
     u32 drawIndex;
+    const Shader* shader;
     RenderCallFunction function;
     union RenderCallFunctionArguments functionArguments;
 } RenderCall;
