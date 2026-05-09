@@ -32,6 +32,11 @@ Rect Window_GetWindowRect()
     };
 }
 
+void Window_SetMouseCursor(MouseCursorType type)
+{
+    Raylib_SetMouseCursor(type);
+}
+
 bool Window_ShouldClose()
 {
     return Raylib_WindowShouldClose();

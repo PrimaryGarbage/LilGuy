@@ -14,6 +14,7 @@ void Raylib_InitWindow(u32 windowWidth, u32 windowHeight, const char* windowTitl
 void Raylib_SetWindowMonitor(u8 monitor);
 bool Raylib_WindowShouldClose();
 void Raylib_CloseWindow();
+void Raylib_SetMouseCursor(i32 cursor);
 void Raylib_PollInputEvents();
 void Raylib_BeginDrawing();
 void Raylib_EndDrawing();

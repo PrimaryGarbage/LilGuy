@@ -8,6 +8,7 @@
 #include "scene/scene.h"
 #include "tween.h"
 #include "vector2.h"
+#include "window/mouse_cursor_type.h"
 #include "window/window.h"
 #include "graphics/graphics.h"
 #include "random.h"
@@ -30,6 +31,7 @@ int main()
     Window_Hide();
     Window_Init("LilGuy", windowSize, true);
     Window_SetMonitor(0);
+    Window_SetMouseCursor(MOUSE_CURSOR_TYPE_CROSSHAIR);
 
     Texture2D screenCaptureTexture = Graphics_LoadTextureFromImage(&screenCaptureImage);
     Graphics_DrawTexture(&screenCaptureTexture, (Rect){ .x = 0.0f, .y = 0.0f, .width = screenCaptureTexture.width, .height = screenCaptureTexture.height }, DRAW_ORDER_BACKGROUND);

@@ -1,6 +1,7 @@
 #ifndef __WINDOW_H__
 #define __WINDOW_H__
 
+#include "mouse_cursor_type.h"
 #include "vector2.h"
 #include "rect.h"
 
@@ -12,5 +13,6 @@ bool Window_ShouldClose();
 void Window_Hide();
 void Window_Show();
 Rect Window_GetWindowRect();
+void Window_SetMouseCursor(MouseCursorType type);
 
 #endif // __WINDOW_H__

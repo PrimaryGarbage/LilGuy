@@ -152,6 +152,11 @@ void Raylib_CloseWindow()
     CloseWindow();
 }
 
+void Raylib_SetMouseCursor(i32 cursor)
+{
+    SetMouseCursor(cursor);
+}
+
 void Raylib_PollInputEvents()
 {
     PollInputEvents();
