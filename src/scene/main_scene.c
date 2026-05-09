@@ -55,8 +55,16 @@ Scene* MainScene_Create()
     Scene* mainCharScene = MainCharScene_Create(scene);
     mainCharScene->transform.position = Vector2_MultScalar(Graphics_GetScreenSize(), 0.5f);
 
-    Scene* blockScene = BlockScene_Create(scene);
-    blockScene->transform.position = (Vector2) { .x = 300.0f, .y = 800.0f };
+    Scene* blockScene1 = BlockScene_Create(scene);
+    blockScene1->transform.position = (Vector2) { .x = 300.0f, .y = 800.0f };
+    Scene* blockScene2 = BlockScene_Create(scene);
+    blockScene2->transform.position = (Vector2) { .x = 500.0f, .y = 600.0f };
+    Scene* blockScene3 = BlockScene_Create(scene);
+    blockScene3->transform.position = (Vector2) { .x = 720.0f, .y = 350.0f };
+    Scene* blockScene4 = BlockScene_Create(scene);
+    blockScene4->transform.position = (Vector2) { .x = 1050.0f, .y = 870.0f };
+    Scene* blockScene5 = BlockScene_Create(scene);
+    blockScene5->transform.position = (Vector2) { .x = 1350.0f, .y = 700.0f };
 
     scene->drawFunction = Draw;
     scene->updateFunction = Update;

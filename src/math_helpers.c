@@ -46,3 +46,8 @@ float Smoothstepf(float edge0, float edge1, float val)
     float t = Clampf(0.0f, 1.0f, (val - edge0) / (edge1 - edge0));
     return t * t * (3.0f - 2.0f * t);
 }
+
+double Clampd(double min, double max, double val)
+{
+    return CLAMP(min, max, val);
+}

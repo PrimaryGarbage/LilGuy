@@ -16,6 +16,8 @@ float LerpAnglef(float a, float b, float w);
 float Signf(float val);
 float Smoothstepf(float edge0, float edge1, float val);
 
+double Clampd(double min, double max, double val);
+
 static inline float DegToRad(float deg)
 {
     constexpr float twoPi = 2.0f * 3.14159265f;

@@ -31,6 +31,7 @@ typedef struct MainCharSceneData {
     Texture2D bodyTexture;
     Scene* leftFoot;
     Scene* rightFoot;
+    Scene* eyes;
     Scene* bodyCollider;
     Scene* onGroundRaycast;
     Scene* gun;
@@ -200,6 +201,7 @@ static void Shoot(Scene* scene)
     {
         MainCharSceneData* sceneData = (MainCharSceneData*)scene->sceneData;
         MainCharGunScene_Shoot(sceneData->gun);
+        MainCharEyesScene_Squint(sceneData->eyes);
     }
 }
 
@@ -344,7 +346,7 @@ Scene* MainCharScene_Create(Scene* parent)
     sceneData->leftFoot = leftFoot;
     sceneData->rightFoot = rightFoot;
 
-    MainCharEyesScene_Create(scene, "Main Char Left Eye");
+    sceneData->eyes = MainCharEyesScene_Create(scene, "Main Char Left Eye");
 
     Scene* gun = MainCharGunScene_Create(scene, scene);
     sceneData->gun = gun;
