@@ -60,6 +60,7 @@ Scene* AnimatedSpriteScene_Create(Scene* parent, const char* imagePath, u32 atla
     sceneData->elapsed = 0.0;
     sceneData->currentTextureIdx = 0u;
     sceneData->drawOrder = drawOrder;
+    sceneData->tint = COLOR_WHITE;
 
     scene->updateFunction = Update;
     scene->drawFunction = Draw;

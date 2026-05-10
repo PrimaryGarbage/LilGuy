@@ -263,7 +263,7 @@ static void Draw(Scene* scene)
     DrawUi(scene);
 
     // Draw point at origin
-    //Graphics_DrawCircle(scene->globalTransform.position, 2.0f, COLOR_RED, DRAW_ORDER_TOP);
+    Graphics_DrawCircle(scene->globalTransform.position, 2.0f, COLOR_RED, DRAW_ORDER_TOP);
 }
 
 static void OnBodyCollision(Scene* scene, CollisionInfo info)

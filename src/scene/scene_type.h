@@ -19,6 +19,7 @@ typedef enum SceneType {
     SCENE_TYPE_ANIMATED_SPRITE,
     SCENE_TYPE_SPRING_ARM,
     SCENE_TYPE_POINT_LIGHT,
+    SCENE_TYPE_TUMOR,
 } SceneType;
 
 #endif // __SCENE_TAGS_H__

@@ -30,7 +30,7 @@ int main()
 
     Window_Hide();
     Window_Init("LilGuy", windowSize, true);
-    Window_SetMonitor(0);
+    Window_SetMonitor(1);
     Window_SetMouseCursor(MOUSE_CURSOR_TYPE_CROSSHAIR);
 
     Texture2D screenCaptureTexture = Graphics_LoadTextureFromImage(&screenCaptureImage);

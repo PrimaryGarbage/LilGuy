@@ -44,7 +44,6 @@ static inline Matrix Transform_CreateMatrix(const Transform* transform)
     Matrix rotation = Matrix_Rotate(DegToRad(transform->rotation));
     Matrix translation = Matrix_Translate(transform->position);
 
-
     Matrix result = Matrix_Identity();
     result = Matrix_Mult(&result, &scale);
     result = Matrix_Mult(&result, &rotation);

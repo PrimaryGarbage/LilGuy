@@ -3,8 +3,10 @@
 
 #include "rect.h"
 
+#define COLLIDER_LAYER_ENEMY 0b100
 #define COLLIDER_LAYER_MAIN_CHAR 0b10
 #define COLLIDER_LAYER_WORLD 0b1
+#define COLLIDER_LAYER_ALL 0xFFFFFFFF
 
 typedef struct Collider {
     Rect rect;

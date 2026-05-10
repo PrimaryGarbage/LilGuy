@@ -7,6 +7,7 @@
 #include "scene.h"
 #include "graphics/graphics.h"
 #include "scene_type.h"
+#include "tumor_scene.h"
 #include "vector2.h"
 #include <stdlib.h>
 
@@ -65,6 +66,8 @@ Scene* MainScene_Create()
     blockScene4->transform.position = (Vector2) { .x = 1050.0f, .y = 870.0f };
     Scene* blockScene5 = BlockScene_Create(scene);
     blockScene5->transform.position = (Vector2) { .x = 1350.0f, .y = 700.0f };
+
+    Scene* tumorScene = TumorScene_Create(scene, mainCharScene);
 
     scene->drawFunction = Draw;
     scene->updateFunction = Update;

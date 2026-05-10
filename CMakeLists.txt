@@ -61,6 +61,7 @@ set(SCENE_FILES
 	animated_sprite_scene.c animated_sprite_scene.h
 	spring_arm_scene.c spring_arm_scene.h
 	point_light_scene.c point_light_scene.h
+	tumor_scene.c tumor_scene.h
 )
 
 set(PHYSICS_FILES
