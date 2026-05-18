@@ -18,8 +18,8 @@ void Scene_Free(Scene* scene)
     if(scene->parent)
         Scene_RemoveChild(scene->parent, scene);
 
-    for(u32 i = 0u; i < scene->childrenCount; ++i)
-        Scene_Free(scene->children[i]);
+    while(scene->childrenCount != 0)
+        Scene_Free(scene->children[0]);
 
     if (scene->sceneData)
         free(scene->sceneData);

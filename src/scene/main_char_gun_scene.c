@@ -11,6 +11,8 @@
 #include "sprite_scene.h"
 #include "tween.h"
 #include "vector2.h"
+#include "physics/collision_layer.h"
+
 #include <math.h>
 #include <stdlib.h>
 
@@ -134,7 +136,7 @@ Scene* MainCharGunScene_Create(Scene* parent, Scene* followTarget)
     Scene* gunFlashLightScene = PointLightScene_Create(gunFlash, "MainCharGunFlash Point Light", gunFlashLightColor, gunFlashLightRadius);
     gunFlashLightScene->transform.position.x += 10.0f;
 
-    Scene* raycastScene = RaycastScene_Create(scene, Vector2_Right(), sceneData->gunTexture.width, "Main Char Gun Raycast");
+    Scene* raycastScene = RaycastScene_Create(scene, Vector2_Right(), sceneData->gunTexture.width, COLLISION_LAYER_WORLD, "Main Char Gun Raycast");
     RaycastScene_SetVisible(raycastScene, false);
     sceneData->raycast = raycastScene;
 

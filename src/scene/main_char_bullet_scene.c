@@ -2,6 +2,7 @@
 #include "graphics/draw_order.h"
 #include "graphics/graphics.h"
 #include "logging.h"
+#include "physics/collider.h"
 #include "physics/raycast.h"
 #include "physics/transform.h"
 #include "point_light_scene.h"
@@ -13,6 +14,8 @@
 #include "scene_type.h"
 #include "tween.h"
 #include "vector2.h"
+#include "physics/collision_layer.h"
+
 #include <stdlib.h>
 
 #define SCENE_TYPE SCENE_TYPE_MAIN_CHAR_BULLET
@@ -45,12 +48,17 @@ static void Update(Scene* scene, double deltatime)
     MainCharBulletSceneData* sceneData = scene->sceneData;
 
     float raycastLenght = c_size.x + Vector2_Length(sceneData->speed) * deltatime;
-    Raycast raycast = Raycast_New(scene->globalTransform.position, Transform_Forward(&scene->globalTransform), raycastLenght);
+    Raycast raycast = Raycast_New(scene->globalTransform.position, Transform_Forward(&scene->globalTransform), raycastLenght, COLLISION_LAYER_WORLD | COLLISION_LAYER_ENEMY);
 
     Vector2 collisionPoint;
-    if (Raycast_CheckForCollision(&raycast, &collisionPoint))
+    const Collider* collider = Raycast_CheckForCollision(&raycast, &collisionPoint);
+    if (collider)
     {
         Scene_QueueFree(scene);
+
+        if (collider->damageCallback)
+            collider->damageCallback(collider->damageCallbackOwner, sceneData->damage);
+
         Scene* sparkScene = SpriteScene_CreateWithTexture(Scene_GetRoot(scene), &s_staticData.sparkTexture, "Projectile Spark Srpite");
         sparkScene->transform.position = collisionPoint;
         sparkScene->transform.rotation = RandomFloat() * 360.0f;

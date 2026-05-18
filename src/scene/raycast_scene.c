@@ -16,6 +16,7 @@ typedef struct RaycastSceneData {
     Scene* onCollisioonCallbackOwner;
     float length;
     bool visible;
+    u32 scan;
 } RaycastSceneData;
 
 void Update(Scene* scene, double _)
@@ -24,7 +25,7 @@ void Update(Scene* scene, double _)
 
     if (sceneData->onCollisionCallback)
     {
-        Raycast raycast = Raycast_New(scene->globalTransform.position, Transform_Forward(&scene->globalTransform), sceneData->length);
+        Raycast raycast = Raycast_New(scene->globalTransform.position, Transform_Forward(&scene->globalTransform), sceneData->length, sceneData->scan);
         Vector2 collisionPoint;
         if (Raycast_CheckForCollision(&raycast, &collisionPoint))
             sceneData->onCollisionCallback(sceneData->onCollisioonCallbackOwner, collisionPoint);
@@ -40,7 +41,7 @@ void Draw(Scene* scene)
     Graphics_DrawVectorFromPoint(scene->globalTransform.position, Vector2_MultScalar(Transform_Forward(&scene->globalTransform), sceneData->length), COLOR_GREEN);
 }
 
-Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length, const char* name)
+Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length, u32 scan, const char* name)
 {
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_RAYCAST, parent, name);
@@ -48,6 +49,7 @@ Scene* RaycastScene_Create(Scene* parent, Vector2 direction, float length, const
     sceneData->length = length;
     sceneData->onCollisionCallback = NULL;
     sceneData->visible = false;
+    sceneData->scan = scan;
     scene->sceneData = sceneData;
 
     scene->updateFunction = Update;
@@ -75,7 +77,7 @@ bool RaycastScene_CheckForCollision(Scene* scene, Vector2* collisionPoint_out)
 
     Scene_UpdateGlobalTransform(scene);
 
-    Raycast raycast = Raycast_New(scene->globalTransform.position, Transform_Forward(&scene->globalTransform), sceneData->length);
+    Raycast raycast = Raycast_New(scene->globalTransform.position, Transform_Forward(&scene->globalTransform), sceneData->length, sceneData->scan);
 
     Vector2 point;
     if (Raycast_CheckForCollision(&raycast, &point))

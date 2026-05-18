@@ -2,7 +2,7 @@
 #include "collider_scene.h"
 #include "graphics/draw_order.h"
 #include "graphics/graphics.h"
-#include "rect.h"
+#include "physics/collision_layer.h"
 #include "scene.h"
 #include <stdlib.h>
 
@@ -39,8 +39,8 @@ Scene* BlockScene_Create(Scene* parent)
     sceneData->texture = Graphics_LoadTexture("res/images/Block.png");
 
     Scene* colliderScene = ColliderScene_Create(scene, (Vector2) { sceneData->texture.width, sceneData->texture.height }, "Block Scene Collider");
-    ColliderScene_SetCollisionLayers(colliderScene, COLLIDER_LAYER_WORLD);
-    ColliderScene_SetCollisionScan(colliderScene, COLLIDER_LAYER_WORLD);
+    ColliderScene_SetCollisionLayers(colliderScene, COLLISION_LAYER_WORLD);
+    ColliderScene_SetCollisionScan(colliderScene, COLLISION_LAYER_WORLD);
 
     Scene_UpdateGlobalTransform(scene);
 

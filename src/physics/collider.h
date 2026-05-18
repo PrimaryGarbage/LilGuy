@@ -3,15 +3,17 @@
 
 #include "rect.h"
 
-#define COLLIDER_LAYER_ENEMY 0b100
-#define COLLIDER_LAYER_MAIN_CHAR 0b10
-#define COLLIDER_LAYER_WORLD 0b1
-#define COLLIDER_LAYER_ALL 0xFFFFFFFF
+// FD
+typedef struct Scene Scene;
+
+typedef void (*Collider_DamageCallback)(Scene* scene, float damage);
 
 typedef struct Collider {
     Rect rect;
     u32 layers;
     u32 scan;
+    Collider_DamageCallback damageCallback;
+    Scene* damageCallbackOwner;
 } Collider;
 
 typedef struct CollisionInfo {

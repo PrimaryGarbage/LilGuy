@@ -1,6 +1,7 @@
 #include "collider_scene.h"
 #include "graphics/draw_order.h"
 #include "graphics/graphics.h"
+#include "physics/collider.h"
 #include "scene.h"
 #include "scene_type.h"
 #include <stdlib.h>
@@ -156,6 +157,17 @@ const Collider* ColliderScene_CheckForCollision(Scene* scene)
 
 void ColliderScene_ForceUpdate(Scene* scene)
 {
+    ASSERT_SCENE_TYPE(scene);
+
     Scene_UpdateGlobalTransform(scene);
     SearchCollisions(scene);
+}
+
+void ColliderScene_SetDamageCallback(Scene* scene, Collider_DamageCallback callback, Scene* damageCallbackOwner)
+{
+    ASSERT_SCENE_TYPE(scene);
+
+    ColliderSceneData* sceneData = scene->sceneData;
+    sceneData->collider.damageCallback = callback;
+    sceneData->collider.damageCallbackOwner = damageCallbackOwner;
 }

@@ -14,5 +14,6 @@ void ColliderScene_SetCollisionLayers(Scene* scene, u32 layers);
 void ColliderScene_SetCollisionScan(Scene* scene, u32 scan);
 const Collider* ColliderScene_CheckForCollision(Scene* scene);
 void ColliderScene_ForceUpdate(Scene* scene);
+void ColliderScene_SetDamageCallback(Scene* scene, Collider_DamageCallback callback, Scene* damageCallbackOwner);
 
 #endif // __COLLIDER_SCENE_H__

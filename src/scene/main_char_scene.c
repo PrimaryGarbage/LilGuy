@@ -20,6 +20,8 @@
 #include "vector2.h"
 #include "graphics/graphics.h"
 #include "tween.h"
+#include "physics/collision_layer.h"
+
 #include <math.h>
 
 #define SCENE_TYPE SCENE_TYPE_MAIN_CHAR
@@ -369,10 +371,11 @@ Scene* MainCharScene_Create(Scene* parent)
     colliderScene->transform.position = colliderPosition;
     ColliderScene_SetVisible(colliderScene, false);
     ColliderScene_SetOnCollisionCallback(colliderScene, scene, OnBodyCollision);
-    ColliderScene_SetCollisionLayers(colliderScene, COLLIDER_LAYER_MAIN_CHAR);
-    ColliderScene_SetCollisionScan(colliderScene, COLLIDER_LAYER_WORLD);
+    ColliderScene_SetCollisionLayers(colliderScene, COLLISION_LAYER_MAIN_CHAR);
+    ColliderScene_SetCollisionScan(colliderScene, COLLISION_LAYER_WORLD);
 
-    Scene* onGroundRaycastScene = RaycastScene_Create(scene, Vector2_Down(), legLength + sceneData->bodyTexture.height * 0.5f + 1.0f, "OnGround Raycast");
+    Scene* onGroundRaycastScene = RaycastScene_Create(scene, Vector2_Down(), legLength + sceneData->bodyTexture.height * 0.5f + 1.0f, 
+        COLLISION_LAYER_WORLD, "OnGround Raycast");
     RaycastScene_SetVisible(onGroundRaycastScene, false);
     sceneData->onGroundRaycast = onGroundRaycastScene;
 

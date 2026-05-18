@@ -3,7 +3,7 @@
 #include "collider.h"
 #include <math.h>
 
-Raycast Raycast_New(Vector2 position, Vector2 direction, float length)
+Raycast Raycast_New(Vector2 position, Vector2 direction, float length, u32 scan)
 {
     direction = Vector2_Normalize(direction);
     
@@ -11,11 +11,11 @@ Raycast Raycast_New(Vector2 position, Vector2 direction, float length)
         .position = position,
         .direction = direction,
         .length = length,
-        .scan = 1
+        .scan = scan
     };
 }
 
-bool Raycast_CheckForCollision(Raycast* raycast, Vector2* collisionPoint_out)
+const Collider* Raycast_CheckForCollision(Raycast* raycast, Vector2* collisionPoint_out)
 {
     constexpr float step = 0.1f;
 
@@ -31,9 +31,9 @@ bool Raycast_CheckForCollision(Raycast* raycast, Vector2* collisionPoint_out)
         if (collider)
         {
             if(collisionPoint_out) *collisionPoint_out = ray;
-            return true;
+            return collider;
         }
     }
 
-    return false;
+    return NULL;
 }
