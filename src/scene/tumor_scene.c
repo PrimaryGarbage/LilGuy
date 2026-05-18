@@ -1,7 +1,6 @@
 #include "tumor_scene.h"
 #include "graphics/draw_order.h"
 #include "graphics/graphics.h"
-#include "logging.h"
 #include "scene/animated_sprite_scene.h"
 #include "scene/collider_scene.h"
 #include "scene/scene.h"
@@ -45,12 +44,10 @@ static void Draw(Scene* scene)
     Graphics_DrawCircle(scene->globalTransform.position, 2.0f, COLOR_WHITE, DRAW_ORDER_TOP);
 }
 
-static void TakeDamage(Scene* scene, float damage)
+static void TakeDamage(Scene* scene, CollisionCallbackInfo info)
 {
     TumorSceneData* sceneData = scene->sceneData;
-    sceneData->health -= damage;
-
-    LogInfo("%s took damage: %f. Remaining health: %f", scene->name, damage, sceneData->health);
+    sceneData->health -= info.damage;
 }
 
 Scene* TumorScene_Create(Scene* parent, Scene* mainChar)

@@ -6,13 +6,17 @@
 // FD
 typedef struct Scene Scene;
 
-typedef void (*Collider_DamageCallback)(Scene* scene, float damage);
+typedef struct {
+    float damage;
+} CollisionCallbackInfo;
+
+typedef void (*Collider_CollisionCallback)(Scene* scene, CollisionCallbackInfo callbackInfo);
 
 typedef struct Collider {
     Rect rect;
     u32 layers;
     u32 scan;
-    Collider_DamageCallback damageCallback;
+    Collider_CollisionCallback collisionCallback;
     Scene* damageCallbackOwner;
 } Collider;
 

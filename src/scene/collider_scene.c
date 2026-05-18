@@ -163,11 +163,11 @@ void ColliderScene_ForceUpdate(Scene* scene)
     SearchCollisions(scene);
 }
 
-void ColliderScene_SetDamageCallback(Scene* scene, Collider_DamageCallback callback, Scene* damageCallbackOwner)
+void ColliderScene_SetDamageCallback(Scene* scene, Collider_CollisionCallback callback, Scene* damageCallbackOwner)
 {
     ASSERT_SCENE_TYPE(scene);
 
     ColliderSceneData* sceneData = scene->sceneData;
-    sceneData->collider.damageCallback = callback;
+    sceneData->collider.collisionCallback = callback;
     sceneData->collider.damageCallbackOwner = damageCallbackOwner;
 }

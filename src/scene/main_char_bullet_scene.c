@@ -56,8 +56,8 @@ static void Update(Scene* scene, double deltatime)
     {
         Scene_QueueFree(scene);
 
-        if (collider->damageCallback)
-            collider->damageCallback(collider->damageCallbackOwner, sceneData->damage);
+        if (collider->collisionCallback)
+            collider->collisionCallback(collider->damageCallbackOwner, (CollisionCallbackInfo){ .damage = sceneData->damage });
 
         Scene* sparkScene = SpriteScene_CreateWithTexture(Scene_GetRoot(scene), &s_staticData.sparkTexture, "Projectile Spark Srpite");
         sparkScene->transform.position = collisionPoint;
