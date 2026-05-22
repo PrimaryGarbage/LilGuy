@@ -3,6 +3,7 @@
 #include "cleanup.h"
 #include "draw_order.h"
 #include "graphics/color.h"
+#include "graphics/draw_order.h"
 #include "graphics/image.h"
 #include "physics/matrix.h"
 #include "rect.h"
@@ -378,6 +379,25 @@ void Graphics_DrawTextureT(const Texture2D* texture, i32 drawOrder, Color tint)
     };
 
     QueueRenderCall(drawOrder, _DrawTextureT_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
+static void _DrawText_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawTextArguments args = arguments.drawTextArguments;
+
+    Raylib_DrawText(args.text, args.position.x, args.position.y, args.size, args.color);
+}
+
+void Graphics_DrawText(const char* text, Vector2 position, float size, Color color, u32 drawOrder)
+{
+    DrawTextArguments args = {
+        .text = text,
+        .position = position,
+        .size = size,
+        .color = color,
+    };
+
+    QueueRenderCall(drawOrder, _DrawText_RenderCall, (union RenderCallFunctionArguments*)&args);
 }
 
 void Graphics_ClearBackground(Color color)

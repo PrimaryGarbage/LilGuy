@@ -21,6 +21,7 @@ set(SRC_FILES
 	list.c list.h
 	debug.c debug.h
 	cleanup.c cleanup.h
+	edit_mode.c edit_mode.h
 )
 
 set(WINDOW_FILES

@@ -1,5 +1,6 @@
 #include "cleanup.h"
 #include "debug.h"
+#include "edit_mode.h"
 #include "graphics/draw_order.h"
 #include "graphics/image.h"
 #include "input/input.h"
@@ -15,6 +16,21 @@
 #include "result.h"
 #include "timer.h"
 #include "logging.h"
+
+static void Update(double deltatime)
+{
+    EditMode_Update(deltatime);
+
+    double simulationDeltatime = EditMode_Enabled() ? 0.0 : deltatime;
+    Scene_Update(Scene_GetRoot(), simulationDeltatime);
+    Tween_Update(simulationDeltatime);
+}
+
+static void Draw()
+{
+    EditMode_Draw();
+    Scene_Draw(Scene_GetRoot());
+}
 
 int main()
 {
@@ -56,16 +72,15 @@ int main()
 
         ///////////////////
         /// UPDATE HERE ///
-        Scene_Update(rootScene, deltatime);
+        Update(deltatime);
         ///////////////////
 
-        Tween_Update(deltatime);
 
         /////////////////
         /// DRAW HERE ///
-        Scene_Draw(rootScene);
+        Draw();
         /////////////////
-        
+
         Graphics_Flush();
 
         Scene_TrimQueuedScenes();

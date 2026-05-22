@@ -1,4 +1,5 @@
 #include "scene.h"
+#include "edit_mode.h"
 #include "logging.h"
 #include "physics/transform.h"
 #include "result.h"

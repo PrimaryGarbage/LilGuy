@@ -360,6 +360,11 @@ void Raylib_PopMatrix()
     rlPopMatrix();
 }
 
+void Raylib_DrawText(const char* text, u32 posX, u32 posY, u32 fontSize, Color color)
+{
+    DrawText(text, posX, posY, fontSize, ColorToRlColor(color));
+}
+
 Shader Raylib_LoadShader(const char* vsFilePath, const char* fsFilePath)
 {
     return RlShaderToShader(LoadShader(vsFilePath, fsFilePath));

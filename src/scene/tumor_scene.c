@@ -1,7 +1,6 @@
 #include "tumor_scene.h"
 #include "graphics/color.h"
 #include "graphics/draw_order.h"
-#include "graphics/graphics.h"
 #include "scene/animated_sprite_scene.h"
 #include "scene/collider_scene.h"
 #include "scene/scene.h"

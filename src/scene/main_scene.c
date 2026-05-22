@@ -1,6 +1,7 @@
 #include "main_scene.h"
 #include "block_scene.h"
 #include "collider_scene.h"
+#include "edit_mode.h"
 #include "main_char_scene.h"
 #include "physics/transform.h"
 #include "rect.h"

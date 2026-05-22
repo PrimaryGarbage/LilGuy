@@ -56,6 +56,7 @@ void Raylib_DrawLineEx(Vector2 startPos, Vector2 endPos, float thick, Color colo
 void Raylib_DrawCircleV(Vector2 position, float radius, Color color);
 void Raylib_PushMatrix(const Matrix* matrix);
 void Raylib_PopMatrix();
+void Raylib_DrawText(const char* text, u32 posX, u32 posY, u32 fontSize, Color color);
 
 // Shaders
 Shader Raylib_LoadShader(const char* vsFilePath, const char* fsFilePath);
