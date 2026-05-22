@@ -30,6 +30,7 @@ typedef struct MainCharSceneData {
     Vector2 speed;
     bool onGround;
     float fuel;
+    float health;
     Texture2D bodyTexture;
     Scene* leftFoot;
     Scene* rightFoot;
@@ -38,16 +39,18 @@ typedef struct MainCharSceneData {
     Scene* onGroundRaycast;
     Scene* gun;
     Scene* jetpackFire;
-    float elapsedSinceLastBlink;
     float bodyToFootMaxDistance;
     bool movingLeftFoot;
     bool movingRightFoot;
     bool usingJetpack;
+    double elapsedSinceLastDamage;
 } MainCharSceneData;
 
+constexpr float c_maxHealth = 100.0f;
 constexpr float c_maxFuel = 1.0f;
 constexpr float c_idleDistanceBetweenFeet = 10.0f;
 constexpr double c_landingAnimationLength = 0.2f;
+constexpr double c_damageInvincibilityTime = 2.0;
 
 static Vector2 GetNewFootPosition(Scene* scene)
 {
@@ -142,6 +145,8 @@ static void MoveCharacter(Scene* scene, double deltatime)
     constexpr float fuelBurnRate = 0.4f;
     constexpr float fuelRefillRate = 0.3f;
 
+    sceneData->elapsedSinceLastDamage += deltatime;
+
     sceneData->speed.y += gravityAccel * deltatime;
 
     bool tryingToMove = false;
@@ -219,7 +224,8 @@ static void DrawCharacter(Scene* scene)
     MainCharSceneData* sceneData = scene->sceneData;
 
     Graphics_SetModelMatrix(&scene->transform);
-    Graphics_DrawTextureT(&sceneData->bodyTexture, DRAW_ORDER_MAIN_CHAR, COLOR_WHITE);
+    Color tint = sceneData->elapsedSinceLastDamage < c_damageInvincibilityTime ? COLOR_RED : COLOR_WHITE;
+    Graphics_DrawTextureT(&sceneData->bodyTexture, DRAW_ORDER_MAIN_CHAR, tint);
     Graphics_ClearModelMatrix();
 
     // Draw speed
@@ -268,7 +274,7 @@ static void Draw(Scene* scene)
     Graphics_DrawCircle(scene->globalTransform.position, 2.0f, COLOR_RED, DRAW_ORDER_TOP);
 }
 
-static void OnBodyCollision(Scene* scene, CollisionInfo info)
+static void OnBodyCollision(Scene* scene, ColliderScene_CollisionInfo info)
 {
     MainCharSceneData* sceneData = scene->sceneData;
 
@@ -317,6 +323,18 @@ static void Cleanup(Scene* scene)
     Graphics_UnloadTexture(sceneData->bodyTexture);
 }
 
+static void TakeDamage(Scene* scene, float damage, Vector2 damagePoint)
+{
+    MainCharSceneData* sceneData = scene->sceneData;
+
+    if (sceneData->elapsedSinceLastDamage < c_damageInvincibilityTime) return;
+
+    sceneData->health -= damage;
+    sceneData->elapsedSinceLastDamage = 0.0;
+
+    LogInfo("Main Char took damage: %f; Health: %f", damage, sceneData->health);
+}
+
 Scene* MainCharScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
@@ -328,9 +346,10 @@ Scene* MainCharScene_Create(Scene* parent)
     sceneData->speed = Vector2_Zero();
     sceneData->onGround = false;
     sceneData->fuel = c_maxFuel;
-    sceneData->elapsedSinceLastBlink = 0.0f;
     sceneData->bodyTexture = Graphics_LoadTexture("res/images/main_char/MainCharBody.png");
     sceneData->bodyToFootMaxDistance = sceneData->bodyTexture.height * 0.5f + legLength;
+    sceneData->health = c_maxHealth;
+    sceneData->elapsedSinceLastDamage = c_damageInvincibilityTime;
 
     scene->sceneData = sceneData;
     scene->transform.origin = Vector2_New(sceneData->bodyTexture.width * 0.5f, (float)sceneData->bodyTexture.height * 0.5f);
@@ -338,6 +357,7 @@ Scene* MainCharScene_Create(Scene* parent)
     scene->updateFunction = Update;
     scene->drawFunction = Draw;
     scene->cleanupFunction = Cleanup;
+    scene->takeDamageFunction = TakeDamage;
 
     Scene_UpdateGlobalTransform(scene);
 
@@ -366,7 +386,7 @@ Scene* MainCharScene_Create(Scene* parent)
         .y = -colliderSize.y * 0.5f
     };
 
-    Scene* colliderScene = ColliderScene_Create(scene, colliderSize, "Main Char Scene Body Collider");
+    Scene* colliderScene = ColliderScene_Create(scene, scene, colliderSize, "Main Char Scene Body Collider");
     sceneData->bodyCollider = colliderScene;
     colliderScene->transform.position = colliderPosition;
     ColliderScene_SetVisible(colliderScene, false);

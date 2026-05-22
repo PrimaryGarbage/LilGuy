@@ -1,5 +1,4 @@
 #include "spark_scene.h"
-#include "animated_sprite_scene.h"
 #include "graphics/graphics.h"
 #include "random.h"
 #include "scene.h"

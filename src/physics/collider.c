@@ -7,12 +7,13 @@
 
 static const Collider* s_colliders[STATIC_COLLIDER_COUNT_MAX];
 
-Collider Collider_New(Rect rect)
+Collider Collider_New(Rect rect, Scene* owner)
 {
     return (Collider){
         .rect = rect,
         .layers = 1,
-        .scan = 1
+        .scan = 1,
+        .owner = owner
     };
 }
 

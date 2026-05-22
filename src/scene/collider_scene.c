@@ -36,7 +36,7 @@ static void SearchCollisions(Scene* scene)
         const Collider* otherCollider = Collider_CheckForCollision(&sceneData->collider);
         if (otherCollider)
         {
-            sceneData->onCollisionCallback(sceneData->onCollisionCallbackOwner, (CollisionInfo) { 
+            sceneData->onCollisionCallback(sceneData->onCollisionCallbackOwner, (ColliderScene_CollisionInfo) { 
                 .collider = otherCollider, 
                 .collisionRect = Collider_GetCollisionRect(&sceneData->collider, otherCollider)
             });
@@ -71,7 +71,7 @@ static void Cleanup(Scene* scene)
     Collider_Unregister(&sceneData->collider);
 }
 
-Scene* ColliderScene_Create(Scene* parent, Vector2 size, const char* name)
+Scene* ColliderScene_Create(Scene* parent, Scene* colliderOwner, Vector2 size, const char* name)
 {
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_COLLIDER, parent, name);
@@ -83,8 +83,9 @@ Scene* ColliderScene_Create(Scene* parent, Vector2 size, const char* name)
     sceneData->onCollisionCallbackOwner = NULL;
     sceneData->collider = Collider_New((Rect){
         .width = size.x,
-        .height = size.y
-    });
+        .height = size.y,
+    }, colliderOwner);
+    sceneData->collider.owner = parent;
 
     scene->sceneData = sceneData;
 
@@ -161,13 +162,4 @@ void ColliderScene_ForceUpdate(Scene* scene)
 
     Scene_UpdateGlobalTransform(scene);
     SearchCollisions(scene);
-}
-
-void ColliderScene_SetDamageCallback(Scene* scene, Collider_CollisionCallback callback, Scene* damageCallbackOwner)
-{
-    ASSERT_SCENE_TYPE(scene);
-
-    ColliderSceneData* sceneData = scene->sceneData;
-    sceneData->collider.collisionCallback = callback;
-    sceneData->collider.damageCallbackOwner = damageCallbackOwner;
 }

@@ -6,28 +6,14 @@
 // FD
 typedef struct Scene Scene;
 
-typedef struct {
-    float damage;
-    Vector2 collisionPoint;
-} CollisionCallbackInfo;
-
-typedef void (*Collider_CollisionCallback)(Scene* scene, CollisionCallbackInfo callbackInfo);
-
 typedef struct Collider {
     Rect rect;
     u32 layers;
     u32 scan;
-    Collider_CollisionCallback collisionCallback;
-    Scene* damageCallbackOwner;
+    Scene* owner;
 } Collider;
 
-typedef struct CollisionInfo {
-    const Collider* collider;
-    Rect collisionRect;
-} CollisionInfo;
-
-// return first colliding collider
-Collider Collider_New(Rect rect);
+Collider Collider_New(Rect rect, Scene* owner);
 const Collider* Collider_CheckForCollision(const Collider* collider);
 const Collider* Collider_CheckForPointCollision(Vector2 point, u32 scan);
 Rect Collider_GetCollisionRect(const Collider* colliderA, const Collider* colliderB);

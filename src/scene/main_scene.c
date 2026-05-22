@@ -44,13 +44,13 @@ Scene* MainScene_Create()
 
     Vector2 screenSize = Graphics_GetScreenSize();
 
-    Scene* upperWorldColliderScene = ColliderScene_Create(scene, screenSize, "Upper Screen Bound Collider");
+    Scene* upperWorldColliderScene = ColliderScene_Create(scene, scene, screenSize, "Upper Screen Bound Collider");
     upperWorldColliderScene->transform.position.y = screenSize.y;
-    Scene* lowerWorldColliderScene = ColliderScene_Create(scene, screenSize, "Lower Screen Bound Collider");
+    Scene* lowerWorldColliderScene = ColliderScene_Create(scene, scene, screenSize, "Lower Screen Bound Collider");
     lowerWorldColliderScene->transform.position.y = -screenSize.y;
-    Scene* leftWorldColliderScene = ColliderScene_Create(scene, screenSize, "Left Screen Bound Collider");
+    Scene* leftWorldColliderScene = ColliderScene_Create(scene, scene, screenSize, "Left Screen Bound Collider");
     leftWorldColliderScene->transform.position.x = -screenSize.x;
-    Scene* rightWorldColliderScene = ColliderScene_Create(scene, screenSize, "Right Screen Bound Collider");
+    Scene* rightWorldColliderScene = ColliderScene_Create(scene, scene, screenSize, "Right Screen Bound Collider");
     rightWorldColliderScene->transform.position.x = screenSize.x;
 
     Scene* mainCharScene = MainCharScene_Create(scene);
@@ -67,7 +67,12 @@ Scene* MainScene_Create()
     Scene* blockScene5 = BlockScene_Create(scene);
     blockScene5->transform.position = (Vector2) { .x = 1350.0f, .y = 700.0f };
 
-    Scene* tumorScene = TumorScene_Create(scene, mainCharScene);
+    Scene* tumorScene1 = TumorScene_Create(scene, mainCharScene);
+    tumorScene1->transform.position = (Vector2) { .x = 300.0, .y = 500.0f };
+    Scene* tumorScene2 = TumorScene_Create(scene, mainCharScene);
+    tumorScene2->transform.position = (Vector2) { .x = 600.0, .y = 300.0f };
+    Scene* tumorScene3 = TumorScene_Create(scene, mainCharScene);
+    tumorScene3->transform.position = (Vector2) { .x = 950.0, .y = 250.0f };
 
     scene->drawFunction = Draw;
     scene->updateFunction = Update;

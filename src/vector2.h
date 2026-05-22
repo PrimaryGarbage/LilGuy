@@ -47,5 +47,6 @@ float Vector2_LengthSquared(Vector2 vec);
 Vector2 Vector2_Lerp(Vector2 a, Vector2 b, float w);
 bool Vector2_Equals(Vector2 left, Vector2 right);
 bool Vector2_EqualsWithin(Vector2 left, Vector2 right, float delta);
+Vector2 Vector2_Clamp(float min, float max, Vector2 vec);
 
 #endif // __VECTOR2_H__

@@ -45,4 +45,9 @@ static inline Vector2 Rect_GetSize(const Rect* rect)
     return (Vector2){ .x = rect->width, .y = rect->height };
 }
 
+static inline Vector2 Rect_GetCenter(const Rect* rect)
+{
+    return (Vector2) { .x = rect->x + rect->width * 0.5f, .y = rect->y + rect->height * 0.5f };
+}
+
 #endif // __RECT_H__

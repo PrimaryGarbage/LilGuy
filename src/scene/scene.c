@@ -127,6 +127,7 @@ void Scene_DefaultInit(Scene* scene, SceneType type, Scene* parent, const char* 
     scene->updateFunction = NULL;
     scene->drawFunction = NULL;
     scene->cleanupFunction = NULL;
+    scene->takeDamageFunction = NULL;
 
     if (parent) Scene_AddChild(parent, scene);
 

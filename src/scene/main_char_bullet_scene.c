@@ -49,12 +49,9 @@ static void Update(Scene* scene, double deltatime)
     {
         Scene_QueueFree(scene);
 
-        if (collider->collisionCallback)
+        if (collider->owner && collider->owner->takeDamageFunction)
         {
-            collider->collisionCallback(collider->damageCallbackOwner, (CollisionCallbackInfo){ 
-                .damage = sceneData->damage,
-                .collisionPoint = collisionPoint,
-            });
+            collider->owner->takeDamageFunction(collider->owner, sceneData->damage, collisionPoint);
         }
         else
         {

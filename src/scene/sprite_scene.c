@@ -44,6 +44,7 @@ Scene* SpriteScene_Create(Scene* parent, const char* imagePath, const char* name
     sceneData->drawOrder = DRAW_ORDER_DEFAULT;
     sceneData->shouldUnloadTexture = true;
     sceneData->texture = Graphics_LoadTexture(imagePath);
+    sceneData->tint = COLOR_WHITE;
     if (sceneData->texture.id == 0)
         PANIC_EX(LogErrorM("Failed to load texture. Filepath: %s", imagePath););
 

@@ -109,6 +109,13 @@ bool Vector2_EqualsWithin(Vector2 left, Vector2 right, float delta)
     return fabsf(left.x - right.x) < delta && fabsf(left.y - right.y) < delta;
 }
 
+Vector2 Vector2_Clamp(float min, float max, Vector2 vec)
+{
+    if (vec.x == 0.0f && vec.y == 0.0f) return Vector2_Zero();
+
+    return Vector2_MultScalar(Vector2_Normalize(vec), Clampf(min, max, Vector2_Length(vec)));
+}
+
 Vector2 Vector2u_ToVector2(Vector2u vec)
 {
     return (Vector2){ .x = (float)vec.x, .y = (float)vec.y };

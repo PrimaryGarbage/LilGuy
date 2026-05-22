@@ -38,7 +38,7 @@ Scene* BlockScene_Create(Scene* parent)
     scene->sceneData = sceneData;
     sceneData->texture = Graphics_LoadTexture("res/images/Block.png");
 
-    Scene* colliderScene = ColliderScene_Create(scene, (Vector2) { sceneData->texture.width, sceneData->texture.height }, "Block Scene Collider");
+    Scene* colliderScene = ColliderScene_Create(scene, scene, (Vector2) { sceneData->texture.width, sceneData->texture.height }, "Block Scene Collider");
     ColliderScene_SetCollisionLayers(colliderScene, COLLISION_LAYER_WORLD);
     ColliderScene_SetCollisionScan(colliderScene, COLLISION_LAYER_WORLD);
 
