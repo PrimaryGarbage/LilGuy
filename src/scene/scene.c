@@ -8,6 +8,7 @@ static Scene* s_scenesToFree[512];
 static u32 s_scenesToFreeCount = 0u;
 
 static u32 s_idCounter = 0u;
+static Scene* s_rootScene = NULL;
 
 void Scene_Free(Scene* scene)
 {
@@ -142,12 +143,14 @@ u32 Scene_GenerateId()
     return s_idCounter++;
 }
 
-Scene* Scene_GetRoot(Scene* scene)
+Scene* Scene_GetRoot()
 {
-    while(scene->parent)
-        scene = scene->parent;
+    return s_rootScene;
+}
 
-    return scene;
+void Scene_SetRoot(Scene* scene)
+{
+    s_rootScene = scene;
 }
 
 void Scene_Cleanup(Scene* scene)

@@ -179,7 +179,7 @@ void MainCharGunScene_Shoot(Scene* scene)
     
     Vector2 bulletSpeed = Vector2_MultScalar(Vector2_Rotate(Vector2_Right(), scene->globalTransform.rotation), c_bulletSpeed);
 
-    MainCharBulletScene_Create(Scene_GetRoot(scene), bulletPosition, bulletSpeed);
+    MainCharBulletScene_Create(Scene_GetRoot(), bulletPosition, bulletSpeed);
 
     sceneData->elapsedSinceShot = 0.0;
 

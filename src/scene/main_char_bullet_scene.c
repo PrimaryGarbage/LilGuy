@@ -5,14 +5,11 @@
 #include "physics/collider.h"
 #include "physics/raycast.h"
 #include "physics/transform.h"
-#include "point_light_scene.h"
-#include "random.h"
 #include "result.h"
 #include "scene.h"
 #include "scene/scene.h"
-#include "scene/sprite_scene.h"
 #include "scene_type.h"
-#include "tween.h"
+#include "spark_scene.h"
 #include "vector2.h"
 #include "physics/collision_layer.h"
 
@@ -35,13 +32,9 @@ typedef struct MainCharBulletSceneStaticData {
 static MainCharBulletSceneStaticData s_staticData;
 
 constexpr float c_defaultDamage = 1.0f;
-constexpr double c_sparkLifetime = 0.05f;
 constexpr Vector2 c_size = (Vector2){ .x = 8.0f, 2.0f };
-
-static void TweenOnProjectileSparkFinishCallback(Scene* scene)
-{
-    Scene_QueueFree(scene);
-}
+constexpr Color c_bulletColor = (Color){ .r = 252u, .g = 229u, .b = 150u, .a = 255u };
+constexpr Color c_bulletLightColor = (Color){ .r = 235u, .g = 190u, .b = 235u, .a = 10u };
 
 static void Update(Scene* scene, double deltatime)
 {
@@ -57,19 +50,18 @@ static void Update(Scene* scene, double deltatime)
         Scene_QueueFree(scene);
 
         if (collider->collisionCallback)
-            collider->collisionCallback(collider->damageCallbackOwner, (CollisionCallbackInfo){ .damage = sceneData->damage });
+        {
+            collider->collisionCallback(collider->damageCallbackOwner, (CollisionCallbackInfo){ 
+                .damage = sceneData->damage,
+                .collisionPoint = collisionPoint,
+            });
+        }
+        else
+        {
+            Color lightColor = (Color){ .r = 252u, .g = 229u, .b = 150u, .a = 30u };
+            SparkScene_Create(Scene_GetRoot(), collisionPoint, 1.0f, c_bulletColor, true, lightColor, "Main Char Bullet Spark");
+        }
 
-        Scene* sparkScene = SpriteScene_CreateWithTexture(Scene_GetRoot(scene), &s_staticData.sparkTexture, "Projectile Spark Srpite");
-        sparkScene->transform.position = collisionPoint;
-        sparkScene->transform.rotation = RandomFloat() * 360.0f;
-        sparkScene->transform.origin = (Vector2){ .x = s_staticData.sparkTexture.width * 0.5f, .y = s_staticData.sparkTexture.height * 0.5f };
-        sparkScene->transform.scale = Vector2_Uniform(RandomFloat() + 0.5f);
-
-        constexpr Color sparkLightColor = { .r = 252u, .g = 229u, .b = 150u, .a = 30u };
-        float sparkLightRadius = RandomFloat() * 50.0f + 20.0f;
-        PointLightScene_Create(sparkScene, "MainChar Bullet Spark Light", sparkLightColor, sparkLightRadius);
-
-        Tween_CreateTimer(c_sparkLifetime, sparkScene, TweenOnProjectileSparkFinishCallback);
         return;
     }
 
@@ -91,12 +83,11 @@ static void Update(Scene* scene, double deltatime)
 static void Draw(Scene* scene)
 {
     Graphics_SetModelMatrix(&scene->globalTransform);
-    Graphics_DrawRectT(c_size, COLOR_YELLOW, DRAW_ORDER_DEFAULT);
+    Graphics_DrawRectT(c_size, c_bulletColor, DRAW_ORDER_DEFAULT);
     Graphics_ClearModelMatrix();
 
-    constexpr Color lightColor = (Color) { .r = 235u, .g = 190u, .b = 235u, .a = 10u };
     constexpr float lightRadius = 30.0f;
-    Graphics_DrawLight(scene->globalTransform.position, lightRadius, lightColor);
+    Graphics_DrawLight(scene->globalTransform.position, lightRadius, c_bulletLightColor);
 }
 
 Scene* MainCharBulletScene_Create(Scene* parent, Vector2 initialPosition, Vector2 speed)

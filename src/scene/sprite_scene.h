@@ -7,5 +7,6 @@
 Scene* SpriteScene_Create(Scene* parent, const char* imagePath, const char* name);
 Scene* SpriteScene_CreateWithTexture(Scene* parent, const Texture2D* texture, const char* name);
 void SpriteScene_SetDrawOrder(Scene* scene, i32 drawOrder);
+void SpriteScene_SetTint(Scene* scene, Color tint);
 
 #endif // __SPRITE_SCENE_H__

@@ -1,4 +1,5 @@
 #include "sprite_scene.h"
+#include "graphics/color.h"
 #include "graphics/draw_order.h"
 #include "graphics/graphics.h"
 #include "graphics/texture2d.h"
@@ -12,6 +13,7 @@
 typedef struct SpriteSceneData {
     Texture2D texture;
     i32 drawOrder;
+    Color tint;
     bool shouldUnloadTexture;
 } SpriteSceneData;
 
@@ -20,7 +22,7 @@ static void Draw(Scene* scene)
     SpriteSceneData* sceneData = scene->sceneData;
 
     Graphics_SetModelMatrix(&scene->globalTransform);
-    Graphics_DrawTextureT(&sceneData->texture, sceneData->drawOrder, COLOR_WHITE);
+    Graphics_DrawTextureT(&sceneData->texture, sceneData->drawOrder, sceneData->tint);
     Graphics_ClearModelMatrix();
 }
 
@@ -61,6 +63,7 @@ Scene* SpriteScene_CreateWithTexture(Scene* parent, const Texture2D* texture, co
     sceneData->drawOrder = DRAW_ORDER_DEFAULT;
     sceneData->shouldUnloadTexture = false;
     sceneData->texture = *texture;
+    sceneData->tint = COLOR_WHITE;
 
     scene->drawFunction = Draw;
     scene->cleanupFunction = Cleanup;
@@ -73,4 +76,11 @@ void SpriteScene_SetDrawOrder(Scene* scene, i32 drawOrder)
     ASSERT_SCENE_TYPE(scene);
 
     ((SpriteSceneData*)scene->sceneData)->drawOrder = drawOrder;
+}
+
+void SpriteScene_SetTint(Scene* scene, Color tint)
+{
+    ASSERT_SCENE_TYPE(scene);
+
+    ((SpriteSceneData*)scene->sceneData)->tint = tint;
 }

@@ -1,10 +1,13 @@
 #include "tumor_scene.h"
+#include "graphics/color.h"
 #include "graphics/draw_order.h"
 #include "graphics/graphics.h"
 #include "scene/animated_sprite_scene.h"
 #include "scene/collider_scene.h"
 #include "scene/scene.h"
 #include "scene_type.h"
+#include "spark_scene.h"
+#include "splash_scene.h"
 #include "vector2.h"
 #include "physics/collision_layer.h"
 #include "animated_sprite_scene.h"
@@ -29,6 +32,7 @@ static void Update(Scene* scene, double deltatime)
     if (sceneData->health <= 0.0f)
     {
         Scene_QueueFree(scene);
+        SplashScene_Create(Scene_GetRoot(), scene->globalTransform.position, 1.5f, "Tumor Death Splash", COLOR_RED);
         return;
     }
 
@@ -48,6 +52,7 @@ static void TakeDamage(Scene* scene, CollisionCallbackInfo info)
 {
     TumorSceneData* sceneData = scene->sceneData;
     sceneData->health -= info.damage;
+    SparkScene_Create(Scene_GetRoot(), info.collisionPoint, 2.0f, COLOR_RED, false, COLOR_WHITE, "Tumor Collision Spark");
 }
 
 Scene* TumorScene_Create(Scene* parent, Scene* mainChar)

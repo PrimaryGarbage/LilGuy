@@ -3,6 +3,7 @@
 #include "graphics/texture_atlas.h"
 #include "scene.h"
 #include "scene_type.h"
+#include "vector2.h"
 #include <stdlib.h>
 
 #define SCENE_TYPE SCENE_TYPE_ANIMATED_SPRITE
@@ -14,6 +15,8 @@ typedef struct AnimatedSpriteSceneData{
     double switchTime;
     u32 drawOrder;
     Color tint;
+    AnimatedSpriteScene_OnAnimationFinishCallback onAnimationFinishCallback;
+    Scene* onAnimationFinishCallbackOwner;
 } AnimatedSpriteSceneData;
 
 static void Update(Scene* scene, double deltatime)
@@ -24,9 +27,15 @@ static void Update(Scene* scene, double deltatime)
     if (sceneData->elapsed > sceneData->switchTime)
     {
         if (sceneData->currentTextureIdx == sceneData->textureAtlas.texturesCount - 1)
+        {
             sceneData->currentTextureIdx = 0u;
+            if (sceneData->onAnimationFinishCallback)
+                sceneData->onAnimationFinishCallback(sceneData->onAnimationFinishCallbackOwner);
+        }
         else
+        {
             sceneData->currentTextureIdx++;
+        }
 
         sceneData->elapsed = 0.0;
     }
@@ -61,6 +70,8 @@ Scene* AnimatedSpriteScene_Create(Scene* parent, const char* imagePath, u32 atla
     sceneData->currentTextureIdx = 0u;
     sceneData->drawOrder = drawOrder;
     sceneData->tint = COLOR_WHITE;
+    sceneData->onAnimationFinishCallback = NULL;
+    sceneData->onAnimationFinishCallbackOwner = NULL;
 
     scene->updateFunction = Update;
     scene->drawFunction = Draw;
@@ -82,4 +93,21 @@ void AnimatedSpriteScene_SetTint(Scene* scene, Color tint)
     ASSERT_SCENE_TYPE(scene);
 
     ((AnimatedSpriteSceneData*)scene->sceneData)->tint = tint;
+}
+
+void AnimatedSpriteScene_SetOnAnimationFinishCallback(Scene* scene, AnimatedSpriteScene_OnAnimationFinishCallback callback, Scene* callbackOwner)
+{
+    ASSERT_SCENE_TYPE(scene);
+    AnimatedSpriteSceneData* sceneData = scene->sceneData;
+
+    sceneData->onAnimationFinishCallback = callback;
+    sceneData->onAnimationFinishCallbackOwner = callbackOwner;
+}
+
+void AnimatedSpriteScene_SetOriginToCenter(Scene* scene)
+{
+    ASSERT_SCENE_TYPE(scene);
+    AnimatedSpriteSceneData* sceneData = scene->sceneData;
+
+    scene->transform.origin = Vector2_MultScalar(Vector2u_ToVector2(sceneData->textureAtlas.textureSize), 0.5f);
 }

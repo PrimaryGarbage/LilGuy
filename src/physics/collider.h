@@ -8,6 +8,7 @@ typedef struct Scene Scene;
 
 typedef struct {
     float damage;
+    Vector2 collisionPoint;
 } CollisionCallbackInfo;
 
 typedef void (*Collider_CollisionCallback)(Scene* scene, CollisionCallbackInfo callbackInfo);

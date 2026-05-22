@@ -62,6 +62,8 @@ set(SCENE_FILES
 	spring_arm_scene.c spring_arm_scene.h
 	point_light_scene.c point_light_scene.h
 	tumor_scene.c tumor_scene.h
+	splash_scene.c splash_scene.h
+	spark_scene.c spark_scene.h
 )
 
 set(PHYSICS_FILES

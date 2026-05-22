@@ -40,6 +40,7 @@ int main()
 
     Scene* rootScene = MainScene_Create();
 
+    Scene_SetRoot(rootScene);
     Scene_Start(rootScene);
 
     Debug_PrintSceneTree(rootScene);
