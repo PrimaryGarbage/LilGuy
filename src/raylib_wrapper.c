@@ -434,7 +434,7 @@ Rect Raylib_GetCollisionRect(Rect a, Rect b)
     return RlRectToRect(GetCollisionRec(RectToRlRect(a), RectToRlRect(b)));
 }
 
-bool CheckCollisionPointRect(Vector2 point, Rect rect)
+Vector2 Raylib_MeasureText(const char* text, float fontSize)
 {
-    return CheckCollisionPointRec(Vector2ToRlVector2(point), RectToRlRect(rect));
+    return RlVector2ToVector2(MeasureTextEx(GetFontDefault(), text, fontSize, 0.0f));
 }

@@ -3,6 +3,6 @@
 
 #include "scene.h"
 
-Scene* TumorScene_Create(Scene* parent, Scene* mainChar);
+Scene* TumorScene_Create(Scene* parent);
 
 #endif // __TUMOR_SCENE_H__

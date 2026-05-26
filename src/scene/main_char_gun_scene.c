@@ -1,4 +1,5 @@
 #include "main_char_gun_scene.h"
+#include "game_manager.h"
 #include "graphics/draw_order.h"
 #include "graphics/graphics.h"
 #include "graphics/image.h"
@@ -179,7 +180,7 @@ void MainCharGunScene_Shoot(Scene* scene)
     
     Vector2 bulletSpeed = Vector2_MultScalar(Vector2_Rotate(Vector2_Right(), scene->globalTransform.rotation), c_bulletSpeed);
 
-    MainCharBulletScene_Create(Scene_GetRoot(), bulletPosition, bulletSpeed);
+    MainCharBulletScene_Create(GameManager_GetBulletParentScene(), bulletPosition, bulletSpeed);
 
     sceneData->elapsedSinceShot = 0.0;
 

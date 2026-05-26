@@ -75,6 +75,7 @@ void Raylib_SetShaderValueTexture(const Shader* shader, int locIndex, const Text
 bool Raylib_CheckCollisionRects(Rect a, Rect b);
 bool Raylib_CheckCollisionPointRect(Vector2 point, Rect rect);
 Rect Raylib_GetCollisionRect(Rect a, Rect b);
-bool CheckCollisionPointRect(Vector2 point, Rect rect); 
+
+Vector2 Raylib_MeasureText(const char* text, float fontSize);
 
 #endif // __RAYLIB_WRAPPER_H__

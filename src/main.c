@@ -1,6 +1,7 @@
 #include "cleanup.h"
 #include "debug.h"
 #include "edit_mode.h"
+#include "game_manager.h"
 #include "graphics/draw_order.h"
 #include "graphics/image.h"
 #include "input/input.h"
@@ -22,14 +23,14 @@ static void Update(double deltatime)
     EditMode_Update(deltatime);
 
     double simulationDeltatime = EditMode_Enabled() ? 0.0 : deltatime;
-    Scene_Update(Scene_GetRoot(), simulationDeltatime);
+    Scene_Update(GameManager_GetRootScene(), simulationDeltatime);
     Tween_Update(simulationDeltatime);
 }
 
 static void Draw()
 {
     EditMode_Draw();
-    Scene_Draw(Scene_GetRoot());
+    Scene_Draw(GameManager_GetRootScene());
 }
 
 int main()
@@ -56,7 +57,7 @@ int main()
 
     Scene* rootScene = MainScene_Create();
 
-    Scene_SetRoot(rootScene);
+    GameManager_Init(rootScene);
     Scene_Start(rootScene);
 
     Debug_PrintSceneTree(rootScene);

@@ -1,0 +1,11 @@
+#ifndef __GAME_MANAGER_H__
+#define __GAME_MANAGER_H__
+
+#include "scene/scene.h"
+
+void GameManager_Init(Scene* root);
+Scene* GameManager_GetRootScene();
+Scene* GameManager_GetBulletParentScene();
+Scene* GameManager_GetMainCharScene();
+
+#endif // __GAME_MANAGER_H__

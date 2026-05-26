@@ -22,6 +22,7 @@ set(SRC_FILES
 	debug.c debug.h
 	cleanup.c cleanup.h
 	edit_mode.c edit_mode.h
+	game_manager.c game_manager.h
 )
 
 set(WINDOW_FILES
@@ -65,6 +66,9 @@ set(SCENE_FILES
 	tumor_scene.c tumor_scene.h
 	splash_scene.c splash_scene.h
 	spark_scene.c spark_scene.h
+	button_scene.c button_scene.h
+	stack_container_scene.c stack_container_scene.h
+	label_scene.c label_scene.h
 )
 
 set(PHYSICS_FILES

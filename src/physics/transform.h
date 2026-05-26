@@ -12,6 +12,7 @@ typedef struct Transform {
     float rotation;
     Vector2 scale;
     Vector2 origin;
+    Vector2 size;
     bool topLevel;
     Matrix matrix;
 } Transform;
@@ -23,6 +24,7 @@ static inline Transform Transform_Zero()
         .origin = Vector2_Zero(),
         .rotation = 0.0f,
         .scale = Vector2_Uniform(1.0f),
+        .size = Vector2_Zero(),
         .topLevel = false,
         .matrix = Matrix_Identity()
     };
@@ -66,6 +68,7 @@ static inline Transform Transform_FromMatrix(const Matrix* matrix)
         .position = (Vector2){ .x = matrix->m12, .y = matrix->m13 },
         .rotation = RadToDeg(atan2f(matrix->m1, matrix->m0)),
         .scale = (Vector2){ .x = scaleX, .y = scaleY },
+        .size = Vector2_Zero(),
         .matrix = *matrix,
         .topLevel = false,
         .origin = Vector2_Zero()

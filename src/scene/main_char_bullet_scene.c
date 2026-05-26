@@ -1,4 +1,5 @@
 #include "main_char_bullet_scene.h"
+#include "game_manager.h"
 #include "graphics/draw_order.h"
 #include "graphics/graphics.h"
 #include "logging.h"
@@ -56,7 +57,7 @@ static void Update(Scene* scene, double deltatime)
         else
         {
             Color lightColor = (Color){ .r = 252u, .g = 229u, .b = 150u, .a = 30u };
-            SparkScene_Create(Scene_GetRoot(), collisionPoint, 1.0f, c_bulletColor, true, lightColor, "Main Char Bullet Spark");
+            SparkScene_Create(GameManager_GetRootScene(), collisionPoint, 1.0f, c_bulletColor, true, lightColor, "Main Char Bullet Spark");
         }
 
         return;

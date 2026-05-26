@@ -22,6 +22,9 @@ typedef enum SceneType {
     SCENE_TYPE_TUMOR,
     SCENE_TYPE_SPLASH,
     SCENE_TYPE_SPARK,
+    SCENE_TYPE_BUTTON,
+    SCENE_TYPE_STACK_CONTAINER,
+    SCENE_TYPE_LABEL,
 } SceneType;
 
 #endif // __SCENE_TAGS_H__

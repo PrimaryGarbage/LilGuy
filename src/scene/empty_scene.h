@@ -3,6 +3,6 @@
 
 #include "scene.h"
 
-Scene* EmptyScene_Create();
+Scene* EmptyScene_Create(Scene* parent, const char* name);
 
 #endif // __EMPTY_SCENE_H__

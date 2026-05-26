@@ -1,5 +1,4 @@
 #include "scene.h"
-#include "edit_mode.h"
 #include "logging.h"
 #include "physics/transform.h"
 #include "result.h"
@@ -9,7 +8,6 @@ static Scene* s_scenesToFree[512];
 static u32 s_scenesToFreeCount = 0u;
 
 static u32 s_idCounter = 0u;
-static Scene* s_rootScene = NULL;
 
 void Scene_Free(Scene* scene)
 {
@@ -38,6 +36,9 @@ void Scene_AddChild(Scene* scene, Scene* child)
 
     scene->children[scene->childrenCount++] = child;
     child->parent = scene;
+
+    if (!child->started) 
+        Scene_Start(child);
 }
 
 void Scene_RemoveChild(Scene* scene, Scene* child)
@@ -91,6 +92,13 @@ static void Scene_DrawChildren(Scene* scene)
         Scene_Draw(scene->children[i]);
 }
 
+void Scene_Start(Scene* scene)
+{
+    if (scene->startFunction) scene->startFunction(scene);
+    Scene_StartChildren(scene);
+    scene->started = true;
+}
+
 void Scene_Update(Scene* scene, double deltatime)
 {
     if (scene->updateFunction)
@@ -101,7 +109,8 @@ void Scene_Update(Scene* scene, double deltatime)
 
     Scene_UpdateGlobalTransform(scene);
 
-    Scene_UpdateChildren(scene, deltatime);
+    if (scene->updateChildren)
+        Scene_UpdateChildren(scene, deltatime);
 }
 
 void Scene_Draw(Scene* scene)
@@ -110,7 +119,8 @@ void Scene_Draw(Scene* scene)
 
     if (scene->drawFunction) scene->drawFunction(scene);
 
-    Scene_DrawChildren(scene);
+    if (scene->drawChildren)
+        Scene_DrawChildren(scene);
 }
 
 void Scene_DefaultInit(Scene* scene, SceneType type, Scene* parent, const char* name)
@@ -121,8 +131,11 @@ void Scene_DefaultInit(Scene* scene, SceneType type, Scene* parent, const char* 
     scene->childrenCount = 0u;
     scene->transform = Transform_Zero();
     scene->visible = true;
+    scene->started = false;
     scene->name = name;
     scene->parent = NULL;
+    scene->drawChildren = true;
+    scene->updateChildren = true;
 
     scene->startFunction = NULL;
     scene->updateFunction = NULL;
@@ -145,25 +158,9 @@ u32 Scene_GenerateId()
     return s_idCounter++;
 }
 
-Scene* Scene_GetRoot()
-{
-    return s_rootScene;
-}
-
-void Scene_SetRoot(Scene* scene)
-{
-    s_rootScene = scene;
-}
-
 void Scene_Cleanup(Scene* scene)
 {
     if (scene->cleanupFunction) scene->cleanupFunction(scene);
-}
-
-void Scene_Start(Scene* scene)
-{
-    if (scene->startFunction) scene->startFunction(scene);
-    Scene_StartChildren(scene);
 }
 
 void Scene_TrimQueuedScenes()

@@ -1,4 +1,5 @@
 #include "tumor_scene.h"
+#include "game_manager.h"
 #include "graphics/color.h"
 #include "graphics/draw_order.h"
 #include "scene/animated_sprite_scene.h"
@@ -17,7 +18,6 @@
 
 typedef struct TumorSceneData {
     Scene* sprite;
-    Scene* mainChar;
     Vector2 speed;
     double animationElapsed;
     float health;
@@ -37,23 +37,25 @@ static void Update(Scene* scene, double deltatime)
     if (sceneData->health <= 0.0f)
     {
         Scene_QueueFree(scene);
-        SplashScene_Create(Scene_GetRoot(), scene->globalTransform.position, 1.5f, "Tumor Death Splash", COLOR_RED);
+        SplashScene_Create(GameManager_GetRootScene(), scene->globalTransform.position, 1.5f, "Tumor Death Splash", COLOR_RED);
         return;
     }
 
-    Vector2 direction = Vector2_Normalize(Vector2_Sub(sceneData->mainChar->globalTransform.position, scene->globalTransform.position));
+    Scene* mainCharScene = GameManager_GetMainCharScene();
+
+    Vector2 direction = Vector2_Normalize(Vector2_Sub(mainCharScene->globalTransform.position, scene->globalTransform.position));
     sceneData->speed = Vector2_Clamp(-c_maxSpeed, c_maxSpeed, Vector2_Add(sceneData->speed, Vector2_MultScalar(direction, c_acceleration * deltatime)));
     //sceneData->speed = Vector2_Add(sceneData->speed, Vector2_MultScalar(direction, c_acceleration * deltatime));
     scene->transform.position = Vector2_Add(scene->transform.position, Vector2_MultScalar(sceneData->speed, deltatime));
 }
 
-static void Draw(Scene* scene)
-{
-    //TumorSceneData* sceneData = scene->sceneData;
-
-    // Origin
-    //Graphics_DrawCircle(scene->globalTransform.position, 2.0f, COLOR_WHITE, DRAW_ORDER_TOP);
-}
+//static void Draw(Scene* scene)
+//{
+//    //TumorSceneData* sceneData = scene->sceneData;
+//
+//    // Origin
+//    //Graphics_DrawCircle(scene->globalTransform.position, 2.0f, COLOR_WHITE, DRAW_ORDER_TOP);
+//}
 
 static void OnCollision(Scene* scene, ColliderScene_CollisionInfo info)
 {
@@ -74,10 +76,10 @@ static void TakeDamage(Scene* scene, float damage, Vector2 collisionPoint)
 
     TumorSceneData* sceneData = scene->sceneData;
     sceneData->health -= damage;
-    SparkScene_Create(Scene_GetRoot(), collisionPoint, 2.0f, COLOR_RED, false, COLOR_WHITE, "Tumor Collision Spark");
+    SparkScene_Create(GameManager_GetRootScene(), collisionPoint, 2.0f, COLOR_RED, false, COLOR_WHITE, "Tumor Collision Spark");
 }
 
-Scene* TumorScene_Create(Scene* parent, Scene* mainChar)
+Scene* TumorScene_Create(Scene* parent)
 {
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_TUMOR, parent, "Tumor");
@@ -86,7 +88,6 @@ Scene* TumorScene_Create(Scene* parent, Scene* mainChar)
 
     constexpr double animatedSpriteSwitchTime = 0.2f;
     sceneData->sprite = AnimatedSpriteScene_Create(scene, "res/images/Tumor.png", 4u, 1u, animatedSpriteSwitchTime, DRAW_ORDER_NPC, "Tumor Animated Sprite");
-    sceneData->mainChar = mainChar;
     sceneData->animationElapsed = 0.0;
     sceneData->health = c_maxHealth;
     sceneData->speed = Vector2_Zero();
@@ -104,7 +105,7 @@ Scene* TumorScene_Create(Scene* parent, Scene* mainChar)
     sceneData->sprite->transform.origin = Vector2_MultScalar(spriteSize, 0.5f);
 
     scene->updateFunction = Update;
-    scene->drawFunction = Draw;
+    //scene->drawFunction = Draw;
     scene->takeDamageFunction = TakeDamage;
 
     return scene;

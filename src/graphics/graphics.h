@@ -3,12 +3,15 @@
 
 #include "physics/transform.h"
 #include "rect.h"
+#include "scene/scene.h"
 #include "shader.h"
 #include "vector2.h"
 #include "color.h"
 #include "image.h"
 #include "texture2d.h"
 #include "result.h"
+
+typedef void (*Graphics_OnButtonPressed)(Scene* scene);
 
 Result Graphics_CaptureScreen(Image* image_out);
 
@@ -41,6 +44,5 @@ void Graphics_DrawTextureT(const Texture2D* texture, i32 drawOrder, Color tint);
 void Graphics_DrawText(const char* text, Vector2 position, float size, Color color, u32 drawOrder);
 void Graphics_ClearBackground(Color color);
 void Graphics_Flush();
-
 
 #endif // __GRAPHICS_H__

@@ -1,10 +1,8 @@
 #include "main_scene.h"
 #include "block_scene.h"
 #include "collider_scene.h"
-#include "edit_mode.h"
 #include "main_char_scene.h"
 #include "physics/transform.h"
-#include "rect.h"
 #include "scene.h"
 #include "graphics/graphics.h"
 #include "scene_type.h"
@@ -68,12 +66,12 @@ Scene* MainScene_Create()
     Scene* blockScene5 = BlockScene_Create(scene);
     blockScene5->transform.position = (Vector2) { .x = 1350.0f, .y = 700.0f };
 
-    Scene* tumorScene1 = TumorScene_Create(scene, mainCharScene);
-    tumorScene1->transform.position = (Vector2) { .x = 300.0, .y = 500.0f };
-    Scene* tumorScene2 = TumorScene_Create(scene, mainCharScene);
-    tumorScene2->transform.position = (Vector2) { .x = 600.0, .y = 300.0f };
-    Scene* tumorScene3 = TumorScene_Create(scene, mainCharScene);
-    tumorScene3->transform.position = (Vector2) { .x = 950.0, .y = 250.0f };
+    //Scene* tumorScene1 = TumorScene_Create(scene);
+    //tumorScene1->transform.position = (Vector2) { .x = 300.0, .y = 500.0f };
+    //Scene* tumorScene2 = TumorScene_Create(scene);
+    //tumorScene2->transform.position = (Vector2) { .x = 600.0, .y = 300.0f };
+    //Scene* tumorScene3 = TumorScene_Create(scene);
+    //tumorScene3->transform.position = (Vector2) { .x = 950.0, .y = 250.0f };
 
     scene->drawFunction = Draw;
     scene->updateFunction = Update;
