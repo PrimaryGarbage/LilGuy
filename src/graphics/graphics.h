@@ -42,6 +42,7 @@ void Graphics_UnloadTexture(Texture2D texture);
 void Graphics_DrawTexture(const Texture2D* texture, Rect dest, i32 drawOrder);
 void Graphics_DrawTextureT(const Texture2D* texture, i32 drawOrder, Color tint);
 void Graphics_DrawText(const char* text, Vector2 position, float size, Color color, u32 drawOrder);
+void Graphics_DrawTextRotated(const char* text, Vector2 position, float size, float rotation, Color color, u32 drawOrder);
 void Graphics_ClearBackground(Color color);
 void Graphics_Flush();
 

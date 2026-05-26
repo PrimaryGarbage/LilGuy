@@ -95,6 +95,14 @@ typedef struct DrawTextArguments {
     Color color;
 } DrawTextArguments;
 
+typedef struct DrawTextRotatedArguments {
+    const char* text;
+    Vector2 position;
+    float size;
+    float rotation;
+    Color color;
+} DrawTextRotatedArguments;
+
 union RenderCallFunctionArguments {
     DrawRectArguments drawRectArguments;
     DrawRectTArguments drawRectTArguments;
@@ -108,6 +116,7 @@ union RenderCallFunctionArguments {
     DrawVectorFromPointArguments drawVectorFromPointArguments;
     DrawLightArguments drawLightArguments;
     DrawTextArguments drawTextArguments;
+    DrawTextRotatedArguments drawTextRotatedArguments;
 };
 
 typedef void(*RenderCallFunction)(union RenderCallFunctionArguments arguments);

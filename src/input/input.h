@@ -11,5 +11,6 @@ bool Input_IsMouseButtonPressed(InputMouseButton buton);
 bool Input_IsMouseButtonJustPressed(InputMouseButton buton);
 bool Input_IsMouseButtonJustReleased(InputMouseButton buton);
 Vector2 Input_GetMousePosition();
+float Input_GetMouseWheelMove();
 
 #endif // __INPUT_H__

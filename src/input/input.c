@@ -37,3 +37,8 @@ Vector2 Input_GetMousePosition()
 {
     return Raylib_GetMousePosition();
 }
+
+float Input_GetMouseWheelMove()
+{
+    return Raylib_GetMouseWheelMove();
+}

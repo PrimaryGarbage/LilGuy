@@ -15,6 +15,8 @@ do { \
 #define PixelFormat Rl_PixelFormat
 #define Texture2D Rl_Texture2D
 #define Shader Rl_Shader
+#define GlyphInfo Rl_GlyphInfo
+#define Font Rl_Font
 
 #include "raylib.h"
 #include "rlgl.h"
@@ -27,9 +29,25 @@ do { \
 #undef PixelFormat
 #undef Texture2D
 #undef Shader
+#undef GlyphInfo
+#undef Font
 
 #include "raylib_wrapper.h"
 #include "raymath_wrapper.h"
+
+static inline Font RlFontToFont(Rl_Font font)
+{
+    Font out;
+    TYPE_PUN(Rl_Font, Font, font, out);
+    return out;
+}
+
+static inline Rl_Font FontToRlFont(Font font)
+{
+    Rl_Font out;
+    TYPE_PUN(Font, Rl_Font, font, out);
+    return out;
+}
 
 static inline Shader RlShaderToShader(Rl_Shader shader)
 {
@@ -232,6 +250,11 @@ bool Raylib_IsMouseButtonDown(int button)
     return IsMouseButtonDown(button);
 }
 
+float Raylib_GetMouseWheelMove()
+{
+    return GetMouseWheelMove();
+}
+
 Vector2 Raylib_GetMousePosition()
 {
     return RlVector2ToVector2(GetMousePosition());
@@ -365,6 +388,11 @@ void Raylib_DrawText(const char* text, u32 posX, u32 posY, u32 fontSize, Color c
     DrawText(text, posX, posY, fontSize, ColorToRlColor(color));
 }
 
+void Raylib_DrawTextPro(Font font, const char* text, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint)
+{
+    DrawTextPro(FontToRlFont(font), text, Vector2ToRlVector2(position), Vector2ToRlVector2(origin), rotation, fontSize, spacing, ColorToRlColor(tint));
+}
+
 Shader Raylib_LoadShader(const char* vsFilePath, const char* fsFilePath)
 {
     return RlShaderToShader(LoadShader(vsFilePath, fsFilePath));
@@ -437,4 +465,9 @@ Rect Raylib_GetCollisionRect(Rect a, Rect b)
 Vector2 Raylib_MeasureText(const char* text, float fontSize)
 {
     return RlVector2ToVector2(MeasureTextEx(GetFontDefault(), text, fontSize, 0.0f));
+}
+
+Font Raylib_GetFontDefault()
+{
+    return RlFontToFont(GetFontDefault());
 }

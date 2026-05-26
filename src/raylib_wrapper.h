@@ -1,6 +1,7 @@
 #ifndef __RAYLIB_WRAPPER_H__
 #define __RAYLIB_WRAPPER_H__
 
+#include "graphics/font.h"
 #include "graphics/shader.h"
 #include "physics/matrix.h"
 #include "short_types.h"
@@ -30,6 +31,7 @@ bool Raylib_IsKeyDown(int key);
 bool Raylib_IsMouseButtonPressed(int button);
 bool Raylib_IsMouseButtonReleased(int button);
 bool Raylib_IsMouseButtonDown(int button);
+float Raylib_GetMouseWheelMove();
 Vector2 Raylib_GetMousePosition();
 Image Raylib_LoadImageFromScreen();
 Image Raylib_LoadImage(const char* path);
@@ -57,6 +59,7 @@ void Raylib_DrawCircleV(Vector2 position, float radius, Color color);
 void Raylib_PushMatrix(const Matrix* matrix);
 void Raylib_PopMatrix();
 void Raylib_DrawText(const char* text, u32 posX, u32 posY, u32 fontSize, Color color);
+void Raylib_DrawTextPro(Font font, const char* text, Vector2 position, Vector2 origin, float rotation, float fontSize, float spacing, Color tint);
 
 // Shaders
 Shader Raylib_LoadShader(const char* vsFilePath, const char* fsFilePath);
@@ -77,5 +80,6 @@ bool Raylib_CheckCollisionPointRect(Vector2 point, Rect rect);
 Rect Raylib_GetCollisionRect(Rect a, Rect b);
 
 Vector2 Raylib_MeasureText(const char* text, float fontSize);
+Font Raylib_GetFontDefault();
 
 #endif // __RAYLIB_WRAPPER_H__

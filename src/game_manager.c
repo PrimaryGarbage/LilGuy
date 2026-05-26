@@ -6,6 +6,7 @@
 static Scene* s_rootScene;
 static Scene* s_mainCharScene;
 static Scene*  s_bulletParentScene;
+static Scene* s_genericSpawnParentScene;
 
 static Scene* SearchMainCharScene(Scene* parent)
 {
@@ -34,6 +35,7 @@ void GameManager_Init(Scene* root)
     s_mainCharScene = SearchMainCharScene(root);
 
     s_bulletParentScene = EmptyScene_Create(root, "Bullet Parent");
+    s_genericSpawnParentScene = EmptyScene_Create(root, "Generic Spawn Parent");
 
     if (!s_mainCharScene)
         PANIC_M("Failed to initialize Game Manager: Failed to find main char scene among the root scene children");
@@ -49,6 +51,11 @@ Scene* GameManager_GetRootScene()
 Scene* GameManager_GetBulletParentScene()
 {
     return s_bulletParentScene;
+}
+
+Scene* GameManager_GetGenericSpawnParentScene()
+{
+    return s_genericSpawnParentScene;
 }
 
 Scene* GameManager_GetMainCharScene()

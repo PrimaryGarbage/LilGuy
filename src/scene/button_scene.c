@@ -15,12 +15,13 @@ typedef struct {
     Scene* callbackOwner;
     float borderThickness;
     Color borderColor;
+    i32 tag;
 } ButtonSceneData;
 
 constexpr u32 c_padding = 5u;
 constexpr u32 c_fontSize = 14;
 
-static void Update(Scene* scene, double deltatime)
+static void Update(Scene* scene, double _)
 {
     if (!scene->visible) return;
 
@@ -32,7 +33,7 @@ static void Update(Scene* scene, double deltatime)
     if (Input_IsMouseButtonJustPressed(INPUT_MOUSE_BUTTON_LEFT) && mousePos.x > position->x && mousePos.x < (position->x + size->x) &&
         mousePos.y > position->y && mousePos.y < (position->y + size->y))
     {
-        sceneData->callback(sceneData->callbackOwner);
+        sceneData->callback(sceneData->callbackOwner, sceneData->tag);
     }
 }
 
@@ -60,7 +61,7 @@ static void Draw(Scene* scene)
     Graphics_DrawText(sceneData->text, Vector2_AddScalar(scene->globalTransform.position, c_padding), c_fontSize, COLOR_WHITE, DRAW_ORDER_UI);
 }
 
-Scene* ButtonScene_Create(Scene* parent, const char* name, Vector2 size, Color color, const char* text, ButtonScene_OnPressedCallback callback, Scene* callbackOwner)
+Scene* ButtonScene_Create(Scene* parent, const char* name, Vector2 size, Color color, const char* text, i32 tag, ButtonScene_OnPressedCallback callback, Scene* callbackOwner)
 {
     Scene* scene = malloc(sizeof(Scene));
     Scene_DefaultInit(scene, SCENE_TYPE_BUTTON, parent, name);
@@ -75,6 +76,7 @@ Scene* ButtonScene_Create(Scene* parent, const char* name, Vector2 size, Color c
     sceneData->callbackOwner = callbackOwner;
     sceneData->borderThickness = 0.0f;
     sceneData->borderColor = COLOR_BLACK;
+    sceneData->tag = tag;
 
     scene->updateFunction = Update;
     scene->drawFunction = Draw;

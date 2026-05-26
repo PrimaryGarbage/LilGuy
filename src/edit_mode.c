@@ -6,12 +6,15 @@
 #include "input/input.h"
 #include "input/input_button.h"
 #include "graphics/graphics.h"
+#include "scene/block_scene.h"
 #include "scene/button_scene.h"
-#include "scene/label_scene.h"
 #include "scene/scene.h"
 #include "scene/stack_container_scene.h"
 #include "scene/tumor_scene.h"
 #include "vector2.h"
+
+#define BUTTON_TAG_SPAWN_TUMOR 1
+#define BUTTON_TAG_SPAWN_BLOCK 2
 
 constexpr Color c_spawnButtonColor = (Color) { .r = 30.0f, .g = 30.0f, .b = 30.0f, .a = 255.0f };
 
@@ -21,6 +24,7 @@ static char* s_cursorPosString;
 static const char* s_spawnTooltipString;
 static Scene* s_stackContainer;
 static Scene* s_spawnTumorButton;
+static Scene* s_spawnBlockButton;
 static Scene* s_sceneToSpawn;
 
 static void Cleanup()
@@ -28,10 +32,19 @@ static void Cleanup()
     free(s_cursorPosString);
 }
 
-static void OnTumorSpawnButtonPressed(Scene* scene)
+static void OnSpawnButtonPressed(Scene* scene, i32 tag)
 {
-    s_sceneToSpawn = TumorScene_Create(NULL);
-    s_spawnTooltipString = "Tumor";
+    switch(tag)
+    {
+        case BUTTON_TAG_SPAWN_TUMOR:
+            s_sceneToSpawn = TumorScene_Create(NULL);
+            s_spawnTooltipString = "Tumor";
+            break;
+        case BUTTON_TAG_SPAWN_BLOCK:
+            s_sceneToSpawn = BlockScene_Create(NULL);
+            s_spawnTooltipString = "Block";
+            break;
+    }
 }
 
 static void EnsureInitialized()
@@ -47,10 +60,13 @@ static void EnsureInitialized()
     s_stackContainer->transform.position.y = 130.0f;
     s_stackContainer->visible = false;
 
-    s_spawnTumorButton = ButtonScene_Create(s_stackContainer, "Spawn Tumor Button", (Vector2) { 100.0f, 30.0f }, c_spawnButtonColor, 
-        "Tumor", OnTumorSpawnButtonPressed, GameManager_GetRootScene());
-    s_spawnTumorButton->transform.position = (Vector2) { 10.0f, 130.0f };
+    s_spawnTumorButton = ButtonScene_Create(s_stackContainer, "Spawn Tumor Button", (Vector2){ 100.0f, 30.0f }, c_spawnButtonColor,
+        "Tumor", BUTTON_TAG_SPAWN_TUMOR, OnSpawnButtonPressed, GameManager_GetRootScene());
     ButtonScene_SetBorder(s_spawnTumorButton, 3.0f, COLOR_WHITE);
+
+    s_spawnBlockButton = ButtonScene_Create(s_stackContainer, "Spawn Block Button", (Vector2) { 100.0f, 30.0f }, c_spawnButtonColor, 
+        "Block", BUTTON_TAG_SPAWN_BLOCK, OnSpawnButtonPressed, GameManager_GetRootScene());
+    ButtonScene_SetBorder(s_spawnBlockButton, 3.0f, COLOR_WHITE);
 
     Cleanup_AddCallback(Cleanup);
 
@@ -71,10 +87,12 @@ void EditMode_Update(double deltatime)
     {
         if (s_sceneToSpawn)
         {
+            s_sceneToSpawn->transform.rotation += Input_GetMouseWheelMove();
+
             if (Input_IsMouseButtonJustPressed(INPUT_MOUSE_BUTTON_LEFT))
             {
                 s_sceneToSpawn->transform.position = Input_GetMousePosition();
-                Scene_AddChild(GameManager_GetRootScene(), s_sceneToSpawn);
+                Scene_AddChild(GameManager_GetGenericSpawnParentScene(), s_sceneToSpawn);
                 s_sceneToSpawn = NULL;
             }
             else if (Input_IsMouseButtonJustPressed(INPUT_MOUSE_BUTTON_RIGHT))
@@ -96,7 +114,7 @@ void EditMode_Draw()
     Graphics_DrawText(s_cursorPosString, Vector2_New(10.0f, 90.0f), 20.0f, COLOR_WHITE, DRAW_ORDER_UI);
 
     if (s_sceneToSpawn)
-        Graphics_DrawText(s_spawnTooltipString, mousePos, 14.0f, COLOR_WHITE, DRAW_ORDER_UI);
+        Graphics_DrawTextRotated(s_spawnTooltipString, mousePos, 14.0f, s_sceneToSpawn->transform.rotation, COLOR_WHITE, DRAW_ORDER_UI);
 }
 
 bool EditMode_Enabled()

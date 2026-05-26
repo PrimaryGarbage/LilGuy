@@ -400,6 +400,26 @@ void Graphics_DrawText(const char* text, Vector2 position, float size, Color col
     QueueRenderCall(drawOrder, _DrawText_RenderCall, (union RenderCallFunctionArguments*)&args);
 }
 
+static void _DrawTextRotated_RenderCall(union RenderCallFunctionArguments arguments)
+{
+    DrawTextRotatedArguments args = arguments.drawTextRotatedArguments;
+
+    Raylib_DrawTextPro(Raylib_GetFontDefault(), args.text, args.position, Vector2_Zero(), args.rotation, args.size, 0.0f, args.color);
+}
+
+void Graphics_DrawTextRotated(const char* text, Vector2 position, float size, float rotation, Color color, u32 drawOrder)
+{
+    DrawTextRotatedArguments args = {
+        .text = text,
+        .position = position,
+        .size = size,
+        .color = color,
+        .rotation = rotation,
+    };
+
+    QueueRenderCall(drawOrder, _DrawTextRotated_RenderCall, (union RenderCallFunctionArguments*)&args);
+}
+
 void Graphics_ClearBackground(Color color)
 {
     Raylib_ClearBackground(color);

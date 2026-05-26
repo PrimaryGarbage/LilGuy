@@ -6,6 +6,7 @@
 void GameManager_Init(Scene* root);
 Scene* GameManager_GetRootScene();
 Scene* GameManager_GetBulletParentScene();
+Scene* GameManager_GetGenericSpawnParentScene();
 Scene* GameManager_GetMainCharScene();
 
 #endif // __GAME_MANAGER_H__
