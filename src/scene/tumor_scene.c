@@ -64,19 +64,19 @@ static void OnCollision(Scene* scene, ColliderScene_CollisionInfo info)
         TumorSceneData* sceneData = scene->sceneData;
 
         Vector2 collisionPoint = Rect_GetCenter(&info.collisionRect);
-        info.collider->owner->takeDamageFunction(info.collider->owner, c_damage, collisionPoint);
+        info.collider->owner->takeDamageFunction(info.collider->owner, c_damage, collisionPoint, scene);
         Vector2 recoilDirection = Vector2_Normalize(Vector2_Sub(scene->globalTransform.position, collisionPoint));
         sceneData->speed = Vector2_Add(sceneData->speed, Vector2_MultScalar(recoilDirection, c_attackRecoilStrength));
     }
 }
 
-static void TakeDamage(Scene* scene, float damage, Vector2 collisionPoint)
+static void TakeDamage(Scene* scene, float damage, Vector2 contactPoint, Scene* sender)
 {
     ASSERT_SCENE_TYPE(scene);
 
     TumorSceneData* sceneData = scene->sceneData;
     sceneData->health -= damage;
-    SparkScene_Create(GameManager_GetRootScene(), collisionPoint, 2.0f, COLOR_RED, false, COLOR_WHITE, "Tumor Collision Spark");
+    SparkScene_Create(GameManager_GetRootScene(), contactPoint, 2.0f, COLOR_RED, false, COLOR_WHITE, "Tumor Collision Spark");
 }
 
 Scene* TumorScene_Create(Scene* parent)

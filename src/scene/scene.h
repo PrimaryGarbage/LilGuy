@@ -17,7 +17,7 @@ typedef void(*SceneUpdateFunction)(Scene* scene, double deltatime);
 typedef void(*SceneDrawFunction)(Scene* scene);
 typedef void(*SceneCleanupFunction)(Scene* scene);
 
-typedef void(*SceneTakeDamageFunction)(Scene* scene, float damage, Vector2 damagePoint);
+typedef void(*SceneTakeDamageFunction)(Scene* scene, float damage, Vector2 contactPoint, Scene* sender);
 
 typedef struct Scene {
     u32 id;

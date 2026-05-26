@@ -323,14 +323,23 @@ static void Cleanup(Scene* scene)
     Graphics_UnloadTexture(sceneData->bodyTexture);
 }
 
-static void TakeDamage(Scene* scene, float damage, Vector2 damagePoint)
+static void TakeDamage(Scene* scene, float damage, Vector2 contactPoint, Scene* sender)
 {
     MainCharSceneData* sceneData = scene->sceneData;
 
-    if (sceneData->elapsedSinceLastDamage < c_damageInvincibilityTime) return;
+    if (sceneData->elapsedSinceLastDamage > c_damageInvincibilityTime)
+    {
+        sceneData->health -= damage;
+        sceneData->elapsedSinceLastDamage = 0.0;
+    }
 
-    sceneData->health -= damage;
-    sceneData->elapsedSinceLastDamage = 0.0;
+    if (sender->type == SCENE_TYPE_TUMOR)
+    {
+        constexpr float tumorPushAmount = 300.0f;
+
+        Vector2 damageDirection = Vector2_Normalize(Vector2_Sub(contactPoint, sender->globalTransform.position));
+        sceneData->speed = Vector2_Add(sceneData->speed, Vector2_MultScalar(damageDirection, tumorPushAmount));
+    }
 
     LogInfo("Main Char took damage: %f; Health: %f", damage, sceneData->health);
 }

@@ -52,7 +52,7 @@ static void Update(Scene* scene, double deltatime)
 
         if (collider->owner && collider->owner->takeDamageFunction)
         {
-            collider->owner->takeDamageFunction(collider->owner, sceneData->damage, collisionPoint);
+            collider->owner->takeDamageFunction(collider->owner, sceneData->damage, collisionPoint, scene);
         }
         else
         {
