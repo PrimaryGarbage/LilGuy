@@ -1,15 +1,16 @@
 #include "screen_capture.h"
-#include "image.h"
 #include <stdlib.h>
+#include "image.h"
+#include "result.h"
 
 #ifdef _WIN32
   #include <windows.h>
   #include <wingdi.h>
 #elif __linux__
   #include <string.h>
+  #define STB_IMAGE_IMPLEMENTATION
   #include "stb_image.h"
   #include <stdio.h>
-  #include "graphics/color.h"
 #else
   #error "Unsupported platform"
 #endif
@@ -89,7 +90,7 @@ bool IsSpectacleAvailable() {
     return found && status == 0;
 }
 
-Result CaptureScreen(u32* width_out, u32* height_out, u32** data_out)
+Result CaptureScreen(Image* image_out)
 {
     // 1. Check if spectacle available
     if (!IsSpectacleAvailable())
@@ -102,40 +103,44 @@ Result CaptureScreen(u32* width_out, u32* height_out, u32** data_out)
     }
 
     // 3. Read the PNG data from the pipe into a memory buffer.
-    unsigned char* png_data = NULL;
-    size_t png_size = 0;
+    u8* pngData = NULL;
+    size_t pngSize = 0;
     size_t capacity = 4096;
-    png_data = (unsigned char*)malloc(capacity);
-    if (!png_data) {
+    pngData = malloc(capacity);
+    if (!pngData) {
         pclose(pipe);
         return Error(RESULT_SCREEN_CAPTURE_ERROR, "Failed to read the PNG data");
     }
 
-    size_t bytes_read;
-    while ((bytes_read = fread(png_data + png_size, 1, capacity - png_size, pipe)) > 0) {
-        png_size += bytes_read;
-        if (png_size == capacity) {
+    size_t bytesRead;
+    while ((bytesRead = fread(pngData + pngSize, 1, capacity - pngSize, pipe)) > 0) {
+        pngSize += bytesRead;
+        if (pngSize == capacity) {
             capacity *= 2;
-            u8* new_data = realloc(png_data, capacity);
-            if (!new_data) {
-                free(png_data);
+            u8* reallocatedData = realloc(pngData, capacity);
+            if (!reallocatedData) {
+                free(pngData);
                 pclose(pipe);
                 return Error(RESULT_MEMORY_ALLOCATION_ERROR, "Failed to realloc memory while reading png data");
             }
-            png_data = new_data;
+            pngData = reallocatedData;
         }
     }
     pclose(pipe);
 
     // 4. Decode the PNG data into RGBA format using stb_image.
     int width, height, channels;
-    *data_out = (u32*)stbi_load_from_memory(png_data, (int)png_size, &width, &height, &channels, 4);
+    u32* data = (u32*)stbi_load_from_memory(pngData, (int)pngSize, &width, &height, &channels, 4);
+    if (width <= 0 || height <= 0)
+        return Error(RESULT_SCREEN_CAPTURE_ERROR, "Failed to load image from memory: invalid image dimensions");
 
-    *width_out = width;
-    *height_out = height;
-
-    for(size_t i = 0; i < *width_out * *height_out; ++i)
-        (*data_out)[i] = Color_SwapRAndB(result[i]);
+    *image_out = (Image){
+        .data = data,
+        .dataSize = bytesRead,
+        .width = width,
+        .height = height,
+        .format = PIXEL_FORMAT_UNCOMPRESSED_R8G8B8A8,
+    };
 
     return Success();
 }

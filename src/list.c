@@ -37,8 +37,7 @@ void* List_Append(List* list, const void* element)
         list->capacity = newCapacity;
     }
 
-    memcpy_s(list->data + list->elementSize * list->count, list->elementSize, element, list->elementSize);
-    list->count++;
+    memcpy(list->data + list->elementSize * list->count, element, list->elementSize);
 
     return list->data + (list->count - 1u) * list->elementSize;
 }
@@ -54,8 +53,9 @@ void List_Remove(List* list, const void* element)
             void* buffer = malloc(bufferSize);
             if (!buffer) MEMORY_PANIC();
 
-            memcpy_s(buffer, bufferSize, (ptr + list->elementSize), bufferSize);
-            memcpy_s(ptr, bufferSize, buffer, bufferSize);
+            memcpy(buffer, (ptr + list->elementSize), bufferSize);
+            memcpy(ptr, buffer, bufferSize);
+
             free(buffer);
 
             list->count--;

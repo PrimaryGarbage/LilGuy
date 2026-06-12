@@ -138,6 +138,7 @@ static void MoveCharacter(Scene* scene, double deltatime)
     constexpr float moveAccel = 1000.0f;
     constexpr float jumpAccel = -1500.0f;
     constexpr float gravityAccel = 1000.0f;
+    constexpr float maxGravitySpeed = 500.0f;
     constexpr float maxSpeedX = 180.0f;
     constexpr float maxJetpackSpeedX = 400.0f;
     constexpr float maxSpeedY = 1000.0f;
@@ -147,7 +148,7 @@ static void MoveCharacter(Scene* scene, double deltatime)
 
     sceneData->elapsedSinceLastDamage += deltatime;
 
-    sceneData->speed.y += gravityAccel * deltatime;
+    sceneData->speed.y += Clampf(-maxGravitySpeed, maxGravitySpeed, gravityAccel * deltatime);
 
     bool tryingToMove = false;
 

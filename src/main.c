@@ -45,8 +45,8 @@ int main()
 
     Vector2u windowSize = { screenCaptureImage.width, screenCaptureImage.height };
 
-    Window_Hide();
     Window_Init("LilGuy", windowSize, true);
+    //Window_Hide();
     Window_SetMonitor(1);
     Window_SetMouseCursor(MOUSE_CURSOR_TYPE_CROSSHAIR);
 
@@ -91,11 +91,11 @@ int main()
 
     Scene_Free(rootScene);
 
+    Cleanup_Execute();
+
     Image_Free(&screenCaptureImage);
     Graphics_UnloadTexture(screenCaptureTexture);
     Window_Destroy();
-
-    Cleanup_Execute();
 
     return 0;
 }

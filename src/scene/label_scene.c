@@ -41,7 +41,7 @@ Scene* LabelScene_Create(Scene* parent, const char* name, const char* text, floa
     size_t textLength = strlen(text);
     sceneData->bufferSize = textLength + 1;
     sceneData->buffer = malloc(sceneData->bufferSize);
-    strcpy_s(sceneData->buffer, sceneData->bufferSize, text);
+    strcpy(sceneData->buffer, text);
     sceneData->fontSize = fontSize;
     sceneData->color = textColor;
 
@@ -63,7 +63,7 @@ void LabelScene_SetText(Scene* scene, const char* text)
         sceneData->buffer = realloc(sceneData->buffer, sceneData->bufferSize);
     }
 
-    strcpy_s(sceneData->buffer, sceneData->bufferSize, text);
+    strcpy(sceneData->buffer, text);
 
     scene->transform.size = Raylib_MeasureText(text, sceneData->fontSize);
 }

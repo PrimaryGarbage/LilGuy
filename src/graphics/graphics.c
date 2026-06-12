@@ -11,7 +11,6 @@
 #include "shader.h"
 #include "stb_image_write.h"
 #include <assert.h>
-#include <basetsd.h>
 #include <math.h>
 #include <stddef.h>
 #include <stdlib.h>

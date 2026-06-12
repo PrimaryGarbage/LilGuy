@@ -1,6 +1,8 @@
 #include "main_scene.h"
 #include "block_scene.h"
 #include "collider_scene.h"
+#include "game_manager.h"
+#include "logging.h"
 #include "main_char_scene.h"
 #include "physics/transform.h"
 #include "scene.h"

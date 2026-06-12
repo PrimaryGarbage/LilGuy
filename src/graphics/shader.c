@@ -74,8 +74,8 @@ static void EnsureInitialized()
 static Shader* GetShaderFromCache(const char* vsName, const char* fsName)
 {
     char key[SHADER_KEY_LENGTH_MAX] = {};
-    strcat_s(key, SHADER_KEY_LENGTH_MAX, vsName);
-    strcat_s(key, SHADER_KEY_LENGTH_MAX, fsName);
+    strcat(key, vsName);
+    strcat(key, fsName);
 
     for(u32 i = 0u; i < s_shaderCacheCount; ++i)
     {
@@ -88,10 +88,10 @@ static Shader* GetShaderFromCache(const char* vsName, const char* fsName)
 
     char vsFilepath[256] = {};
     char fsFilepath[256] = {};
-    strcat_s(vsFilepath, 256, SHADER_PATH_PREFIX);
-    strcat_s(fsFilepath, 256, SHADER_PATH_PREFIX);
-    strcat_s(vsFilepath, 256, vsName);
-    strcat_s(fsFilepath, 256, fsName);
+    strcat(vsFilepath, SHADER_PATH_PREFIX);
+    strcat(fsFilepath, SHADER_PATH_PREFIX);
+    strcat(vsFilepath, vsName);
+    strcat(fsFilepath, fsName);
 
     Shader shader = Raylib_LoadShader(vsFilepath, fsFilepath);
 

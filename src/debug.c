@@ -14,7 +14,7 @@ static void Debug_PrintSceneTreeRecurse(const Scene* scene, u32 indent)
     for(; idx < indent; ++idx)
         buffer[idx] = indentChar;
 
-    strcpy_s(buffer + idx, PRINT_SCENE_BUFFER_SIZE - idx, scene->name);
+    strcpy(buffer + idx, scene->name);
     printf("%s\n", buffer);
 
     for(u32 i = 0u; i < scene->childrenCount; ++i)

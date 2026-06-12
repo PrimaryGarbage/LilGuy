@@ -103,6 +103,8 @@ target_link_libraries(${PROJECT_NAME} raylib)
 
 if(WIN32)
 	target_link_libraries(${PROJECT_NAME} winmm)
+elseif(LINUX)
+	target_link_libraries(${PROJECT_NAME} m)
 endif()
 
 ### Add link directories here ###
