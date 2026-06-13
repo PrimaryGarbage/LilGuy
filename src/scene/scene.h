@@ -33,6 +33,7 @@ typedef struct Scene {
     SceneCleanupFunction cleanupFunction;
     SceneTakeDamageFunction takeDamageFunction;
     bool visible;
+    bool enabled;
     bool started;
     bool drawChildren;
     bool updateChildren;
@@ -43,7 +44,7 @@ typedef struct Scene {
 void Scene_TrimQueuedScenes();
 
 void Scene_Free(Scene* scene);
-void Scene_AddChild(Scene* scene, Scene* child);
+void Scene_AddChild(Scene* parent, Scene* child);
 void Scene_RemoveChild(Scene* scene, Scene* child);
 void Scene_UpdateGlobalTransform(Scene* scene);
 void Scene_DefaultInit(Scene* scene, SceneType type, Scene* parent, const char* name);

@@ -1,10 +1,13 @@
 #include "window.h"
 #include <math.h>
+#include "exit_menu.h"
+#include "input/input_button.h"
 #include "raylib_wrapper.h"
 
 void Window_Init(const char* windowTitle, Vector2u windowSize, bool fullscreen)
 {
     Raylib_InitWindow(windowSize.x, windowSize.y, windowTitle, fullscreen);
+    Raylib_SetExitKey(INPUT_KEY_NULL);
 }
 
 void Window_SetMonitor(u8 monitor)
@@ -39,7 +42,7 @@ void Window_SetMouseCursor(MouseCursorType type)
 
 bool Window_ShouldClose()
 {
-    return Raylib_WindowShouldClose();
+    return Raylib_WindowShouldClose() || ExitMenu_Update();
 }
 
 void Window_Hide()

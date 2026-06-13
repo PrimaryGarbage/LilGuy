@@ -1,6 +1,6 @@
 #include "stack_container_scene.h"
 #include "result.h"
-#include "scene.h"
+#include "scene/scene.h"
 #include <stdlib.h>
 
 #define SCENE_TYPE SCENE_TYPE_STACK_CONTAINER

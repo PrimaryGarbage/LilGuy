@@ -155,6 +155,11 @@ void Raylib_InitWindow(u32 windowWidth, u32 windowHeight, const char* windowTitl
     if (fullscreen) ToggleBorderlessWindowed();
 }
 
+void Raylib_SetExitKey(InputKey key)
+{
+    SetExitKey(key);
+}
+
 void Raylib_SetWindowMonitor(u8 monitor)
 {
     SetWindowMonitor(monitor);

@@ -23,6 +23,7 @@ set(SRC_FILES
 	cleanup.c cleanup.h
 	edit_mode.c edit_mode.h
 	game_manager.c game_manager.h
+	exit_menu.c exit_menu.h
 )
 
 set(WINDOW_FILES
@@ -66,6 +67,9 @@ set(SCENE_FILES
 	tumor_scene.c tumor_scene.h
 	splash_scene.c splash_scene.h
 	spark_scene.c spark_scene.h
+)
+
+set (SCENE_UI_FILES
 	button_scene.c button_scene.h
 	stack_container_scene.c stack_container_scene.h
 	label_scene.c label_scene.h
@@ -83,9 +87,10 @@ list(TRANSFORM WINDOW_FILES PREPEND "src/window/")
 list(TRANSFORM GRAPHICS_FILES PREPEND "src/graphics/")
 list(TRANSFORM INPUT_FILES PREPEND "src/input/")
 list(TRANSFORM SCENE_FILES PREPEND "src/scene/")
+list(TRANSFORM SCENE_UI_FILES PREPEND "src/scene/ui/")
 list(TRANSFORM PHYSICS_FILES PREPEND "src/physics/")
 
-add_executable(${PROJECT_NAME} ${SRC_FILES} ${WINDOW_FILES} ${GRAPHICS_FILES} ${INPUT_FILES} ${SCENE_FILES} ${PHYSICS_FILES})
+add_executable(${PROJECT_NAME} ${SRC_FILES} ${WINDOW_FILES} ${GRAPHICS_FILES} ${INPUT_FILES} ${SCENE_FILES} ${SCENE_UI_FILES} ${PHYSICS_FILES})
 
 set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX -d)
 

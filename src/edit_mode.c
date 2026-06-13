@@ -7,9 +7,9 @@
 #include "input/input_button.h"
 #include "graphics/graphics.h"
 #include "scene/block_scene.h"
-#include "scene/button_scene.h"
+#include "scene/ui/button_scene.h"
 #include "scene/scene.h"
-#include "scene/stack_container_scene.h"
+#include "scene/ui/stack_container_scene.h"
 #include "scene/tumor_scene.h"
 #include "vector2.h"
 

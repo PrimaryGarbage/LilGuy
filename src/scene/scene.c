@@ -27,15 +27,15 @@ void Scene_Free(Scene* scene)
     free(scene);
 }
 
-void Scene_AddChild(Scene* scene, Scene* child)
+void Scene_AddChild(Scene* parent, Scene* child)
 {
-    if (scene->childrenCount == SCENE_CHILDREN_MAX)
+    if (parent->childrenCount == SCENE_CHILDREN_MAX)
         PANIC_EX(LogErrorM("Exceeded the max number of children for the scene"););
     if(child->parent)
         PANIC_EX(LogErrorM("Child scene already has a parent! Make sure that you aren't adding the same child twice or forgot to unparent the child first"););
 
-    scene->children[scene->childrenCount++] = child;
-    child->parent = scene;
+    parent->children[parent->childrenCount++] = child;
+    child->parent = parent;
 
     if (!child->started) 
         Scene_Start(child);
@@ -101,6 +101,8 @@ void Scene_Start(Scene* scene)
 
 void Scene_Update(Scene* scene, double deltatime)
 {
+    if (!scene->enabled) return;
+
     if (scene->updateFunction)
     {
         Scene_UpdateGlobalTransform(scene);
@@ -115,7 +117,7 @@ void Scene_Update(Scene* scene, double deltatime)
 
 void Scene_Draw(Scene* scene)
 {
-    if (!scene->visible) return;
+    if (!scene->visible || !scene->enabled) return;
 
     if (scene->drawFunction) scene->drawFunction(scene);
 
@@ -131,6 +133,7 @@ void Scene_DefaultInit(Scene* scene, SceneType type, Scene* parent, const char* 
     scene->childrenCount = 0u;
     scene->transform = Transform_Zero();
     scene->visible = true;
+    scene->enabled = true;
     scene->started = false;
     scene->name = name;
     scene->parent = NULL;

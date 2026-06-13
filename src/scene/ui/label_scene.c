@@ -1,7 +1,7 @@
 #include "label_scene.h"
 #include "graphics/draw_order.h"
 #include "graphics/graphics.h"
-#include "scene.h"
+#include "scene/scene.h"
 #include "raylib_wrapper.h"
 
 #include <stdlib.h>

@@ -3,6 +3,7 @@
 
 #include "graphics/font.h"
 #include "graphics/shader.h"
+#include "input/input_button.h"
 #include "physics/matrix.h"
 #include "short_types.h"
 #include "vector2.h"
@@ -12,6 +13,7 @@
 #include "rect.h"
 
 void Raylib_InitWindow(u32 windowWidth, u32 windowHeight, const char* windowTitle, bool fullscreen);
+void Raylib_SetExitKey(InputKey key);
 void Raylib_SetWindowMonitor(u8 monitor);
 bool Raylib_WindowShouldClose();
 void Raylib_CloseWindow();

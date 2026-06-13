@@ -4,8 +4,6 @@
 #include "game_manager.h"
 #include "graphics/draw_order.h"
 #include "graphics/image.h"
-#include "input/input.h"
-#include "input/input_button.h"
 #include "scene/main_scene.h"
 #include "scene/scene.h"
 #include "tween.h"
@@ -66,8 +64,6 @@ int main()
     {
         Window_PollEvents();
 
-        if (Input_IsKeyPressed(INPUT_KEY_ESCAPE)) break;
-
         Graphics_ClearBackground(COLOR_BLUE);
         Graphics_DrawTexture(&screenCaptureTexture, (Rect){ .x = 0.0f, .y = 0.0f, .width = screenCaptureTexture.width, .height = screenCaptureTexture.height }, DRAW_ORDER_BACKGROUND);
 
@@ -75,7 +71,6 @@ int main()
         /// UPDATE HERE ///
         Update(deltatime);
         ///////////////////
-
 
         /////////////////
         /// DRAW HERE ///
