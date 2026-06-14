@@ -3,6 +3,6 @@
 
 #include "scene.h"
 
-Scene* MainScene_Create();
+Scene* RootScene_Create();
 
 #endif // __MAIN_SCENE_H__

@@ -4,7 +4,7 @@
 #include "game_manager.h"
 #include "graphics/draw_order.h"
 #include "graphics/image.h"
-#include "scene/main_scene.h"
+#include "scene/root_scene.h"
 #include "scene/scene.h"
 #include "tween.h"
 #include "vector2.h"
@@ -16,26 +16,33 @@
 #include "timer.h"
 #include "logging.h"
 
-static void Update(double deltatime)
-{
-    EditMode_Update(deltatime);
+static Texture2D s_screenCaptureTexture;
 
-    double simulationDeltatime = EditMode_Enabled() ? 0.0 : deltatime;
-    Scene_Update(GameManager_GetRootScene(), simulationDeltatime);
-    Tween_Update(simulationDeltatime);
+static void Update()
+{
+    double deltatime = GameManager_GetDeltatime();
+
+    EditMode_Update(deltatime);
+    Scene_Update(GameManager_GetRootScene(), deltatime);
+    Tween_Update(deltatime);
 }
 
 static void Draw()
 {
+    Graphics_ClearBackground(COLOR_BLUE);
+    Graphics_DrawTexture(&s_screenCaptureTexture, (Rect){ .x = 0.0f, .y = 0.0f, 
+        .width = s_screenCaptureTexture.width, .height = s_screenCaptureTexture.height }, DRAW_ORDER_BACKGROUND);
+
     EditMode_Draw();
     Scene_Draw(GameManager_GetRootScene());
+
+    Graphics_Flush();
 }
 
 int main()
 {
     RandomInit();
     Timer globalTimer = Timer_Create();
-    double deltatime;
 
     Image screenCaptureImage;
     Result captureResult = Graphics_CaptureScreen(&screenCaptureImage);
@@ -48,13 +55,13 @@ int main()
     Window_SetMonitor(1);
     Window_SetMouseCursor(MOUSE_CURSOR_TYPE_CROSSHAIR);
 
-    Texture2D screenCaptureTexture = Graphics_LoadTextureFromImage(&screenCaptureImage);
-    Graphics_DrawTexture(&screenCaptureTexture, (Rect){ .x = 0.0f, .y = 0.0f, .width = screenCaptureTexture.width, .height = screenCaptureTexture.height }, DRAW_ORDER_BACKGROUND);
+    s_screenCaptureTexture = Graphics_LoadTextureFromImage(&screenCaptureImage);
+    Image_Free(&screenCaptureImage);
+    Graphics_DrawTexture(&s_screenCaptureTexture, (Rect){ .x = 0.0f, .y = 0.0f, .width = s_screenCaptureTexture.width, .height = s_screenCaptureTexture.height }, DRAW_ORDER_BACKGROUND);
     Graphics_Flush();
     Window_Show();
 
-    Scene* rootScene = MainScene_Create();
-
+    Scene* rootScene = RootScene_Create();
     GameManager_Init(rootScene);
     Scene_Start(rootScene);
 
@@ -64,32 +71,19 @@ int main()
     {
         Window_PollEvents();
 
-        Graphics_ClearBackground(COLOR_BLUE);
-        Graphics_DrawTexture(&screenCaptureTexture, (Rect){ .x = 0.0f, .y = 0.0f, .width = screenCaptureTexture.width, .height = screenCaptureTexture.height }, DRAW_ORDER_BACKGROUND);
+        Update();
 
-        ///////////////////
-        /// UPDATE HERE ///
-        Update(deltatime);
-        ///////////////////
-
-        /////////////////
-        /// DRAW HERE ///
         Draw();
-        /////////////////
-
-        Graphics_Flush();
 
         Scene_TrimQueuedScenes();
 
-        deltatime = Timer_Reset(&globalTimer);
+        GameManager_SetDeltatime(Timer_Reset(&globalTimer));
     }
 
     Scene_Free(rootScene);
 
+    Graphics_UnloadTexture(s_screenCaptureTexture);
     Cleanup_Execute();
-
-    Image_Free(&screenCaptureImage);
-    Graphics_UnloadTexture(screenCaptureTexture);
     Window_Destroy();
 
     return 0;

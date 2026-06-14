@@ -81,6 +81,7 @@ void EditMode_Update(double deltatime)
     {
         s_enabled = !s_enabled;
         s_stackContainer->visible = !s_stackContainer->visible;
+        GameManager_PauseGame(s_enabled);
     } 
 
     if (s_enabled)

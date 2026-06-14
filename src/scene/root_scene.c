@@ -1,14 +1,12 @@
-#include "main_scene.h"
+#include "root_scene.h"
 #include "block_scene.h"
 #include "collider_scene.h"
-#include "game_manager.h"
-#include "logging.h"
 #include "main_char_scene.h"
 #include "physics/transform.h"
 #include "scene.h"
 #include "graphics/graphics.h"
 #include "scene_type.h"
-#include "tumor_scene.h"
+#include "ui/exit_menu_scene.h"
 #include "vector2.h"
 #include <stdlib.h>
 
@@ -30,18 +28,22 @@ static void DrawTestRect()
 
 static void Update(Scene* scene, double deltatime)
 {
+    (void)scene;
+    (void)deltatime;
 }
 
 static void Draw(Scene* scene)
 {
+    (void)scene;
+
     //DrawTestRect();
 }
 
-Scene* MainScene_Create()
+Scene* RootScene_Create()
 {
     Scene* scene = malloc(sizeof(Scene));
     
-    Scene_DefaultInit(scene, SCENE_TYPE_MAIN, NULL, "Main Scene");
+    Scene_DefaultInit(scene, SCENE_TYPE_MAIN, NULL, "Root Scene");
 
     Vector2 screenSize = Graphics_GetScreenSize();
 
@@ -67,6 +69,9 @@ Scene* MainScene_Create()
     blockScene4->transform.position = (Vector2) { .x = 1050.0f, .y = 870.0f };
     Scene* blockScene5 = BlockScene_Create(scene);
     blockScene5->transform.position = (Vector2) { .x = 1350.0f, .y = 700.0f };
+
+    // UI
+    ExitMenuScene_Create(scene);
 
     //Scene* tumorScene1 = TumorScene_Create(scene);
     //tumorScene1->transform.position = (Vector2) { .x = 300.0, .y = 500.0f };

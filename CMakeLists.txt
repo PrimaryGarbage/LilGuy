@@ -23,7 +23,6 @@ set(SRC_FILES
 	cleanup.c cleanup.h
 	edit_mode.c edit_mode.h
 	game_manager.c game_manager.h
-	exit_menu.c exit_menu.h
 )
 
 set(WINDOW_FILES
@@ -55,7 +54,7 @@ set(SCENE_FILES
 	empty_scene.c empty_scene.h
 	block_scene.c block_scene.h
 	collider_scene.c collider_scene.h
-	main_scene.c main_scene.h
+	root_scene.c root_scene.h
 	raycast_scene.c raycast_scene.h
 	main_char_gun_scene.c main_char_gun_scene.h
 	main_char_jetpack_fire_scene.c main_char_jetpack_fire_scene.h
@@ -73,6 +72,7 @@ set (SCENE_UI_FILES
 	button_scene.c button_scene.h
 	stack_container_scene.c stack_container_scene.h
 	label_scene.c label_scene.h
+	exit_menu_scene.c exit_menu_scene.h
 )
 
 set(PHYSICS_FILES

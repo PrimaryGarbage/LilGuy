@@ -7,6 +7,9 @@ static Scene* s_rootScene;
 static Scene* s_mainCharScene;
 static Scene*  s_bulletParentScene;
 static Scene* s_genericSpawnParentScene;
+static bool s_exitRequested = false;
+static double s_deltatime;
+static bool s_paused = false;
 
 static Scene* SearchMainCharScene(Scene* parent)
 {
@@ -63,4 +66,29 @@ Scene* GameManager_GetMainCharScene()
     if (!s_mainCharScene) PANIC_M("Main Char scene isn't set in the Game Manager!");
 
     return s_mainCharScene;
+}
+
+void GameManager_RequestExit()
+{
+    s_exitRequested = true;
+}
+
+bool GameManager_IsExitRequested()
+{
+    return s_exitRequested;
+}
+
+void GameManager_SetDeltatime(double deltatime)
+{
+    s_deltatime = deltatime;
+}
+
+double GameManager_GetDeltatime()
+{
+    return s_paused? 0.0 : s_deltatime;
+}
+
+void GameManager_PauseGame(bool on)
+{
+    s_paused = on;
 }

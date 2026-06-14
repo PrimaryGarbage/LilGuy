@@ -25,6 +25,7 @@ typedef enum SceneType {
     SCENE_TYPE_BUTTON,
     SCENE_TYPE_STACK_CONTAINER,
     SCENE_TYPE_LABEL,
+    SCENE_TYPE_EXIT_MENU,
 } SceneType;
 
 #endif // __SCENE_TAGS_H__

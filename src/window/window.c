@@ -1,8 +1,8 @@
 #include "window.h"
 #include <math.h>
-#include "exit_menu.h"
 #include "input/input_button.h"
 #include "raylib_wrapper.h"
+#include "game_manager.h"
 
 void Window_Init(const char* windowTitle, Vector2u windowSize, bool fullscreen)
 {
@@ -42,7 +42,7 @@ void Window_SetMouseCursor(MouseCursorType type)
 
 bool Window_ShouldClose()
 {
-    return Raylib_WindowShouldClose() || ExitMenu_Update();
+    return Raylib_WindowShouldClose() || GameManager_IsExitRequested();
 }
 
 void Window_Hide()
