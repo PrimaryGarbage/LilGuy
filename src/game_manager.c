@@ -3,13 +3,26 @@
 #include "scene/empty_scene.h"
 #include "scene/scene_type.h"
 
+#define GAME_PAUSE_RESERVATION_COUNT_MAX 8
+
 static Scene* s_rootScene;
 static Scene* s_mainCharScene;
 static Scene*  s_bulletParentScene;
 static Scene* s_genericSpawnParentScene;
 static bool s_exitRequested = false;
 static double s_deltatime;
-static bool s_paused = false;
+static bool s_gamePauseReservations[GAME_PAUSE_RESERVATION_COUNT_MAX];
+
+static bool IsGamePaused()
+{
+    for (u32 i = 0u; i < GAME_PAUSE_RESERVATION_COUNT_MAX; ++i)
+    {
+        if (s_gamePauseReservations[i])
+            return true;
+    }
+
+    return false;
+}
 
 static Scene* SearchMainCharScene(Scene* parent)
 {
@@ -70,6 +83,9 @@ Scene* GameManager_GetMainCharScene()
 
 void GameManager_RequestExit()
 {
+    for (u32 i = 0u; i < GAME_PAUSE_RESERVATION_COUNT_MAX; ++i)
+        s_gamePauseReservations[i] = false;
+
     s_exitRequested = true;
 }
 
@@ -85,10 +101,23 @@ void GameManager_SetDeltatime(double deltatime)
 
 double GameManager_GetDeltatime()
 {
-    return s_paused? 0.0 : s_deltatime;
+    return IsGamePaused()? 0.0 : s_deltatime;
 }
 
-void GameManager_PauseGame(bool on)
+u32 GameManager_RequestGamePause()
 {
-    s_paused = on;
+    for(u32 i = 0u; i < GAME_PAUSE_RESERVATION_COUNT_MAX; ++i)
+    {
+        if (s_gamePauseReservations[i]) continue;
+
+        s_gamePauseReservations[i] = true;
+        return i;
+    }
+
+    PANIC_M("Max number of game pause reservations exceeded!");
+}
+
+void GameManager_RemoveGamePauseRequest(u32 tag)
+{
+    s_gamePauseReservations[tag] = false;
 }

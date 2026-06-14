@@ -12,6 +12,7 @@ void GameManager_RequestExit();
 bool GameManager_IsExitRequested();
 void GameManager_SetDeltatime(double deltatime);
 double GameManager_GetDeltatime();
-void GameManager_PauseGame(bool on);
+u32 GameManager_RequestGamePause();
+void GameManager_RemoveGamePauseRequest(u32 tag);
 
 #endif // __GAME_MANAGER_H__

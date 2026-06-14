@@ -30,6 +30,7 @@ static Scene* s_spawnTumorButton;
 static Scene* s_spawnBlockButton;
 static Scene* s_sceneToSpawn;
 static Scene* s_printSceneTreeButton;
+static u32 s_gamePauseReservationTag;
 
 static void Cleanup()
 {
@@ -94,7 +95,11 @@ void EditMode_Update(double deltatime)
     {
         s_enabled = !s_enabled;
         s_stackContainer->enabled = s_enabled;
-        GameManager_PauseGame(s_enabled);
+
+        if (s_enabled)
+            s_gamePauseReservationTag = GameManager_RequestGamePause();
+        else
+            GameManager_RemoveGamePauseRequest(s_gamePauseReservationTag);
     } 
 
     if (s_enabled)

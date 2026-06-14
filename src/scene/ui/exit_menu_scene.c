@@ -1,5 +1,4 @@
 #include "exit_menu_scene.h"
-#include "edit_mode.h"
 #include "game_manager.h"
 #include "graphics/color.h"
 #include "input/input.h"
@@ -13,6 +12,7 @@
 
 typedef struct {
     Scene* rootContainer;
+    u32 gamePauseReservationTag;
 } ExitMenuSceneData;
 
 static void OnPressedYes(Scene* scene, i32 tag)
@@ -30,7 +30,7 @@ static void OnPressedNo(Scene* scene, i32 tag)
     ExitMenuSceneData* sceneData = scene->sceneData;
 
     sceneData->rootContainer->enabled = false;
-    GameManager_PauseGame(false);
+    GameManager_RemoveGamePauseRequest(sceneData->gamePauseReservationTag);
 }
 
 
@@ -44,7 +44,11 @@ static void Update(Scene* scene, double deltatime)
     {
         sceneData->rootContainer->enabled = !sceneData->rootContainer->enabled;
         sceneData->rootContainer->transform.position = Input_GetMousePosition();
-        GameManager_PauseGame(sceneData->rootContainer->enabled);
+
+        if (sceneData->rootContainer->enabled)
+            sceneData->gamePauseReservationTag = GameManager_RequestGamePause();
+        else
+            GameManager_RemoveGamePauseRequest(sceneData->gamePauseReservationTag);
     }
 }
 
