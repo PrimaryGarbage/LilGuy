@@ -1,4 +1,5 @@
 #include "exit_menu_scene.h"
+#include "edit_mode.h"
 #include "game_manager.h"
 #include "graphics/color.h"
 #include "input/input.h"
@@ -43,9 +44,7 @@ static void Update(Scene* scene, double deltatime)
     {
         sceneData->rootContainer->enabled = !sceneData->rootContainer->enabled;
         sceneData->rootContainer->transform.position = Input_GetMousePosition();
-        
-        if (sceneData->rootContainer->enabled)
-            GameManager_PauseGame(true);
+        GameManager_PauseGame(sceneData->rootContainer->enabled);
     }
 }
 
@@ -58,6 +57,7 @@ Scene* ExitMenuScene_Create(Scene* parent)
 
     Scene* rootContainer = StackContainerScene_Create(scene, false, 5.0f, "Exit Menu Parent");
     sceneData->rootContainer = rootContainer;
+    StackContainerScene_SetBackground(rootContainer, (Color){ .r = 0u, .g = 0u, .b = 0u, .a = 100u });
     LabelScene_Create(rootContainer, "Exit Menu Label", "Exit Game?", 20.0f, COLOR_WHITE);
     Scene* buttonContainer = StackContainerScene_Create(rootContainer, true, 5.0f, "Exit Menu Button Container");
     ButtonScene_Create(buttonContainer, "Exit Menu Button Yes", (Vector2) { 60.0f, 30.0f }, COLOR_BLACK, "Yes", 0, OnPressedYes, scene);
