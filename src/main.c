@@ -42,7 +42,6 @@ static void Draw()
 int main()
 {
     RandomInit();
-    Timer globalTimer = Timer_Create();
 
     Image screenCaptureImage;
     Result captureResult = Graphics_CaptureScreen(&screenCaptureImage);
@@ -52,7 +51,7 @@ int main()
 
     Window_Init("LilGuy", windowSize, true);
     //Window_Hide();
-    Window_SetMonitor(1);
+    //Window_SetMonitor(1);
     Window_SetMouseCursor(MOUSE_CURSOR_TYPE_CROSSHAIR);
 
     s_screenCaptureTexture = Graphics_LoadTextureFromImage(&screenCaptureImage);
@@ -66,6 +65,8 @@ int main()
     Scene_Start(rootScene);
 
     Debug_PrintSceneTree(rootScene);
+
+    Timer globalTimer = Timer_Create();
 
     while(!Window_ShouldClose())
     {
